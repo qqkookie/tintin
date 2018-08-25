@@ -1,0 +1,41 @@
+#
+# .gitignore file for tintin++
+#
+##### Configure & temp files #####
+
+config.status
+Makefile
+config.h
+config.log
+*.tmp
+*.bak
+*.log
+
+##### Generated binaries #####
+
+*.o
+*.obj
+*.exe
+tt++
+tt++.exe
+
+##### CygWin DLL & mintty in WinTin++/bin #####
+
+dev/
+bin/
+cygpcre-1.dll
+cygwin-console-helper.exe
+cygwin1.dll
+cygz.dll
+mintty.exe
+tt++.exe
+
+##### Misc develop tools #####
+
+# Visual Studio files
+.vs/
+*.csproj
+*.sln
+*.suo
+*.pdb
+

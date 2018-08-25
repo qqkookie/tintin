@@ -1,0 +1,34 @@
+Q1.  I am getting a DLL error.
+A1.  This is likely because you have Cygwin installed. Try to update Cygwin, if that doesn't help you're better off running TinTin++ in Cygwin instead by copying tt++.exe to the /bin directory in cygwin.
+
+
+Q2.  The #system, #script, #run, and #suspend commands don't work.
+A2.  These commands require a command shell to execute. For this functionality on Windows you need to install Cygwin and run TinTin++ inside the Cygwin environment.
+
+
+Q3.  Tintin script files look weird in notepad.
+A3.  This is because notepad only follows the windows text format. Try using wordpad instead.
+
+
+Q4.  How to automatically read in a file when starting WinTin++?
+A4.  By default WinTin++ tries to read the file 'main.tin'. This can be changed by right clicking the WinTin++ shortcut, choosing properties, and changing the input field to read a different file. When starting out it's an option to create some triggers and use: #write main.tin, but it's strongly suggested to edit the script file with wordpad or notepad++, rather than creating scripts within WinTin++.
+
+
+Q5. Where does tintin save/read the files?
+A5. Tintin does so in the install directory. The installer makes a shortcut in: start -> program files -> WinTin++ -> Directory, which will take you there.
+
+
+Q6. How does copy/paste work?
+A6. Text is automatically copied when text is selected. You can paste using shift-insert. Pasting behavior can be configured by clicking the titlebar with the right mouse button, and choosing options from the dropdown menu. Pressing ctrl-c will clear your input, as TinTin++ emulates Linux behavior.
+
+
+Q7. How do I change the default settings of the terminal?
+A7. You can configure the terminal settings by right clicking the titlebar and choosing options from the dropdown menu. Settings are stored in the terminal.con file in the WinTin++ directory.
+
+
+Q8. How does WinTin++ work?
+A8. WinTin++ exists of 3 components. The first component is the Cygwin DLL which allows programs written for linux systems to run on Windows. The second component is the compiled TinTin++ source code. The third component is mintty, a PuTTY derived VT100 terminal emulator for Cygwin.
+
+
+Q9. Where's the beloved input bar?
+A9. Type: #split. It's possible to use: #event {SESSION CONNECTED} {#split} to enable split upon connect.

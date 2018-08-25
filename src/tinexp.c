@@ -863,6 +863,54 @@ int substitute(struct session *ses, char *string, char *result, int flags)
 						*pto++ = 'm';
 						pti += sprintf(old, "<%c%c%c>", pti[1], pti[2], pti[3]);
 					}
+
+					// 24 bit truecolor color code: "<xhhhhhhh>" for foregrund, "<Xhhhhhhh>" for background color.
+					//     hhhhhhh is 6 hexadecimal digits of 24 bit color, either in upper or lower case.
+					// ex:   "<Xfffff00>" for yellow background.
+					else if ((pti[1] == 'x' || pti[1] == 'X' ) && isxdigit((int) pti[2]) && isxdigit((int) pti[3]) 
+						&& isxdigit((int) pti[4]) && isxdigit((int) pti[5]) && isxdigit((int) pti[6]) 
+						&& isxdigit((int) pti[7]) && pti[8] == '>')
+					{
+#define 		 hex2bin(c) 	(((c) > '9')? (((c) & 0xDF ) - 55) : ((c) - '0'))
+
+						*pto++ = ESCAPE;
+						*pto++ = '[';
+						*pto++ = pti[1] == 'x' ? '3' : '4';		// foreground/background
+						*pto++ = '8';
+						*pto++ = ';';
+						*pto++ = '2';	// 24 bit true color mode
+						*pto++ = ';';
+						cnt = ( hex2bin(pti[2]) *16 + hex2bin(pti[3]));
+						*pto++ = '0' + cnt / 100;
+						*pto++ = '0' + cnt % 100 / 10;
+						*pto++ = '0' + cnt % 10;
+						*pto++ = ';';	
+						cnt = ( hex2bin(pti[4]) *16 + hex2bin(pti[5]));
+						*pto++ = '0' + cnt / 100;
+						*pto++ = '0' + cnt % 100 / 10;
+						*pto++ = '0' + cnt % 10;
+						*pto++ = ';';
+						cnt = ( hex2bin(pti[6]) *16 + hex2bin(pti[7]));
+						*pto++ = '0' + cnt / 100;
+						*pto++ = '0' + cnt % 100 / 10;
+						*pto++ = '0' + cnt % 10;
+						*pto++ = 'm';
+						pti += 9;	// "<xhhhhhh>"
+					}
+
+					// <K00>~<K99>: custom, numbered 'K'olors. <K81>~<K84> colors are pre-defined for 
+					// help strings and chat color code. <K85>~<K99> are reserved for future internal use. 
+					// To set or override these kolors, set ${_TK00} ~ ${_TK99} vaiables. 
+					// Ex: #var {_TK07} {<XFFFF00><188>} for bold and yellow back ground. 
+					else if (pti[1] == 'K' && isdigit((int) pti[2]) && isdigit((int) pti[3]) && pti[4] == '>')
+					{
+						char kolor[16];
+						sprintf(kolor, "${_TK%c%c}", pti[2], pti[3]);
+						
+						substitute(ses, kolor, pto, (SUB_COL|SUB_VAR));
+						pto += strlen(pto);
+						pti += 5; 	// "<K99>"
+					}
 					else
 					{
 						*pto++ = *pti++;

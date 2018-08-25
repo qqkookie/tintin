@@ -190,7 +190,7 @@ void write_line_mud(struct session *ses, char *line, int size)
 
 		pop_call();
 		return;
-	}
+	}	
 
 #ifdef HAVE_GNUTLS_H
 
@@ -384,6 +384,11 @@ void process_mud_output(struct session *ses, char *linebuf, int prompt)
 		linebuf = line;
 	}
 
+	if ( HAS_BIT(ses->flags, SES_FLAG_OLDCP) && HAS_BIT(ses->flags, SES_FLAG_UTF8))
+	{
+		utf8convert( FALSE, linebuf, -1);
+	}
+
 	do_one_line(linebuf, ses);   /* changes linebuf */
 
 	/*
@@ -424,3 +429,49 @@ void process_mud_output(struct session *ses, char *linebuf, int prompt)
 	return;
 }
 
+#ifdef __CYGWIN__
+#include <windows.h>
+
+// MUD uses legacy multibyte codepage like ISO-8859-x, EUC-KR, EUC-JP.
+// But player uses UTF-8 terminal and tintin file. Needs in-place conversion, both ways. 
+// For Cywin Wintin++ only. CyWin iconv(3) not woking.
+
+int utf8convert(int fromutf, char *linebuf, int inlen)
+{
+	static int codepage = -1;
+	if (codepage == CP_UTF8)
+		return 0;
+
+	if (codepage == -1)
+		codepage = GetACP();
+
+	wchar_t wcbuf[STRING_SIZE];
+
+	int wlen = MultiByteToWideChar((fromutf ? CP_UTF8 : CP_ACP), 0, linebuf, inlen, wcbuf, STRING_SIZE);
+		
+	int  olen = -1;
+	if ( wlen > 0 )
+	{
+		olen = WideCharToMultiByte((fromutf ? CP_ACP : CP_UTF8), 0, wcbuf, wlen, linebuf, STRING_SIZE, NULL, NULL);
+	}
+	return olen;
+}
+/*
+	Test string : "이것은 한글입니다. Happy life! 안녕"
+
+	static char str_euc_kr[] = { 	// Encoded in EUC-KR 
+		0xc0, 0xcc, 0xb0, 0xcd, 0xc0, 0xba, 0x20, 0xc7, 0xd1, 0xb1, 0xdb, 0xc0,
+		0xd4, 0xb4, 0xcf, 0xb4, 0xd9, 0x2e, 0x20, 0x48, 0x61, 0x70, 0x70, 0x79,
+		0x20, 0x6c, 0x69, 0x66, 0x65, 0x21, 0x20, 0xbe, 0xc8, 0xb3, 0xe7, 0x00,
+	};
+
+	static char str_utf8[] = {		// Encoded in UTF-8 
+		0xec, 0x9d, 0xb4, 0xea, 0xb2, 0x83, 0xec, 0x9d, 0x80, 0x20, 0xed, 0x95,
+		0x9c, 0xea, 0xb8, 0x80, 0xec, 0x9e, 0x85, 0xeb, 0x8b, 0x88, 0xeb, 0x8b,
+		0xa4, 0x2e, 0x20, 0x48, 0x61, 0x70, 0x70, 0x79, 0x20, 0x6c, 0x69, 0x66,
+		0x65, 0x21, 0x20, 0xec, 0x95, 0x88, 0xeb, 0x85, 0x95, 0x00,
+	};
+*/	
+#else
+void utf8convert(char *linebuf, int from) {} 	// Dummy
+#endif

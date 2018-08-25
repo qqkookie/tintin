@@ -409,6 +409,12 @@ void init_tintin(int greeting)
 	insert_node_list(gts->list[LIST_PATHDIR], "se", "nw",  "6");
 	insert_node_list(gts->list[LIST_PATHDIR], "sw", "ne", "12");
 
+	// Help/chat string color code default
+	insert_node_list(gts->list[LIST_VARIABLE], "_TK81", "<078>", "" );
+	insert_node_list(gts->list[LIST_VARIABLE], "_TK82", "<178>", "" );
+	insert_node_list(gts->list[LIST_VARIABLE], "_TK83", "<068>", "" );
+	insert_node_list(gts->list[LIST_VARIABLE], "_TK84", "<078>", "" );
+
 	init_terminal();
 
 	if (greeting)

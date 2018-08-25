@@ -513,24 +513,27 @@ DO_CONFIG(config_autotab)
 
 DO_CONFIG(config_charset)
 {
+	DEL_BIT(ses->flags, SES_FLAG_BIG5);
+	DEL_BIT(ses->flags, SES_FLAG_UTF8);
+	DEL_BIT(ses->flags, SES_FLAG_OLDCP);	
 	if (!strcasecmp(arg, "BIG5"))
 	{
 		SET_BIT(ses->flags, SES_FLAG_BIG5);
-		DEL_BIT(ses->flags, SES_FLAG_UTF8);
 	}
 	else if (!strcasecmp(arg, "UTF-8"))
 	{
 		SET_BIT(ses->flags, SES_FLAG_UTF8);
-		DEL_BIT(ses->flags, SES_FLAG_BIG5);
 	}
-	else if (!strcasecmp(arg, "ASCII"))
+	else if (!strcasecmp(arg, "OLDCP"))
 	{
-		DEL_BIT(ses->flags, SES_FLAG_BIG5);
-		DEL_BIT(ses->flags, SES_FLAG_UTF8);
+		// MUD uses legacy multibyte codepage like ISO-8859-x, EUC-KR, EUC-JP.
+		// But player uses UTF-8 terminal and tintin file. For Cywin Wintin++ only.
+		SET_BIT(ses->flags, SES_FLAG_UTF8);
+		SET_BIT(ses->flags, SES_FLAG_OLDCP);
 	}
-	else
+	else if (strcasecmp(arg, "ASCII") != 0)
 	{
-		show_error(ses, LIST_CONFIG, "#SYNTAX: #CONFIG {%s} <ASCII|BIG5|UTF-8>", config_table[index].name);
+		show_error(ses, LIST_CONFIG, "#SYNTAX: #CONFIG {%s} <ASCII|BIG5|UTF-8|OLDCP>", config_table[index].name);
 
 		return NULL;
 	}

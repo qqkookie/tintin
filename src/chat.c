@@ -1534,7 +1534,7 @@ DO_CHAT(chat_name)
 DO_CHAT(chat_paste)
 {
 	struct chat_data *buddy;
-	char temp[BUFFER_SIZE], name[BUFFER_SIZE], *arg;
+	char temp[BUFFER_SIZE+2], name[BUFFER_SIZE], *arg;
 
 	if (left == NULL)
 	{
@@ -1549,7 +1549,7 @@ DO_CHAT(chat_paste)
 
 		arg = get_arg_in_braces(gtd->ses, gtd->chat->paste_buf, name, FALSE);
 
-		sprintf(temp, "%s\n<078>======================================================================", arg);
+		sprintf(temp, "%s\n<K84>======================================================================", arg);
 
 		substitute(gtd->ses, temp, temp, SUB_COL|SUB_ESC);
 
@@ -1612,7 +1612,7 @@ DO_CHAT(chat_paste)
 
 	gtd->chat->paste_time = 400000LL + utime();
 
-	sprintf(temp, "{%s}<078>======================================================================\n<068>%s", left, right);
+	sprintf(temp, "{%s}<K84>======================================================================\n<068>%s", left, right);
 
 	RESTRING(gtd->chat->paste_buf, temp);
 }

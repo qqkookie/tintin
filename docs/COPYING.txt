@@ -1,0 +1,13 @@
+WinTin++ combines three components that all fall under the GNU Generic Public License. The first component is the Cygwin DLL which allows programs written for linux systems to run on Windows. The second component is the compiled TinTin++ source code. The third component is mintty, a PuTTY derived VT100 terminal emulator for Cygwin.
+
+Sources and licensing terms are available at the following sites:
+
+Cygwin 1.7     http://cygwin.com
+mintty 0.9.7   https://mintty.github.io
+TinTin 2.0.0   http://sourceforge.net/projects/tintin
+
+These programs are free software: you can redistribute them and/or modify them under the terms of the GNU General Public License as published by the Free Software Foundation, either version 2 for TinTin++ and Cygwin, or version 3 for mintty, or (at your option) any later version.
+
+These programs are distributed in the hope that they will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+
+More information about the GNU General Public License is available at http://www.gnu.org/licenses.
