@@ -898,10 +898,8 @@ int substitute(struct session *ses, char *string, char *result, int flags)
 						pti += 9;	// "<xhhhhhh>"
 					}
 
-					// <K00>~<K99>: custom, numbered 'K'olors. <K81>~<K84> colors are pre-defined for 
-					// help strings and chat color code. <K85>~<K99> are reserved for future internal use. 
-					// To set or override these kolors, set ${_TK00} ~ ${_TK99} vaiables. 
-					// Ex: #var {_TK07} {<XFFFF00><188>} for bold and yellow back ground. 
+					// <K00>~<K99>: custom, numbered 'K'olors. To set these kolors, set ${_TK00} ~ ${_TK99} global vaiable. 
+					// Ex: #var {_TK07} {<XFFFF00><188>} to set <K07> to bold and yellow background. 
 					else if (pti[1] == 'K' && isdigit((int) pti[2]) && isdigit((int) pti[3]) && pti[4] == '>')
 					{
 						char kolor[16];

@@ -338,7 +338,7 @@ enum operators
 #define SES_FLAG_RUN                  (1LL << 25)
 #define SES_FLAG_UTF8                 (1LL << 26)
 #define SES_FLAG_BIG5                 (1LL << 27)
-#define SES_FLAG_OLDCP                (1LL << 28)
+#define SES_FLAG_MIXED                (1LL << 28)
 #define SES_FLAG_256COLOR             (1LL << 32)
 #define SES_FLAG_IGNORELINE           (1LL << 33)
 #define SES_FLAG_CLOSED               (1LL << 34)
@@ -1692,7 +1692,7 @@ extern void write_line_mud(struct session *ses, char *line, int size);
 extern int read_buffer_mud(struct session *ses);
 extern void readmud(struct session *ses);
 extern void process_mud_output(struct session *ses, char *linebuf, int prompt);
-extern int utf8convert( int fromutf, char *linebuf, int inlen );
+extern int utf8convert(int fromutf, char *linebuf, int inlen);
 
 #endif
 #ifndef __TELOPT_H__

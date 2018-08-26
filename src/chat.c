@@ -1549,7 +1549,7 @@ DO_CHAT(chat_paste)
 
 		arg = get_arg_in_braces(gtd->ses, gtd->chat->paste_buf, name, FALSE);
 
-		sprintf(temp, "%s\n<K84>======================================================================", arg);
+		sprintf(temp, "%s\n<K85>======================================================================", arg);
 
 		substitute(gtd->ses, temp, temp, SUB_COL|SUB_ESC);
 
@@ -1612,7 +1612,7 @@ DO_CHAT(chat_paste)
 
 	gtd->chat->paste_time = 400000LL + utime();
 
-	sprintf(temp, "{%s}<K84>======================================================================\n<068>%s", left, right);
+	sprintf(temp, "{%s}<K85>======================================================================\n<K84>%s", left, right);
 
 	RESTRING(gtd->chat->paste_buf, temp);
 }

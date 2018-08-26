@@ -21,6 +21,9 @@ $         The dollar sign followed by an alphanumeric string is used for
 <000>     Three alphanumeric characters encapsulated by the less- and greater-
           than signs are used for color codes.
 
+<[xX]hhhhhh>  'x' or 'X' prefix and six hexadecimal digits ([0-9a-fA-F]) 
+          encapsulated between < and > is used for 24 bit true color codes.
+
 \         The back slash is used to escape a character
 
 { }       Curly brackets are used for seperating multi word command arguments.

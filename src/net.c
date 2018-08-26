@@ -190,7 +190,7 @@ void write_line_mud(struct session *ses, char *line, int size)
 
 		pop_call();
 		return;
-	}	
+	}
 
 #ifdef HAVE_GNUTLS_H
 
@@ -384,9 +384,9 @@ void process_mud_output(struct session *ses, char *linebuf, int prompt)
 		linebuf = line;
 	}
 
-	if ( HAS_BIT(ses->flags, SES_FLAG_OLDCP) && HAS_BIT(ses->flags, SES_FLAG_UTF8))
+	if ( HAS_BIT(ses->flags, SES_FLAG_MIXED) && HAS_BIT(ses->flags, SES_FLAG_UTF8))
 	{
-		utf8convert( FALSE, linebuf, -1);
+		utf8convert(FALSE, linebuf, -1);
 	}
 
 	do_one_line(linebuf, ses);   /* changes linebuf */
@@ -432,8 +432,6 @@ void process_mud_output(struct session *ses, char *linebuf, int prompt)
 #ifdef __CYGWIN__
 #include <windows.h>
 
-// MUD uses legacy multibyte codepage like ISO-8859-x, EUC-KR, EUC-JP.
-// But player uses UTF-8 terminal and tintin file. Needs in-place conversion, both ways. 
 // For Cywin Wintin++ only. CyWin iconv(3) not woking.
 
 int utf8convert(int fromutf, char *linebuf, int inlen)
@@ -473,5 +471,5 @@ int utf8convert(int fromutf, char *linebuf, int inlen)
 	};
 */	
 #else
-void utf8convert(char *linebuf, int from) {} 	// Dummy
+void utf8convert(int fromutf, char *linebuf, int inlen) {} 	// Dummy
 #endif

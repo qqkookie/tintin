@@ -26,18 +26,19 @@ MAKE = @MAKE@
 
 prefix = @prefix@
 exec_prefix = @exec_prefix@
-bindir = ${DESTDIR}@bindir@
+bindir =@bindir@
 docdir = @prefix@/doc
 
 #this is the standard CFLAGS options, this is what most people should use
 
-CFLAGS += $(DEFINES) @BIG5@
+CFLAGS += $(DEFINES) @BIG5@ -O3
 
 LDFLAGS = @LDFLAGS@
 
 INCS = @MYINCLUDE@
 
 LIBS = @LIBS@
+
 
 # If you prefer to be able to enter ISO latin-1 characters instead
 # of being able to use the meta key for special emacs-like commands
@@ -50,13 +51,19 @@ LIBS = @LIBS@
 #F6 = -DSOCKS
 #LIBSOCKS = -lsocks5
 
+FFLAGS= $(F1) $(F6)
+
 
 # DEFAULT_FILE_DIR is the path to tintin files. 
 # DEFAULT_FILE_DIR = @HOME@
 DEFAULT_FILE_DIR = $(HOME)
 
-FFLAGS= $(F1) $(F6)
+DESTDIR=$(HOME)/bin
 
+
+HEADERS = tintin.h config.h
+
+BUILDDIR = _objs
 
 OFILES = action.o alias.o files.o help.o highlight.o strhash.o input.o log.o \
          main.o misc.o net.o parse.o path.o update.o history.o tab.o vt102.o \
@@ -66,27 +73,34 @@ OFILES = action.o alias.o files.o help.o highlight.o strhash.o input.o log.o \
          list.o forkpty.o cursor.o memory.o system.o line.o tokenize.o \
          data.o nest.o advertise.o ssl.o port.o
 
+OBJS = $(addprefix $(BUILDDIR)/, $(OFILES))
+
+PROG = tt++
+
 
 default: all
 
-all:	tt++
+all:	$(PROG)
 
-
-tt++:	Makefile $(OFILES) tintin.h
+$(PROG): $(OBJS) Makefile
 	@echo "---- Linking..."
-	$(CC) $(INCS) $(CFLAGS) $(FFLAGS) $(LDFLAGS) -o $@ $(OFILES) $(LIBS) ${LIBSOCKS}
+	$(CC) $(INCS) $(CFLAGS) $(FFLAGS) $(LDFLAGS) -o $@ $(OBJS) $(LIBS) ${LIBSOCKS}
+
+
+$(BUILDDIR)/%.o : %.c $(HEADERS)
+	$(CC) $(PIPE) $(CFLAGS) $(FFLAGS) $(INCS) -c $< -o $@
+
+
+install: $(PROG)
+	-mkdir -p  ${DESTDIR}
+	cp $(PROG)  ${DESTDIR}
+#	-mkdir -p $(docdir)
+#	cp ../docs/* ../[A-Z][A-Z]* $(docdir)
 
 
 Makefile: Makefile.in
 	@echo "You need to run ./configure first; then try make."
 	@exit 1
-
-
-install: tt++
-	-mkdir -p $(bindir)
-	cp tt++ $(bindir)
-#	-mkdir -p $(docdir)
-#	cp ../docs/* ../[A-Z][A-Z]* $(docdir)
 
 
 # Autocompile all .c files into .o files using this rule:
@@ -95,8 +109,10 @@ install: tt++
 
 
 clean:
-	rm -f *.o *~ ../*~ ../mods/*~ tt++*
+	rm -f $(BUILDDIR)/*.o *~ ../*~ ../docs/*~ $(PROG)
 
 
-distclean:
-	rm -f *.o *~ ../*~ ../mods/*~ tt++* Makefile config.h config.status config.log
+distclean: clean
+	rm -f Makefile config.h config.status config.log
+	rmdir $(BUILDDIR)
+

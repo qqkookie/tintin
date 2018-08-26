@@ -92,10 +92,6 @@ struct session *parse_input(struct session *ses, char *input)
 		}
 		else
 		{
-			//if ( HAS_BIT(ses->flags, SES_FLAG_OLDCP) && HAS_BIT(ses->flags, SES_FLAG_UTF8))
-			//{
-			//	utf8convert(TRUE , line, size);
-			//}	
 			write_mud(ses, line, SUB_VAR|SUB_FUN|SUB_ESC|SUB_EOL);
 		}
 
@@ -759,7 +755,7 @@ void write_mud(struct session *ses, char *command, int flags)
 		}
 	}
 	
-	if ( HAS_BIT(ses->flags, SES_FLAG_OLDCP) && HAS_BIT(ses->flags, SES_FLAG_UTF8))
+	if ( HAS_BIT(ses->flags, SES_FLAG_MIXED) && HAS_BIT(ses->flags, SES_FLAG_UTF8))
 	{
 		size = utf8convert(TRUE , output, size);
 	}	

@@ -413,7 +413,8 @@ void init_tintin(int greeting)
 	insert_node_list(gts->list[LIST_VARIABLE], "_TK81", "<078>", "" );
 	insert_node_list(gts->list[LIST_VARIABLE], "_TK82", "<178>", "" );
 	insert_node_list(gts->list[LIST_VARIABLE], "_TK83", "<068>", "" );
-	insert_node_list(gts->list[LIST_VARIABLE], "_TK84", "<078>", "" );
+	insert_node_list(gts->list[LIST_VARIABLE], "_TK84", "<068>", "" );	
+	insert_node_list(gts->list[LIST_VARIABLE], "_TK85", "<078>", "" );
 
 	init_terminal();
 

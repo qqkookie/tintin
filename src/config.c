@@ -515,7 +515,7 @@ DO_CONFIG(config_charset)
 {
 	DEL_BIT(ses->flags, SES_FLAG_BIG5);
 	DEL_BIT(ses->flags, SES_FLAG_UTF8);
-	DEL_BIT(ses->flags, SES_FLAG_OLDCP);	
+	DEL_BIT(ses->flags, SES_FLAG_MIXED);	
 	if (!strcasecmp(arg, "BIG5"))
 	{
 		SET_BIT(ses->flags, SES_FLAG_BIG5);
@@ -524,16 +524,15 @@ DO_CONFIG(config_charset)
 	{
 		SET_BIT(ses->flags, SES_FLAG_UTF8);
 	}
-	else if (!strcasecmp(arg, "OLDCP"))
+	else if (!strcasecmp(arg, "MIXED"))
 	{
-		// MUD uses legacy multibyte codepage like ISO-8859-x, EUC-KR, EUC-JP.
-		// But player uses UTF-8 terminal and tintin file. For Cywin Wintin++ only.
+		// Mixed mode: MUD uses legacy multibyte codepage. User uses UTF-8 terminal and tintin file.
 		SET_BIT(ses->flags, SES_FLAG_UTF8);
-		SET_BIT(ses->flags, SES_FLAG_OLDCP);
+		SET_BIT(ses->flags, SES_FLAG_MIXED);
 	}
 	else if (strcasecmp(arg, "ASCII") != 0)
 	{
-		show_error(ses, LIST_CONFIG, "#SYNTAX: #CONFIG {%s} <ASCII|BIG5|UTF-8|OLDCP>", config_table[index].name);
+		show_error(ses, LIST_CONFIG, "#SYNTAX: #CONFIG {%s} <ASCII|BIG5|UTF-8|MIXED>", config_table[index].name);
 
 		return NULL;
 	}
