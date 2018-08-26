@@ -141,7 +141,7 @@
 #define LIST_SIZE                        2
 
 #define CLIENT_NAME              "TinTin++"
-#define CLIENT_VERSION           "2.01.4  "
+#define CLIENT_VERSION           "2.02.X  "
 
 #define ESCAPE                          27
 

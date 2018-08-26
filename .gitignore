@@ -13,6 +13,7 @@ config.log
 
 ##### Generated binaries #####
 
+src/_objs/
 *.o
 *.obj
 *.exe

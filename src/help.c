@@ -212,10 +212,10 @@ struct help_type help_table[] =
 		"         #chat {uninitialize}                  Uninitialize the chat port.\n"
 		"         #chat {who}                           Show all connections\n"
 		"         #chat {zap}        {buddy}            Close a connection\n"
-		"\n"		
+		"\n"
 		"         Display color of chat text can be changed by user.\n" 
 		"         <<888>K84> and <<888>K85> are user-defined color code used to display chat text.\n"
-		"		  #var {_TK84}  {<<888>007>} will display black on white chat text.\n"		
+		"         #var {_TK84}  {<<888>007>} will display black on white chat text.\n"
 	},
 	{
 		"CLASS",
@@ -278,11 +278,12 @@ struct help_type help_table[] =
 		"         hhhhhh is 3 bytes RGB color in six digits hexadecimal number. \n"
 		"         Hex digit is 0-9, a-f, A-F range and case-ignored.\n"
 		"\n"
-		"         Color code <<888>K00>-<<888>K99> are user-definded color code. User can set actual color of\n"
-		"         <<888>K00>-<<888>K99> color code by setting ${_TK00}-${_TK99} global variables.\n"
-		"         <<888>K80>-<<888>K99> codes are resrved for help / chat colors and future internal use.\n"
-		"\n"			
-		"<K82>Example<K81>: #showme <<888>x00FFFF>>Cyan text and  <<888>XE0FFFF>Light cyan BG\n"
+		"         Color code <<888>K00>-<<888>K99> are user-definded color code.\n"
+		"         User can set actual color of <<888>K00>-<<888>K99> color code by setting \n"
+		"         ${_TK00}-${_TK99} global variables. <<888>K80>-<<888>K99> codes are resrved\n"
+		"         for help / chat colors and future internal use.\n"
+		"\n"
+		"<K82>Example<K81>: #showme <<888>xFF69B4>Pink text and  <<888>XE0FFFF>Light cyan BG\n"
 		"<K82>Example<K81>: #var {_TK04} {<<888>118>}; #showme <<888>K04>Bold Red color\n"
 	},
 	{
@@ -601,14 +602,14 @@ struct help_type help_table[] =
 
 	{
 		"GREETING",
-		"<K84>      #<K84>##################################################################<K84>#\n"
-		"<K84>      #<K81>                     T I N T I N + +   "CLIENT_VERSION"                   <K84>#\n"
-		"<K84>      #<K81>                                                                  <K84>#\n"
+		"<K83>      #<K83>##################################################################<K83>#\n"
+		"<K83>      #<K81>                     T I N T I N + +   "CLIENT_VERSION"                   <K83>#\n"
+		"<K83>      #<K81>                                                                  <K83>#\n"
 //		"<068>      #<078>           (<068>T<078>)he k(<068>I<078>)cki(<068>N<078>) (<068>T<078>)ickin d(<068>I<078>)kumud clie(<068>N<078>)t <068>          #\n"
-		"<K84>      #<K81>                 <K84>T<K81>he K<K84>i<K81>cki<K84>n<K81> <K84>T<K81>ickin D<K84>i<K81>kuMUD Clie<K84>n<K81>t <K84>                #\n"
-		"<K84>      #<K81>                                                                  <K84>#\n"
-		"<K84>      #<K81>      Code by Peter Unold, Bill Reis, and Igor van den Hoven      <K84>#\n"
-		"<K84>      #<K84>##################################################################<K84>#<088>\n"
+		"<K83>      #<K81>                 <K83>T<K81>he K<K83>i<K81>cki<K83>n<K81> <K83>T<K81>ickin D<K83>i<K81>kuMUD Clie<K83>n<K81>t <K83>                #\n"
+		"<K83>      #<K81>                                                                  <K83>#\n"
+		"<K83>      #<K81>      Code by Peter Unold, Bill Reis, and Igor van den Hoven      <K83>#\n"
+		"<K83>      #<K83>##################################################################<K83>#<088>\n"
 	},
 	{
 		"GREP",
@@ -636,7 +637,7 @@ struct help_type help_table[] =
 		"\n"
 		"         Display color of help keyword and text can be changed by user.\n" 
 		"         <<888>K81>, <<888>K82>, <<888>K83> are user-defined color code used to display help text.\n"
-		"		  #var {_TK81}  {<<888>007>} will display black on white help text.\n"
+		"         #var {_TK81}  {<<888>007>} will display black on white help text.\n"
 	},
 	{
 		"HIGHLIGHT",

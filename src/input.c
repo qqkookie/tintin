@@ -530,11 +530,14 @@ void echo_command(struct session *ses, char *line)
 		}
 		add_line_buffer(ses, buffer, -1);
 
-		SET_BIT(ses->flags, SES_FLAG_SCROLLSTOP);
-
-		tintin_printf2(ses, "%s", result);
-
-		DEL_BIT(ses->flags, SES_FLAG_SCROLLSTOP);
+		if ( ses->top_row > 1)
+		{
+			SET_BIT(ses->flags, SES_FLAG_SCROLLSTOP);
+			tintin_printf2(ses, "%s", result);
+			DEL_BIT(ses->flags, SES_FLAG_SCROLLSTOP);
+		}	
+		else
+			tintin_printf2(ses, "%s", result);
 	}
 	else
 	{

@@ -60,8 +60,13 @@ chat.c:
 main.c:
 - Default help text / chatting colors are defined here.
 
+input.c:
+- Allow vertical scroll bar, even in #split mode, if top row is 0.
+ Example: #SPLIT 0 2; #PROMPT {[%1,%2,%3]} {[%1, %2, %3] } {1}
+
 tintin.h:
 - session flags are defined explicitly as 64 bit long long integer.
+- tentative version number
 
 Makefile.in
 - Add BUILDDIR and *.o file dependacy on header files.
