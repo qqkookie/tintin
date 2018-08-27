@@ -50,6 +50,7 @@ Using the custom <Kdd> color code, user can set colrs of help text
 and chatting. Useful for player uses black text on white background.
 <K81>, <K82>, <K83> for help text colors, <K84>, <K85> for chat color.
 
+- Shorten "Example:" and "Comment:" to be less stand out.
 - Text color reset to nomal default color after displaying #HELP text.
 - Add help text for 24 bit color and help/chat color. 
 
