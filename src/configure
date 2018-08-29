@@ -680,6 +680,7 @@ ac_subst_files=''
 ac_user_opts='
 enable_option_checking
 enable_big5
+enable_lua
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1298,6 +1299,7 @@ Optional Features:
   --disable-FEATURE       do not include FEATURE (same as --enable-FEATURE=no)
   --enable-FEATURE[=ARG]  include FEATURE [ARG=yes]
   --enable-big5           enable big5 support
+  --enable-lua           enable lua support
 
 Some influential environment variables:
   CC          C compiler command
@@ -2180,6 +2182,11 @@ fi
 # Check whether --enable-big5 was given.
 if test "${enable_big5+set}" = set; then :
   enableval=$enable_big5; BIG5="-DBIG5"
+fi
+
+# Check whether --enable-lua was given.
+if test "${enable_lua+set}" = set; then :
+  enableval=$enable_lua; LUA="-DLUA"
 fi
 
 
@@ -3467,6 +3474,23 @@ fi
 
 done
 
+for ac_header in lua.h
+do :
+  ac_fn_c_check_header_mongrel "$LINENO" "lua.h" "ac_cv_header_lua_h" "$ac_includes_default"
+if test "x$ac_cv_header_lua_h" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LUA_H 1
+_ACEOF
+
+$as_echo "#define HAVE_LUA_H /**/" >>confdefs.h
+
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Lua header file not found. It is the optional development part" >&5
+$as_echo "$as_me: WARNING: Lua header file not found. It is the optional development part" >&2;}
+fi
+
+done
+
 
 # Checks for typedefs, structures, and compiler characteristics.
 { $as_echo "$as_me:${as_lineno-$LINENO}: checking for an ANSI C-conforming const" >&5
@@ -4594,6 +4618,55 @@ _ACEOF
   LIBS="-lm $LIBS"
 
 fi
+
+{ $as_echo "$as_me:${as_lineno-$LINENO}: checking for luaL_newstate in -llua" >&5
+$as_echo_n "checking for luaL_newstate in -llua... " >&6; }
+if ${ac_cv_lib_lua_luaL_newstate+:} false; then :
+  $as_echo_n "(cached) " >&6
+else
+  ac_check_lib_save_LIBS=$LIBS
+LIBS="-llua  $LIBS"
+cat confdefs.h - <<_ACEOF >conftest.$ac_ext
+/* end confdefs.h.  */
+
+/* Override any GCC internal prototype to avoid an error.
+   Use char because int might match the return type of a GCC
+   builtin and then its argument prototype would still apply.  */
+#ifdef __cplusplus
+extern "C"
+#endif
+char luaL_newstate ();
+int
+main ()
+{
+return luaL_newstate ();
+  ;
+  return 0;
+}
+_ACEOF
+if ac_fn_c_try_link "$LINENO"; then :
+  ac_cv_lib_lua_luaL_newstate=yes
+else
+  ac_cv_lib_lua_luaL_newstate=no
+fi
+rm -f core conftest.err conftest.$ac_objext \
+    conftest$ac_exeext conftest.$ac_ext
+LIBS=$ac_check_lib_save_LIBS
+fi
+{ $as_echo "$as_me:${as_lineno-$LINENO}: result: $ac_cv_lib_lua_luaL_newstate" >&5
+$as_echo "$ac_cv_lib_lua_luaL_newstate" >&6; }
+if test "x$ac_cv_lib_lua_luaL_newstate" = xyes; then :
+  cat >>confdefs.h <<_ACEOF
+#define HAVE_LIBLUA 1
+_ACEOF
+
+  LIBS="-llua $LIBS"
+
+else
+  { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Lua runtime library not working, and the corresponding development (header) file" >&5
+$as_echo "$as_me: WARNING: Lua runtime library not working, and the corresponding development (header) file" >&2;}
+fi
+
 
 
 for ac_prog in gmake make

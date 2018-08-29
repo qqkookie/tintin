@@ -89,5 +89,24 @@ Add files from WnTin++ installation. Credit to WinTin++, not Akorn Farmer.
 Added aditinal 16 ANSI color definition entries in wintin.mintty.con.
 
 -----------------------------------------------------------
+
+Wed Aug 29 12:00:00 2018 Akorn Farmer
+
+system.c:
+    * Lua 5.2 interpreter integration.
+    * Added do_lua() command code.
+
+Configure.h.in:
+Configure.h.in:
+Configure:
+    * To add lua header/library/DLL dependancy and clean up.
+
+tintin.h:
+tables.h:
+    * Added new #LUA command.
+
+help.h:
+    * Added #LUA command help.
+
 --------------------------------------------------------------------------------
 <EOT>

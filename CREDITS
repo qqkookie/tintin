@@ -23,7 +23,7 @@ Bryan Turner                       see docs/mods.igr.md Mapper enhancements
 David Champion                     see docs/mods.igr.md Solaris forkpty fix
 Ben Love                           see docs/mods.igr.md Tab enhancements
 Adam Borowski                      see docs/mods.igr.md SSL implementation
-Akorn Farmer                       see docs/mods.akf.md 24 bit truecolor, mixed CP option
+Akorn Farmer                       see docs/mods.akf.md Lua script, 24 bit truecolor, mixed CP option
 
 Modification History
 --------------------

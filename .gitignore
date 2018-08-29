@@ -11,6 +11,8 @@ config.log
 *.bak
 *.log
 
+autom4te.cache/
+
 ##### Generated binaries #####
 
 src/_objs/

@@ -252,3 +252,105 @@ DO_COMMAND(do_textin)
 
 	return ses;
 }
+
+#ifdef HAVE_LUA_H
+
+#include <lua.h>
+#include <lauxlib.h>
+#include <lualib.h>
+
+// 	#lua {<return_variable>} {<LUA_script>} arg1, arg2, ... 
+//	EX) #lua {aaa} {$script} a b c d ...
+
+DO_COMMAND(do_lua)
+{
+	int argc, error;
+	char var[BUFFER_SIZE], script[BUFFER_SIZE], arglist[20][BUFFER_SIZE], buf[BUFFER_SIZE];
+
+	arg = sub_arg_in_braces(ses, arg, var, GET_ONE, SUB_VAR|SUB_FUN);
+
+	arg = sub_arg_in_braces(ses, arg, script, GET_ONE, SUB_VAR|SUB_FUN);	
+
+	if ( *var == '\0' ||  *script == '\0')
+	{
+		return show_error(ses, LIST_COMMAND, "#LUA: VAR, SCRIPT REQUIRED.");
+	}
+		
+	for ( argc = 0 ; *arg != '\0' && argc < 20 ; argc++ )
+	{
+		arg = sub_arg_in_braces(ses, arg, arglist[argc], GET_ONE, SUB_VAR|SUB_FUN);
+	}
+
+	lua_State *Lx = luaL_newstate();	// opens Lua VM
+	while(Lx != NULL) 
+	{
+		luaL_openlibs(Lx);            	// opens libraries
+
+		error = luaL_loadstring(Lx, script); 
+		if (error) break;
+
+		// add arg[1]-arg[20] global vars.
+		lua_createtable(Lx, argc, 0);
+
+		if ( argc > 0 && *arglist[0] != '\0') 
+		{
+			for (int  i = 0; i < argc ; i++ ) 
+			{
+				lua_pushinteger(Lx, i+1); 
+				lua_pushstring(Lx, arglist[i]);
+				lua_settable(Lx, -3);
+			}
+		}
+		lua_setglobal(Lx,"arg");
+
+		error = lua_pcall(Lx, 0, 1, 0);
+		if (error) break; 
+
+		if (lua_type( Lx, 0) == LUA_TTABLE )
+		{
+			lua_pushvalue(Lx, 0);	// copy return value table
+			lua_pushnil(Lx);		// dummy key
+			buf[0] = '\0';
+
+			while (lua_next(Lx, -2))
+			{
+				lua_pushvalue(Lx, -2);	// copy key to convert string
+
+				const char *key = lua_tostring(Lx, -1);
+				const char *value = lua_tostring(Lx, -2);
+				
+				if ( key )
+					cat_sprintf(buf, "{%s}{%s}", key , value ? value : "" );
+
+				lua_pop (Lx, 2);
+			}			
+		}
+		else
+			sprintf(buf, "{%s}", lua_tostring(Lx, 0));			
+	
+		set_nest_node(ses->list[LIST_VARIABLE], var, "%s", buf);
+		
+		// tintin_printf2(ses, "#var %s", buf);
+		break;
+	}
+	
+	if ( error )
+	{
+		show_error(ses, LIST_COMMAND, "#LUA: SCRIPT ERROR: %s", lua_tostring(Lx, -1) );
+		lua_pop(Lx, 1);  // pop error message from the stack
+	}
+
+	lua_close(Lx);
+
+	refresh_terminal();
+
+	return ses;
+}
+
+#else
+
+DO_COMMAND(do_lua) 
+{
+	return show_error(ses, LIST_COMMAND, "#LUA: UNSUPPORTED.");
+}
+#endif // HAVE_LUA_H

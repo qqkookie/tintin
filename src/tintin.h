@@ -1872,6 +1872,7 @@ extern DO_COMMAND(do_scan);
 extern DO_COMMAND(do_script);
 extern DO_COMMAND(do_system);
 extern DO_COMMAND(do_textin);
+extern DO_COMMAND(do_lua);
 #endif
 
 

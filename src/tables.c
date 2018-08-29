@@ -72,6 +72,7 @@ struct command_type command_table[] =
 	{    "local",             do_local,             TOKEN_TYPE_COMMAND },
 	{    "log",               do_log,               TOKEN_TYPE_COMMAND },
 	{    "loop",              do_nop,               TOKEN_TYPE_LOOP    },
+	{    "lua",               do_lua,               TOKEN_TYPE_COMMAND },	
 	{    "macro",             do_macro,             TOKEN_TYPE_COMMAND },
 	{    "map",               do_map,               TOKEN_TYPE_COMMAND },
 	{    "math",              do_math,              TOKEN_TYPE_COMMAND },

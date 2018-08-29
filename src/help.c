@@ -81,14 +81,14 @@ struct help_type help_table[] =
 		"\n"
 		"         Actions can be triggered by the showme command.\n"
 		"\n"
-		"      <K82>Ex<K81>: #act {^You are hungry$} {get bread backpack;eat bread}\n"
+		"     <K82>Ex<K81>: #act {^You are hungry$} {get bread backpack;eat bread}\n"
 		"         Performs 2 commands as you get the hunger message, tintin will not\n"
 		"         be fooled by someone saying 'You are hungry'.\n"
 		"\n"
-		"      <K82>Ex<K81>: #act {%1 tells you 'hello'} {tell %1 Hello %1. How are you today?}\n"
+		"     <K82>Ex<K81>: #act {%1 tells you 'hello'} {tell %1 Hello %1. How are you today?}\n"
 		"         This allows you to seem like a nice, attentive, fast typing gentleman.\n"
 		"\n"
-		"      <K82>Ex<K81>: #act {A puppy barks at you, wagging {his|her|its} tail.} {pat puppy}\n"
+		"     <K82>Ex<K81>: #act {A puppy barks at you, wagging {his|her|its} tail.} {pat puppy}\n"
 		"         This allows you to be nice to puppies regardless of their sex.\n"
 		"\n"
 		"   <K82>Note<K81>: You can remove an action with the #unaction command.\n"
@@ -109,13 +109,13 @@ struct help_type help_table[] =
 		"         The word can include the %1 to %99 variables making an alias behave\n"
 		"         like an action, allowing more complex input matching.\n"
 		"\n"
-		"      <K82>Ex<K81>: #alias gb get bread bag\n"
+		"     <K82>Ex<K81>: #alias gb get bread bag\n"
 		"         Typing gb at the prompt would be sent as 'get bread bag'.\n"
 		"\n"
-		"      <K82>Ex<K81>: #alias ws {wake;stand}\n"
+		"     <K82>Ex<K81>: #alias ws {wake;stand}\n"
 		"         Since ws aliases a multiple command, you must use the braces.\n"
 		"\n"
-		"      <K82>Ex<K81>: #alias heal cast 'heal' %1\n"
+		"     <K82>Ex<K81>: #alias heal cast 'heal' %1\n"
 		"         Typing 'heal valgar' would be sent as 'cast 'heal' valgar'.\n"
 		"\n"
 		"   <K82>Note<K81>: See '#help action', for more information about triggers.\n"
@@ -128,7 +128,7 @@ struct help_type help_table[] =
 		"\n"
 		"         Sends a command to all active sessions.\n"
 		"\n"
-		"      <K82>Ex<K81>: #all quit\n"
+		"     <K82>Ex<K81>: #all quit\n"
 		"         Sends 'quit' to all active sessions.\n"
 	},
 	{
@@ -137,7 +137,7 @@ struct help_type help_table[] =
 		"\n"
 		"         Sends a beep to your terminal.\n"
 		"\n"
-		"      <K82>Ex<K81>: #action {tells you} {#bell}\n"
+		"     <K82>Ex<K81>: #action {tells you} {#bell}\n"
 		"         Will chime every time someone gives you a tell.\n"
 	},
 	{
@@ -148,7 +148,7 @@ struct help_type help_table[] =
 		"         #WHILE and #SWITCH statements. When #BREAK is found, tintin will stop\n"
 		"         executing the statement it is currently in and move on to the next.\n"
 		"\n"
-		"      <K82>Ex<K81>: #while {1} {#math cnt $cnt + 1;#if {$cnt == 20} {#break}}\n"
+		"     <K82>Ex<K81>: #while {1} {#math cnt $cnt + 1;#if {$cnt == 20} {#break}}\n"
 	},
 	{
 		"BUFFER",
@@ -165,7 +165,7 @@ struct help_type help_table[] =
 		"\n"
 		"         #buffer {write} {filename} Write the buffer to the given file.\n"
 		"\n"
-		"      <K82>Ex<K81>: #macro {(press ctrl-v)(press F1)} {#buffer end}\n"
+		"     <K82>Ex<K81>: #macro {(press ctrl-v)(press F1)} {#buffer end}\n"
 		"         Associates F1 key to 'scroll buffer to its end' command.\n"
 	},
 	{
@@ -232,7 +232,7 @@ struct help_type help_table[] =
 		"         Keep in mind that the kill and read option are very fast allowing\n"
 		"         them to be used to enable and disable classes.\n"
 		"\n"
-		"      <K82>Ex<K81>: #class extra kill;#class extra read extra.tin\n"
+		"     <K82>Ex<K81>: #class extra kill;#class extra read extra.tin\n"
 		"         Deletes all triggers of 'extra' class if any. Read 'extra.tin' file,\n"
 		"         all triggers loaded will be assigned to the fresh new 'extra' class.\n"
 	},
@@ -270,8 +270,8 @@ struct help_type help_table[] =
 		"         <<888>caf> - Violet           <<888>cfa> - Lime\n"
 		"         <<888>fac> - Pink             <<888>fca> - Orange\n"
 		"\n"
-		"      <K82>Ex<K81>: #showme <<888>acf>Azure    <<888>afc>Jade     <<888>caf>Violet\n"
-		"      <K82>Ex<K81>: #showme <<888>cfa>Lime     <<888>fac>Pink     <<888>fca>Orange\n"
+		"     <K82>Ex<K81>: #showme <<888>acf>Azure    <<888>afc>Jade     <<888>caf>Violet\n"
+		"     <K82>Ex<K81>: #showme <<888>cfa>Lime     <<888>fac>Pink     <<888>fca>Orange\n"
 		"\n"
 		"         To use 24 bit true colors on termimal that supports it, use <<888>xhhhhhh> code\n" 
 		"         for foreground RGB color and  <<888>Xhhhhhh> code for background RGB color.\n"
@@ -283,8 +283,8 @@ struct help_type help_table[] =
 		"         ${_TK00}-${_TK99} global variables. <<888>K80>-<<888>K99> codes are resrved\n"
 		"         for help / chat colors and future internal use.\n"
 		"\n"
-		"      <K82>Ex<K81>: #showme <<888>xFF69B4>Pink text and  <<888>XE0FFFF>Light cyan BG\n"
-		"      <K82>Ex<K81>: #var {_TK04} {<<888>118>}; #showme <<888>K04>Bold Red color\n"
+		"     <K82>Ex<K81>: #showme <<888>xFF69B4>Pink text and  <<888>XE0FFFF>Light cyan BG\n"
+		"     <K82>Ex<K81>: #var {_TK04} {<<888>118>}; #showme <<888>K04>Bold Red color\n"
 	},
 	{
 		"CONFIG",
@@ -316,7 +316,7 @@ struct help_type help_table[] =
 		"         to the end of the command and proceed as normal, which may be to\n"
 		"         reiterate the command.\n"
 		"\n"
-		"      <K82>Ex<K81>: #loop 1 10 cnt {#if {$cnt % 2 == 0} {#continue} {say $cnt}}\n"
+		"     <K82>Ex<K81>: #loop 1 10 cnt {#if {$cnt % 2 == 0} {#continue} {say $cnt}}\n"
 	},
 	{
 		"CR",
@@ -367,7 +367,7 @@ struct help_type help_table[] =
 		"\n"
 		"         Floating point precision for miliseconds is possible.\n"
 		"\n"
-		"      <K82>Ex<K81>: #showme first;#delay {1} {#showme last}\n"
+		"     <K82>Ex<K81>: #showme first;#delay {1} {#showme last}\n"
 		"         This will print 'first', and 'last' around one second later.\n"
 		"\n"
 		"   <K82>Note<K81>: If you want to remove a delay with the #undelay command you can add\n"
@@ -385,7 +385,7 @@ struct help_type help_table[] =
 		"         As with the #showme command you can split the {format} argument up into\n"
 		"         two braced arguments, in which case the 2nd argument is the row number.\n"
 		"\n"
-		"      <K82>Ex<K81>: #echo {The current date is %t.} {%Y-%m-%d %H:%M:%S}\n"
+		"     <K82>Ex<K81>: #echo {The current date is %t.} {%Y-%m-%d %H:%M:%S}\n"
 		"         #echo {[%38s][%-38s]} {Hello World} {Hello World}\n"
 		"         #echo {{this is %s on the top row} {-1}} {printed}\n"
 	},
@@ -396,7 +396,7 @@ struct help_type help_table[] =
 		"         The else statement should follow an #IF or #ELSEIF statement and is\n"
 		"         only called if the proceeding #IF or #ELSEIF is false.\n"
 		"\n"
-		"      <K82>Ex<K81>: #if {1d2 == 1} {smile};#else {grin}\n"
+		"     <K82>Ex<K81>: #if {1d2 == 1} {smile};#else {grin}\n"
 	},
 	{
 		"ELSEIF",
@@ -406,7 +406,7 @@ struct help_type help_table[] =
 		"         only called when the statement is true and the proceeding #IF and\n"
 		"         #ELSEIF statements are false.\n"
 		"\n"
-		"      <K82>Ex<K81>: #if {1d3 == 1} {smirk};#elseif {1d2 == 1} {snicker}\n"
+		"     <K82>Ex<K81>: #if {1d3 == 1} {smirk};#elseif {1d2 == 1} {snicker}\n"
 	},
 	{
 		"END",
@@ -486,7 +486,7 @@ struct help_type help_table[] =
 		"         WEEK                  %2 week\n"
 		"         YEAR                  %0 year\n"
 		"\n"
-		"      <K82>Ex<K81>: #event {SESSION CONNECTED} {#read mychar.tin}\n"
+		"     <K82>Ex<K81>: #event {SESSION CONNECTED} {#read mychar.tin}\n"
 		"\n"
 		"   <K82>Note<K81>: You can remove an event with the #unevent command.\n"
 	},
@@ -496,8 +496,8 @@ struct help_type help_table[] =
 		"\n"
 		"         List elements must either be separated by braces or semicolons.\n"
 		"\n"
-		"      <K82>Ex<K81>: #forall {a;b;c;d} {say &0}\n"
-		"      <K82>Ex<K81>: #forall {{a}{b}{c}{d}} {say &0}\n"
+		"     <K82>Ex<K81>: #forall {a;b;c;d} {say &0}\n"
+		"     <K82>Ex<K81>: #forall {{a}{b}{c}{d}} {say &0}\n"
 		"         Both equal: say a;say b;say c;say d\n"
 	},
 	{
@@ -508,8 +508,8 @@ struct help_type help_table[] =
 		"         the given variable and execute the command part of the statement. List\n"
 		"         elements must be separated by braces or semicolons.\n"
 		"\n"
-		"      <K82>Ex<K81>: #foreach {bob;tim;kim} {name} {tell $name Hello}\n"
-		"      <K82>Ex<K81>: #foreach {{bob}{tim}{kim}} {name} {tell $name Hello}\n"
+		"     <K82>Ex<K81>: #foreach {bob;tim;kim} {name} {tell $name Hello}\n"
+		"     <K82>Ex<K81>: #foreach {{bob}{tim}{kim}} {name} {tell $name Hello}\n"
 	},
 	{
 		"FORMAT",
@@ -566,10 +566,10 @@ struct help_type help_table[] =
 		"         The function itself can use the provided arguments which are stored\n"
 		"         in %1 to %9, with %0 holding all arguments.\n"
 		"\n"
-		"      <K82>Ex<K81>: #function {rnd} {#math {result} {1 d (%2 - %1 + 1) + %1 - 1}}\n"
+		"     <K82>Ex<K81>: #function {rnd} {#math {result} {1 d (%2 - %1 + 1) + %1 - 1}}\n"
 		"         #showme A random number between 100 and 200: @rnd{100;200}\n"
 		"\n"
-		"      <K82>Ex<K81>: #function gettime {#format result %t %H:%M}\n"
+		"     <K82>Ex<K81>: #function gettime {#format result %t %H:%M}\n"
 		"         #showme The current time is @gettime{}\n"
 		"\n"
 		"   <K82>Note<K81>: You can remove a function with the #unfunction command.\n"
@@ -624,7 +624,7 @@ struct help_type help_table[] =
 		"         By default grep searches from the end of the scrollback buffer to the\n"
 		"         beginning, this can be reversed by using a negative page number.\n"
 		"\n"
-		"      <K82>Ex<K81>: #grep Bubba tells you\n"
+		"     <K82>Ex<K81>: #grep Bubba tells you\n"
 		"         This will show all occasions where bubba tells you something.\n"
 	},
 	{
@@ -666,13 +666,13 @@ struct help_type help_table[] =
 		"\n"
 		"         Besides color names also <<888>abc> color codes can be used.\n"
 		"\n"
-		"      <K82>Ex<K81>: #high {Valgar} {reverse}\n"
+		"     <K82>Ex<K81>: #high {Valgar} {reverse}\n"
 		"         Prints every occurrence of 'Valgar' in reverse video.\n"
 		"\n"
-		"      <K82>Ex<K81>: #high {^You %1} {bold cyan}\n"
+		"     <K82>Ex<K81>: #high {^You %1} {bold cyan}\n"
 		"         Boldfaces any line that starts with 'You' in cyan.\n"
 		"\n"
-		"      <K82>Ex<K81>: #high {Bubba} {red underscore blink}\n"
+		"     <K82>Ex<K81>: #high {Bubba} {red underscore blink}\n"
 		"         Highlights the name Bubba as blinking, red, underscored text\n"
 		"\n"
 		"   <K82>Note<K81>: See '#help action', for more information about triggers.\n"
@@ -709,7 +709,7 @@ struct help_type help_table[] =
 		"         'math' command only instead of storing the result, the result is used\n"
 		"         to determine whether to execute the commands.\n"
 		"\n"
-		"      <K82>Ex<K81>: #action {%0 gives you %1 gold coins.} {#if {%1>5000} {thank %0}}\n"
+		"     <K82>Ex<K81>: #action {%0 gives you %1 gold coins.} {#if {%1>5000} {thank %0}}\n"
 		"         If someone gives you more than 5000 coins, thank them.\n"
 		"\n"
 		"   <K82>Note<K81>: See '#help math', for more information.\n"
@@ -744,7 +744,7 @@ struct help_type help_table[] =
 		"         With two arguments the triggers in the chosen list that match the\n"
 		"         given pattern will be removed.\n"
 		"\n"
-		"      <K82>Ex<K81>: #kill alias %*test*\n"
+		"     <K82>Ex<K81>: #kill alias %*test*\n"
 	},
 	{
 		"LINE",
@@ -826,7 +826,7 @@ struct help_type help_table[] =
 		"\n"
 		"         Avoid setting the result variable as local in a function.\n"
 		"\n"
-		"      <K82>Ex<K81>: #alias {swap} {#local x %0;#replace x {e} {u};#showme $x}\n"
+		"     <K82>Ex<K81>: #alias {swap} {#local x %0;#replace x {e} {u};#showme $x}\n"
 	},
 
 	{
@@ -846,14 +846,48 @@ struct help_type help_table[] =
 		"         or decrementing by 1 each time through.  The value of the loop counter\n"
 		"         is stored in the provided variable, which you can use in the commands.\n"
 		"\n"
-		"      <K82>Ex<K81>: #loop 1 3 loop {get all $loop\\.corpse}\n"
+		"     <K82>Ex<K81>: #loop 1 3 loop {get all $loop\\.corpse}\n"
 		"         This equals 'get all 1.corpse;get all 2.corpse;get all 3.corpse'.\n"
 		"\n"
 		"         The . needs to be escaped so it's not treated as part of the variable.\n"
 		"\n"
-		"      <K82>Ex<K81>: #loop 3 1 cnt {drop $cnt\\.key}\n"
+		"     <K82>Ex<K81>: #loop 3 1 cnt {drop $cnt\\.key}\n"
 		"         This equals 'drop 3.key;drop 2.key;drop 1.key'.\n"
 	},
+
+	{
+		"LUA",
+		"<K82>Command<K81>: #lua <K82>{<K81><vaiable name><K82>} {<K81><script><K82>} <K82>{<K81>argument1<K82>} {<K81>argument2<K82>} {<K81>etc<K82>}<K81>\n"
+		"\n"
+		"         Like a #math statement, given LUA script string is executed as\n"
+		"         LUA program and return value from lua return statement is\n"
+		"         assigned to the named tintin variable.\n"
+		"\n"
+		"         Value returned from lua to tintin is via top-level lua return\n"
+		"         statement with value. Return value is string or numeric value\n"
+		"         like #variable command.\n"
+		"\n"		
+		"         To return multiple values, return as lua 'keyed' table or \n"
+		"         numbered array. Lua table or numbered array will be converted\n"
+		"         to tintin++ keyed 'table' / nested variable, or nummbered list.\n"
+		"\n"
+		"     <K82>Ex<K81>: on lua: { aaa = 1234, xy =\"hello\" } or { 22, 33, \"ok\" }\n"	
+		"     <K82>Ex<K81>: on tintin: $var_name[aaa] or $result.xy. $result[2].\n"
+		"\n"
+		"         Result string is not substituted with variable or color code etc.\n"
+		"         Any console input/output (like print()) from lua interpreter\n"
+		"         are discarded.\n"	
+		"\n"
+		"         Command line input arguments are avaiable as lua global variable,\n"
+		"         as arg[1]-arg[20], as well as normal %1-%99 in the script.\n"
+		"\n"
+		"     <K82>Ex<K81>: #lua result {$script} aa bb cc 123\n"
+		"\n"
+		"   <K82>Note<K81>: This feature on CyWin MS Windows client requires Lua DLL like\n"
+		"         cyglua-5.2.dll.\n"
+		"\n"
+	},
+
 	{
 		"MACRO",
 		"<K82>Command<K81>: #macro <K82>{<K81>key sequence<K82>}<K81> <K82>{<K81>commands<K82>}<K81>\n"
@@ -867,11 +901,11 @@ struct help_type help_table[] =
 		"         Another option is pressing ctrl-v, which will enable CONVERT META for\n"
 		"         the next key pressed.\n"
 		"\n"
-		"      <K82>Ex<K81>: #macro {(press ctrl-v)(press F1)} {#showme \\e[2J;#buffer lock}\n"
+		"     <K82>Ex<K81>: #macro {(press ctrl-v)(press F1)} {#showme \\e[2J;#buffer lock}\n"
 		"         Clear the screen and lock the window when you press F1, useful when the\n"
 		"         boss is near.\n"
 		"\n"
-		"      <K82>Ex<K81>: #macro {\\eOM} {#cursor enter}\n"
+		"     <K82>Ex<K81>: #macro {\\eOM} {#cursor enter}\n"
 		"         Makes the keypad's enter key work as an enter in keypad mode.\n"
 		"\n"
 		"   <K82>Note<K81>: Not all terminals properly initialize the keypad key sequences.\n"
@@ -1107,17 +1141,17 @@ struct help_type help_table[] =
 		"         Floating point precision is added by using the decimal . operator.\n"
 		"         Time in seconds is calculated using [day]:[hour]:<minute>:<second>.\n"
 		"\n"
-		"      <K82>Ex<K81>: #math {heals} {$mana / 40}\n"
+		"     <K82>Ex<K81>: #math {heals} {$mana / 40}\n"
 		"         Assuming there is a variable $mana, divides its value by 40 and stores\n"
 		"         the result in $heals.\n"
 		"\n"
-		"      <K82>Ex<K81>: #action {^You receive %0 experience} {updatexp %0}\n"
+		"     <K82>Ex<K81>: #action {^You receive %0 experience} {updatexp %0}\n"
 		"         #alias updatexp {#math {xpneed} {$xpneed - %0}\n"
 		"         Let's say you have a variable which stores xp needed for your next\n"
 		"         level.  The above will modify that variable after every kill, showing\n"
 		"         the amount still needed.\n"
 		"\n"
-		"      <K82>Ex<K81>: #action {%0 tells %1}\n"
+		"     <K82>Ex<K81>: #action {%0 tells %1}\n"
 		"           {#if {\"\%0\" == \"Bubba\" && $afk} {reply I'm away, my friend.}}\n"
 		"         When you are away from keyboard, it will only reply to your friend.\n"
 	},
@@ -1144,7 +1178,7 @@ struct help_type help_table[] =
 		"         For commenting out an entire trigger and especially large sections of\n"
 		"         triggers you would want to use /* text */\n"
 		"\n"
-		"      <K82>Ex<K81>: #nop This is the start of my script file.\n"
+		"     <K82>Ex<K81>: #nop This is the start of my script file.\n"
 	},
 	{
 		"PARSE",
@@ -1154,7 +1188,7 @@ struct help_type help_table[] =
 		"         the given string.  The value of the current character is stored in the\n"
 		"         provided variable.\n"
 		"\n"
-		"      <K82>Ex<K81>: #parse {hello world} {char} {#showme $char}\n"
+		"     <K82>Ex<K81>: #parse {hello world} {char} {#showme $char}\n"
 	},
 	{
 		"PATH",
@@ -1175,7 +1209,7 @@ struct help_type help_table[] =
 		"                      walk backwards using #path walk backwards.\n"
 		"         #path zip:   Turn loaded path into a speedwalk.\n"
 		"\n"
-		"      <K82>Ex<K81>: #path ins {unlock n;open n} {unlock s;open s}\n"
+		"     <K82>Ex<K81>: #path ins {unlock n;open n} {unlock s;open s}\n"
 	},
 	{
 		"PATHDIR",
@@ -1196,7 +1230,7 @@ struct help_type help_table[] =
 		"         want 'ne' to have a value of 3 (1 + 2). This value is required for the\n"
 		"         #map functionality to work.\n"
 		"\n"
-		"      <K82>Ex<K81>: #pathdir {ue} {dw} {18}\n"
+		"     <K82>Ex<K81>: #pathdir {ue} {dw} {18}\n"
 		"         #pathdir {dw} {ue} {40}\n"
 		"\n"
 		"   <K82>Note<K81>: You can remove a pathdir with the #unpathdir command.\n"		
@@ -1287,7 +1321,7 @@ struct help_type help_table[] =
 		"      %i matching becomes case insensitive.\n"
 		"      %I matching becomes case sensitive (default).\n"
 		"\n"
-		"      <K82>Ex<K81>: #regexp {bli bla blo} {bli {.*} blo} {#showme &1}\n"
+		"     <K82>Ex<K81>: #regexp {bli bla blo} {bli {.*} blo} {#showme &1}\n"
 	},
 	{
 		"REPLACE",
@@ -1315,8 +1349,8 @@ struct help_type help_table[] =
 		"         full tintin scripting capabilities. If a file name is given the file\n"
 		"         is loaded prior to execution.\n"
 		"\n"
-		"      <K82>Ex<K81>: #run {somewhere} {ssh someone@somewhere.com}\n"
-		"      <K82>Ex<K81>: #run {something} {tail -f chats.log}\n"
+		"     <K82>Ex<K81>: #run {somewhere} {ssh someone@somewhere.com}\n"
+		"     <K82>Ex<K81>: #run {something} {tail -f chats.log}\n"
 	},
 	{
 		"SCAN",
@@ -1346,10 +1380,10 @@ struct help_type help_table[] =
 		"\n"
 		"         If you provide a variable the output of the script is stored as a list.\n"
 		"\n"
-		"      <K82>Ex<K81>: #script {ruby -e 'print \"#showme hello world\"'}\n"
-		"      <K82>Ex<K81>: #script {python -c 'print \"#showme hello world\"'}\n"
-		"      <K82>Ex<K81>: #script {php -r 'echo \"#showme hello world\"'}\n"
-		"      <K82>Ex<K81>: #script {path} {pwd};#showme The path is $path[1].\n"
+		"     <K82>Ex<K81>: #script {ruby -e 'print \"#showme hello world\"'}\n"
+		"     <K82>Ex<K81>: #script {python -c 'print \"#showme hello world\"'}\n"
+		"     <K82>Ex<K81>: #script {php -r 'echo \"#showme hello world\"'}\n"
+		"     <K82>Ex<K81>: #script {path} {pwd};#showme The path is $path[1].\n"
 	},
 
 	{
@@ -1383,7 +1417,7 @@ struct help_type help_table[] =
 		"\n"
 		"         The startup session is named 'gts' and can be used for relog scripts.\n"
 		"\n"
-		"      <K82>Ex<K81>: #event {SESSION DISCONNECTED} {#gts #delay 10 #ses %0 mymud.com 4321}\n"
+		"     <K82>Ex<K81>: #event {SESSION DISCONNECTED} {#gts #delay 10 #ses %0 mymud.com 4321}\n"
 		"\n"
 		"<K82>Related<K81>: all, snoop, and zap.\n"
 		"<K82>Related<K81>: port, run, ssl, \n"
@@ -1398,7 +1432,7 @@ struct help_type help_table[] =
 		"\n"
 		"         Actions can be triggered by the showme command.\n"
 		"\n"
-		"      <K82>Ex<K81>: #action {%0 ultraslays you.}\n"
+		"     <K82>Ex<K81>: #action {%0 ultraslays you.}\n"
 		"           {#showme {###### ARGH! We were ultraslayed by %0 ######};#gagline}\n"
 		"         Emphasis ultraslaying.\n"
 	},
@@ -1419,7 +1453,7 @@ struct help_type help_table[] =
 		"         signify how many times to go that direction. You can turn it on/off\n"
 		"         with #config.\n"
 		"\n"
-		"      <K82>Ex<K81>: Without speedwalk, you have to type:\n"
+		"     <K82>Ex<K81>: Without speedwalk, you have to type:\n"
 		"         s;s;w;w;w;w;w;s;s;s;w;w;w;n;n;w\n"
 		"         With speedwalk, you only have to type:\n"
 		"         2s5w3s3w2nw\n"
@@ -1446,7 +1480,7 @@ struct help_type help_table[] =
 		"         to display something you can set the top and bottom line with the\n"
 		"         additional arguments.\n"
 		"\n"
-		"      <K82>Ex<K81>: #split\n"
+		"     <K82>Ex<K81>: #split\n"
 		"         If tintin has determined that you have a screen of 30 rows, it will\n"
 		"         set the main window from line #1 to line #28.\n"
 		"\n"
@@ -1496,13 +1530,13 @@ struct help_type help_table[] =
 		"\n"
 		"         If no argument is given, all subs are displayed.\n"
 		"\n"
-		"      <K82>Ex<K81>: #sub {Zoe} {ZOE}\n"
+		"     <K82>Ex<K81>: #sub {Zoe} {ZOE}\n"
 		"         Any instance of Zoe will be replaced with ZOE.\n"
 		"\n"
-		"      <K82>Ex<K81>: #sub {~\\e[0;34m} {\\e[1;34m}\n"
+		"     <K82>Ex<K81>: #sub {~\\e[0;34m} {\\e[1;34m}\n"
 		"         Replace generic dark blue color codes with bright blue ones.\n"
 		"\n"
-		"      <K82>Ex<K81>: #sub {%1massacres%2} {<<888>018>%1<<888>118>MASSACRES<<888>018>%2}\n"
+		"     <K82>Ex<K81>: #sub {%1massacres%2} {<<888>018>%1<<888>118>MASSACRES<<888>018>%2}\n"
 		"         Replaces all occurrences of 'massacres' with 'MASSACRES' in red.\n"
 		"\n"
 		"   <K82>Note<K81>: See '#help action', for more information about triggers.\n"
@@ -1538,7 +1572,7 @@ struct help_type help_table[] =
 		"         If the 'default' command is found and no 'case' statement has been\n"
 		"         matched the default command's argument is executed.\n"
 		"\n"
-		"      <K82>Ex<K81>: #switch {1d4} {#case 1 cackle;#case 2 smile;#default giggle}\n"
+		"     <K82>Ex<K81>: #switch {1d4} {#case 1 cackle;#case 2 smile;#default giggle}\n"
 	},
 	{
 		"SYSTEM",
@@ -1592,20 +1626,20 @@ struct help_type help_table[] =
 		"         each session and can be accessed by adding a $ before the variable\n"
 		"         name.\n"
 		"\n"
-		"      <K82>Ex<K81>: #alias {target} {#var target %0}\n"
+		"     <K82>Ex<K81>: #alias {target} {#var target %0}\n"
 		"         #alias {x}      {kick $target}\n"
 		"\n"
 		"         The name of a variable must exist of only letters, numbers and\n"
 		"         underscores in order to be substituted.  If you do not meet these\n"
 		"         requirements do not panic, simply encapsulate the variable in braces:\n"
 		"\n"
-		"      <K82>Ex<K81>: #variable {cool website} {http://tintin.sourceforge.net}\n"
+		"     <K82>Ex<K81>: #variable {cool website} {http://tintin.sourceforge.net}\n"
 		"         #chat I was on ${cool website} yesterday!.\n"
 		"\n"
 		"         Variables can be nested using brackets or dots:\n"
 		"\n"
-		"      <K82>Ex<K81>: #var hp[self] 34;#var hp[target] 46\n"
-		"      <K82>Ex<K81>: #var hp.self  34;#var hp.target  46\n"
+		"     <K82>Ex<K81>: #var hp[self] 34;#var hp[target] 46\n"
+		"     <K82>Ex<K81>: #var hp.self  34;#var hp.target  46\n"
 		"\n"
 		"         You can see the first nest of a variable using $variable[+1] and the\n"
 		"         last nest using $variable[-1]. Using $variable[-2] will report the\n"
@@ -1615,13 +1649,13 @@ struct help_type help_table[] =
 		"         Nested variables are also known as tables, table generally being used\n"
 		"         to refer to several variables nested within one specific variable.\n"
 		"\n"
-		"      <K82>Ex<K81>: #showme {Targets starting with the letter A: $targets[A%*]\n"
+		"     <K82>Ex<K81>: #showme {Targets starting with the letter A: $targets[A%*]\n"
 		"\n"
 		"         To see the internal index of a variable use &<variable name>. To see\n"
 		"         the size of a table you would use: &targets[] or &targets[%*]. A non\n"
 		"         existent nested variable will report itself as 0.\n"
 		"\n" 
-		"      <K82>Ex<K81>: #showme {Number of targets starting with A: &targets[A%*]\n"
+		"     <K82>Ex<K81>: #showme {Number of targets starting with A: &targets[A%*]\n"
 		"\n"
 		"         In some scripts you need to know the name of a nested variable. This\n"
 		"         is also known as the key, and you can get it using *variable. For\n"
@@ -1647,7 +1681,7 @@ struct help_type help_table[] =
 		"\n"
 		"         The conditional is evaluated exactly the same as in the 'math' command.\n"
                 "\n"
-                "      <K82>Ex<K81>: #math cnt 0;#while {$cnt < 20} {#math cnt $cnt + 1;say $cnt}\n"
+                "     <K82>Ex<K81>: #math cnt 0;#while {$cnt < 20} {#math cnt $cnt + 1;say $cnt}\n"
 		"\n"
 		"   <K82>Note<K81>: See '#help math', for more information.\n"
 	},
