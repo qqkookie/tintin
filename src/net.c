@@ -471,5 +471,6 @@ int utf8convert(int fromutf, char *linebuf, int inlen)
 	};
 */	
 #else
-void utf8convert(int fromutf, char *linebuf, int inlen) {} 	// Dummy
+int utf8convert(int fromutf, char *linebuf, int inlen) 
+	{ return 0; } 	// Dummy
 #endif

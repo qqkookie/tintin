@@ -32,6 +32,10 @@
 #else
 #ifdef HAVE_UTIL_H
 #include <util.h>
+#else
+#if HAVE_LIBUTIL
+#include <libutil.h>
+#endif
 #endif
 #endif
 
@@ -305,6 +309,7 @@ DO_COMMAND(do_lua)
 
 		error = lua_pcall(Lx, 0, 1, 0);
 		if (error) break; 
+		// tintin_printf2(ses, "LUA TYPE = [%s]", lua_typename(Lx, lua_type( Lx, 0)));
 
 		if (lua_type( Lx, 0) == LUA_TTABLE )
 		{
@@ -325,12 +330,14 @@ DO_COMMAND(do_lua)
 				lua_pop (Lx, 2);
 			}			
 		}
-		else
-			sprintf(buf, "{%s}", lua_tostring(Lx, 0));			
+		else{
+			const char *val = lua_tostring(Lx, 0);
+			strcpy( buf, ( val ? val : "" ));
+		}			
 	
-		set_nest_node(ses->list[LIST_VARIABLE], var, "%s", buf);
+		set_nest_node(ses->list[LIST_VARIABLE], var, "%s", buf);	
 		
-		// tintin_printf2(ses, "#var %s", buf);
+		// tintin_printf2(ses, "TT var [%s] = [%s]", var, buf);
 		break;
 	}
 	

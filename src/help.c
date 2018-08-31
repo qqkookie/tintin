@@ -881,6 +881,8 @@ struct help_type help_table[] =
 		"         Command line input arguments are avaiable as lua global variable,\n"
 		"         as arg[1]-arg[20], as well as normal %1-%99 in the script.\n"
 		"\n"
+		"     <K82>Ex<K81>: #lua result {return { arg[1], arg[2]} } 123 \"abc\"\n"
+		"     <K82>Ex<K81>: #lua result {return { aa = 123, bbb = \"abc\" } }\n"	
 		"     <K82>Ex<K81>: #lua result {$script} aa bb cc 123\n"
 		"\n"
 		"   <K82>Note<K81>: This feature on CyWin MS Windows client requires Lua DLL like\n"

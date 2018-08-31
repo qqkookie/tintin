@@ -2,6 +2,8 @@
 
 Sun Aug 26 12:00:00 2018 Akorn Farmer <cantata@gmail.com> (qqKookie@GitHub)
 
+GitHub repository:https://github.com/qqkookie/tintin
+
 * tinexpr.c
 
 1) 24 bit true color color code
@@ -107,6 +109,11 @@ tables.h:
 
 help.h:
     * Added #LUA command help.
+
+net.c :
+parse.c:
+system.c:
+    * Port to freebsd, minor fix.
 
 --------------------------------------------------------------------------------
 <EOT>
