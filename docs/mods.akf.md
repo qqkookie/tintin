@@ -92,7 +92,7 @@ Added aditinal 16 ANSI color definition entries in wintin.mintty.con.
 
 -----------------------------------------------------------
 
-Wed Aug 29 12:00:00 2018 Akorn Farmer
+Wed Sep 2 12:00:00 2018 Akorn Farmer
 
 system.c:
     * Lua 5.2 interpreter integration.
@@ -109,11 +109,29 @@ tables.h:
 
 help.h:
     * Added #LUA command help.
+    * Added group #action / #unaction & #read change
 
 net.c :
 parse.c:
 system.c:
     * Port to freebsd, minor fix.
+
+data.c:
+    * Named group action/unaction.
+
+main.c:
+file.c:
+    * /// starts single-line comment in C++ // comment style in command file.
+    * Better #read file handing on cygwin Windows environment.
+      #read will remembers filename and use it as default filename.   
+    * If #read can't find named file first, files in the .tintin directory 
+      will be tried as second guess.
+ssl.c: 
+    * #ssl will trys to find certificate in the .tintin dir itself.
+
+session.c:
+    * history of non-starting sessions are also preserve in history.txt file
+      and shared across/among non-starting sessions.
 
 --------------------------------------------------------------------------------
 <EOT>

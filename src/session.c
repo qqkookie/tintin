@@ -297,8 +297,17 @@ struct session *new_session(struct session *ses, char *name, char *arg, int desc
 		{
 			do_read(newses, file);
 		}
-	}
 
+		if ( newses != gts && HAS_BIT(newses->flags, SES_FLAG_CONNECTED))
+		{
+			struct listroot *root = gts->list[LIST_HISTORY];
+			for (int i = 0 ; i < root->used ; i++)
+			{
+				insert_node_list(newses->list[LIST_HISTORY], root->list[i]->left, "", "old");
+			}
+		}				
+	}
+	
 	pop_call();
 	return gtd->ses;
 }
@@ -419,6 +428,16 @@ void cleanup_session(struct session *ses)
 	if (ses->port)
 	{
 		port_uninitialize(ses, "", "", "");
+	}
+
+	if (ses != gts && HAS_BIT(ses->flags, SES_FLAG_CONNECTED))
+	{
+		struct listroot *root = ses->list[LIST_HISTORY];
+		for (int i = 0 ; i < root->used ; i++)
+		{
+			if ( !strstr(root->list[i]->pr, "old" ))
+				insert_node_list(gts->list[LIST_HISTORY], root->list[i]->left, "", "");
+		}
 	}
 
 	SET_BIT(ses->flags, SES_FLAG_CLOSED);

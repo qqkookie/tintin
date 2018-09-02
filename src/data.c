@@ -148,6 +148,11 @@ struct listnode *insert_node_list(struct listroot *root, char *ltext, char *rtex
 	return insert_index_list(root, node, index);
 }
 
+double to_priority(char *prtext)
+{
+	double pr = atof(prtext);
+	return (pr == 0.0 && !is_number(prtext)) ? 3.0 : pr ;
+}
 
 struct listnode *update_node_list(struct listroot *root, char *ltext, char *rtext, char *prtext)
 {
@@ -171,7 +176,7 @@ struct listnode *update_node_list(struct listroot *root, char *ltext, char *rtex
 		switch (list_table[root->type].mode)
 		{
 			case PRIORITY:
-				if (atof(node->pr) != atof(prtext))
+				if (to_priority(node->pr) != to_priority(prtext))
 				{
 					delete_index_list(root, index);
 					return insert_node_list(root, ltext, rtext, prtext);
@@ -421,7 +426,7 @@ int bsearch_priority_list(struct listroot *root, char *text, char *priority, int
 
 	while (bot <= top)
 	{
-		srt = atof(priority) - atof(root->list[val]->pr);
+		srt = to_priority(priority) - to_priority(root->list[val]->pr);
 
 		if (!srt)
 		{
@@ -565,15 +570,36 @@ void delete_node_with_wild(struct session *ses, int type, char *text)
 		return;
 	}
 
-	for (i = root->used - 1 ; i >= 0 ; i--)
+	if ( ! match(ses, arg1, "{^\\s*(GROUP|group)\\s+[{\\w}]+}", SUB_NONE)) 
 	{
-		if (match(ses, root->list[i]->left, arg1, SUB_VAR|SUB_FUN))
+		for (i = root->used - 1 ; i >= 0 ; i--)
 		{
-			show_message(ses, type, "#OK. {%s} IS NO LONGER %s %s.", root->list[i]->left, (*list_table[type].name == 'A' || *list_table[type].name == 'E') ? "AN" : "A", list_table[type].name);
+			if (match(ses, root->list[i]->left, arg1, SUB_VAR|SUB_FUN))
+			{
+				show_message(ses, type, "#OK. {%s} IS NO LONGER %s %s.", root->list[i]->left, (*list_table[type].name == 'A' || *list_table[type].name == 'E') ? "AN" : "A", list_table[type].name);
 
-			delete_index_list(root, i);
+				delete_index_list(root, i);
 
-			found = TRUE;
+				found = TRUE;
+			}
+		}
+	}
+	else 	// arg1 is GROUP {xxx}
+	{
+		char prtext[BUFFER_SIZE];
+		get_arg_in_braces(ses, arg1 + 5, prtext, 0);
+
+		for (i = root->used - 1 ; i >= 0 ; i--)
+		{
+			if (match(ses, root->list[i]->pr, prtext, SUB_NONE))
+			{
+				show_message(ses, type, "#OK. {%s} IS NO LONGER %s %s.", root->list[i]->left, (*list_table[type].name == 'A' || *list_table[type].name == 'E') ? "AN" : "A", list_table[type].name);
+
+				delete_index_list(root, i);
+
+				found = TRUE;
+			}
+
 		}
 	}
 

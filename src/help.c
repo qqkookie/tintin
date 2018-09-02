@@ -92,6 +92,15 @@ struct help_type help_table[] =
 		"         This allows you to be nice to puppies regardless of their sex.\n"
 		"\n"
 		"   <K82>Note<K81>: You can remove an action with the #unaction command.\n"
+		"\n"
+		"         If priority argument is number, lower number has higher priority.\n"
+		"         If priority arument is non-numeric single word, it is treated as\n"
+		"         named action group name. So whole actions in the same named group\n"
+		"         can be removed with single #unaction {GROUP <name>} statment.\n"
+		"         Default priority is 5, but for named group actions, always 3.\n"
+		"\n"
+		"     <K82>Ex<K81>: #act {^haste: %1 hrs$} {#var Haste %1} {Aff1}\n"
+		"     <K82>Ex<K81>: #unact {GROUP {Aff1}}\n"	
 	},
 	{
 		"ALIAS",
@@ -692,6 +701,7 @@ struct help_type help_table[] =
 		"         #history <K82>{<K81>write<K82>}     {<K81>filename<K82>}<K81>   Write a command history to file.\n"
 		"\n"
 		"         Without an argument all available options are shown.\n"
+		"         Old saved history is shared across and among sessions.\n"
 	},
 	{
 		"IF",
@@ -1179,8 +1189,11 @@ struct help_type help_table[] =
 		"\n"
 		"         For commenting out an entire trigger and especially large sections of\n"
 		"         triggers you would want to use /* text */\n"
+		"         /// followed by a white space character starts single line comment,\n"
+		"         in style of C++ // comment, continues to end of current line.\n"
 		"\n"
 		"     <K82>Ex<K81>: #nop This is the start of my script file.\n"
+		"     <K82>Ex<K81>: #var x 1  /// Set variable ${x}.\n"
 	},
 	{
 		"PARSE",
@@ -1286,8 +1299,11 @@ struct help_type help_table[] =
 		"         If you uses braces, { and } you can use several lines for 1 commands.\n"
 		"         This however means you must always match every { with a } for the read\n"
 		"         command to work.\n"
+		"         #READ remembers last read filename. If filename argument is omitted,\n" 
+		"         default is last successfully read filename.\n"
+		"         If the argument is relative path, .tintin directory is also tried.\n"
 		"\n"
-		"         You can comment out triggers using /* text */\n"
+		"         You can comment out triggers using /* text */ or a /// \n"
 	},
 	{
 		"REGEXP",

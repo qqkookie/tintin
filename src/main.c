@@ -35,6 +35,9 @@
 struct session *gts;
 struct tintin_data *gtd;
 
+#include <setjmp.h>
+jmp_buf exit_gate;
+
 void pipe_handler(int signal)
 {
 	restore_terminal();
@@ -227,15 +230,15 @@ int main(int argc, char **argv)
 
 	init_tintin(greeting);
 
-	sprintf(filename, "%s/%s", gtd->home, TINTIN_DIR);
+	strcpy(filename, gtd->home);
 
-	if (mkdir(filename, 0777) || errno == EEXIST)
+	if (mkdir(filename, 0755) || errno == EEXIST)
 	{
-		sprintf(filename, "%s/%s/%s", gtd->home, TINTIN_DIR, HISTORY_FILE);
+		sprintf(filename, "%s/%s", gtd->home, HISTORY_FILE);
 
 		if (access(filename, F_OK ) != -1)
 		{
-			history_read(gts, filename);
+			history_read(gts, filename);		
 		}
 	}
 
@@ -304,7 +307,11 @@ int main(int argc, char **argv)
 	check_all_events(gts, SUB_ARG|SUB_SEC, 0, 2, "PROGRAM START", CLIENT_NAME, CLIENT_VERSION);
 	check_all_events(gts, SUB_ARG|SUB_SEC, 0, 2, "SCREEN RESIZE", ntos(gts->cols), ntos(gts->rows));
 
-	mainloop();
+	if (!setjmp(exit_gate))
+	{
+		mainloop();
+	}	
+	sleep(1);
 
 	return 0;
 }
@@ -345,7 +352,33 @@ void init_tintin(int greeting)
 
 	gtd->input_off      = 1;
 
-	gtd->home           = strdup(getenv("HOME") ? getenv("HOME") : ".");
+	char *usrhome = getenv("HOME");
+
+#ifdef __CYGWIN__
+	if ( !*usrhome || access(usrhome, F_OK ) == -1)
+	{
+		char winhome[BUFFER_SIZE], *cp = winhome;
+		char *prof = getenv("USERPROFILE");
+
+		if (prof)
+		{
+			strcpy (winhome,  prof);
+			while ((cp = strchr(cp, '\\')))
+				*cp = '/';
+
+			usrhome = winhome;
+		}
+	}
+#endif
+
+	if (!usrhome)
+		usrhome = ".";
+
+	char ttdir[BUFFER_SIZE];
+
+	sprintf(ttdir, "%s/%s", usrhome, TINTIN_DIR);
+
+	gtd->home           = strdup(ttdir);
 	gtd->term           = strdup(getenv("TERM") ? getenv("TERM") : "UNKNOWN");
 
 	for (index = 0 ; index < 100 ; index++)
@@ -479,5 +512,6 @@ void quitmsg(char *message)
 	}
 	fflush(NULL);
 
-	exit(0);
+	// exit(0);
+	longjmp(exit_gate, 1);
 }

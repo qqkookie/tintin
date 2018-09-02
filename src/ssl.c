@@ -126,7 +126,7 @@ static int get_cert_file(struct session *ses, char *result)
 		}
 	}
 
-	sprintf(result, "%s/%s/ssl/%s.crt", gtd->home, TINTIN_DIR, name);
+	sprintf(result, "%s/%s.crt", gtd->home, name);
 
 	return 1;
 }
@@ -176,22 +176,11 @@ static void save_cert(struct session *ses, gnutls_x509_crt_t cert, int new)
 		return;
 	}
 
-	sprintf(filename, "%s/%s", gtd->home, TINTIN_DIR);
-
-	if (mkdir(filename, 0777) && errno != EEXIST)
-	{
-		tintin_printf(ses, "#SSL: FAILED TO CREATE TINTIN DIR %s (%s)", filename, strerror(errno));
-
-		return;
-	}
-
-	sprintf(filename, "%s/%s/ssl", gtd->home, TINTIN_DIR);
-
-	mkdir(filename, 0755);
+	strcpy(filename, gtd->home);
 
 	if (mkdir(filename, 0755) && errno != EEXIST)
 	{
-		tintin_printf(ses, "#SSL: CANNOT CREATE CERTS DIR %s (%s)", filename, strerror(errno));
+		tintin_printf(ses, "#SSL: FAILED TO CREATE TINTIN DIR %s (%s)", filename, strerror(errno));
 
 		return;
 	}

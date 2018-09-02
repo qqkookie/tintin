@@ -37,6 +37,7 @@ tt++.exe
 
 # Visual Studio files
 .vs/
+.vscode/
 *.csproj
 *.sln
 *.suo

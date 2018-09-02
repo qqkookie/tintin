@@ -40,9 +40,23 @@ DO_COMMAND(do_read)
 	char *bufi, *bufo, filename[BUFFER_SIZE], temp[BUFFER_SIZE], *pti, *pto, last = 0;
 	int lvl, cnt, com, lnc, fix, ok;
 	int counter[LIST_MAX];
+	static char *lastfile = NULL;
 
 	get_arg_in_braces(ses, arg, filename, TRUE);
 	substitute(ses, filename, filename, SUB_VAR|SUB_FUN);
+
+	if ( !*filename && lastfile)
+		strcpy(filename, lastfile);
+
+	if ( access(filename, F_OK ) == -1 && filename[0] != '/'  && filename[2] != ':' )
+	{
+		sprintf(temp, "%s/%s", gtd->home, filename);
+
+		if ( access(temp, F_OK ) != -1 )
+		{
+			 strcpy(filename, temp);
+		}			 
+	}
 
 	if ((fp = fopen(filename, "r")) == NULL)
 	{
@@ -129,6 +143,12 @@ DO_COMMAND(do_read)
 						pti += 2;
 						com += 1;
 					}
+					else if (lvl == 0 && pti[1] == '/' && pti[2] == '/' && isspace(pti[3]))
+					{
+						char *eol = strchr(pti + 3, '\n');
+						if (eol)
+							pti = eol;
+					}	
 					else
 					{
 						*pto++ = *pti++;
@@ -358,6 +378,11 @@ DO_COMMAND(do_read)
 			}
 		}
 	}
+
+	if (lastfile)
+		free(lastfile);
+	lastfile = strdup(filename);
+
 	fclose(fp);
 
 	free(bufi);
