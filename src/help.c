@@ -701,7 +701,7 @@ struct help_type help_table[] =
 		"         #history <K82>{<K81>write<K82>}     {<K81>filename<K82>}<K81>   Write a command history to file.\n"
 		"\n"
 		"         Without an argument all available options are shown.\n"
-		"         Old saved history is shared across and among sessions.\n"
+		"         Old saved history is shared across and among the sessions.\n"
 	},
 	{
 		"IF",
@@ -1118,6 +1118,7 @@ struct help_type help_table[] =
 		"         Operators       Priority     Function\n"
 		"         ------------------------------------------------\n"
 		"         !               0            logical not\n"
+		"         ?               0            logical test\n"
 		"         ~               0            bitwise not\n"
 		"         *               1            integer multiply\n"
 		"         **              1            integer power\n"
@@ -1147,6 +1148,16 @@ struct help_type help_table[] =
 		"         Strings must be enclosed in \" \" and use regex with == and !=,\n"
 		"         in the case of <= and >= the alphabetic order is compared.\n"
 		"\n"
+		"         Non-empty string can be evaluated as non-zero number value.\n"
+		"         Same applies to #if, #elseif and #while test statement.\n"
+		"         This and below behaviors are controlled by #config math compat|eval.\n"	
+		"         Unary ! and ? operator can test string. Empty string or undefined\n"
+		"         variable are considered as number 0. To test if number or string,\n"
+		"         unary operator + on string always evaluated as number 0,\n"
+		"         including empty or numeric string and undefined variable.\n"
+		"         Before doing math, make sure operands are number with + test.\n"
+		"         To test single word or empty string, quoting is optional.\n"		
+		"\n"
 		"         The #if and #switch commands use #math. Several commands accepting\n"
 		"         integer input allow math operations as well.\n"
 		"\n"
@@ -1166,6 +1177,9 @@ struct help_type help_table[] =
 		"     <K82>Ex<K81>: #action {%0 tells %1}\n"
 		"           {#if {\"\%0\" == \"Bubba\" && $afk} {reply I'm away, my friend.}}\n"
 		"         When you are away from keyboard, it will only reply to your friend.\n"
+		"\n"	
+		"     <K82>Ex<K81>: #if { + %1 && %1 > 100 } { drop %1 coin }\n"
+		"         You must check argument is number and do numeric comparison.\n"
 	},
 	{
 		"MESSAGE",
@@ -1300,8 +1314,8 @@ struct help_type help_table[] =
 		"         This however means you must always match every { with a } for the read\n"
 		"         command to work.\n"
 		"         #READ remembers last read filename. If filename argument is omitted,\n" 
-		"         default is last successfully read filename.\n"
-		"         If the argument is relative path, .tintin directory is also tried.\n"
+		"         default is last successfully read filename. If the filename is\n"
+		"         relative path or base name, .tintin directory is also searched.\n"
 		"\n"
 		"         You can comment out triggers using /* text */ or a /// \n"
 	},

@@ -339,6 +339,7 @@ enum operators
 #define SES_FLAG_UTF8                 (1LL << 26)
 #define SES_FLAG_BIG5                 (1LL << 27)
 #define SES_FLAG_MIXED                (1LL << 28)
+#define SES_FLAG_MATHEVAL             (1LL << 29)
 #define SES_FLAG_256COLOR             (1LL << 32)
 #define SES_FLAG_IGNORELINE           (1LL << 33)
 #define SES_FLAG_CLOSED               (1LL << 34)
@@ -1304,6 +1305,7 @@ extern void show_vtmap(struct session *ses);
 extern DO_COMMAND(do_math);
 extern int is_math(struct session *ses, char *str);
 extern double get_number(struct session *ses, char *str);
+extern double get_number_eval(struct session *ses, char *str);
 extern double get_double(struct session *ses, char *str);
 extern void get_number_string(struct session *ses, char *str, char *result);
 extern double mathswitch(struct session *ses, char *left, char *right);
@@ -1381,6 +1383,7 @@ extern DO_CONFIG(config_mccp);
 extern DO_CONFIG(config_autotab);
 extern DO_CONFIG(config_charset);
 extern DO_CONFIG(config_256color);
+extern DO_CONFIG(config_math);
 
 #endif
 
@@ -1602,6 +1605,7 @@ extern void abort_handler(int signal);
 extern void pipe_handler(int signal);
 extern void suspend_handler(int signal);
 extern void trap_handler(int signal);
+extern void close_handler(int signal);
 
 extern int main(int argc, char **argv);
 extern void init_tintin(int greeting);

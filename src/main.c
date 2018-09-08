@@ -155,6 +155,16 @@ void trap_handler(int signal)
 	exit(-1);
 }
 
+void close_handler(int signal)
+{
+	restore_terminal();
+
+	clean_screen(gtd->ses);
+
+	fflush(NULL);
+
+	quitmsg("Closeing...");
+}
 
 /****************************************************************************/
 /* main() - show title - setup signals - init lists - readcoms - mainloop() */
@@ -180,7 +190,7 @@ int main(int argc, char **argv)
 		syserr("signal SIGSEGV");
 	}
 
-	if (signal(SIGHUP, trap_handler) == BADSIG)
+	if (signal(SIGHUP, close_handler) == BADSIG)
 	{
 		syserr("signal SIGHUP");
 	}
@@ -493,7 +503,7 @@ void quitmsg(char *message)
 	{
 		char filename[BUFFER_SIZE];
 
-		sprintf(filename, "%s/%s/%s", gtd->home, TINTIN_DIR, HISTORY_FILE);
+		sprintf(filename, "%s/%s", gtd->home, HISTORY_FILE);
 
 		history_write(gts, filename);
 	}

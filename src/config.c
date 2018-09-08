@@ -572,3 +572,24 @@ DO_CONFIG(config_256color)
 
 	return ses;
 }
+
+DO_CONFIG(config_math)
+{
+	if (!strcasecmp(arg, "COMPAT"))
+	{
+		DEL_BIT(ses->flags, SES_FLAG_MATHEVAL);
+	}
+	else if (!strcasecmp(arg, "EVAL"))
+	{
+		SET_BIT(ses->flags, SES_FLAG_MATHEVAL);
+	}
+	else
+	{
+		show_error(ses, LIST_CONFIG, "#SYNTAX: #CONFIG MATH <COMPAT|EVAL>");
+
+		return NULL;
+	}
+	update_node_list(ses->list[LIST_CONFIG], config_table[index].name, capitalize(arg), "");
+
+	return ses;
+}

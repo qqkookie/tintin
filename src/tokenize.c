@@ -802,7 +802,7 @@ struct scriptnode *parse_script(struct scriptroot *root, int lvl, struct scriptn
 				continue;
 
 			case TOKEN_TYPE_ELSEIF:
-				if (split && get_number(root->ses, token->str))
+				if (split && get_number_eval(root->ses, token->str))
 				{
 					token = parse_script(root, lvl + 1, token->next, shift);
 
@@ -852,7 +852,7 @@ struct scriptnode *parse_script(struct scriptroot *root, int lvl, struct scriptn
 			case TOKEN_TYPE_IF:
 				split = NULL;
 
-				if (get_number(root->ses, token->str))
+				if (get_number_eval(root->ses, token->str))
 				{
 					token = parse_script(root, lvl + 1, token->next, shift);
 				}
@@ -962,7 +962,7 @@ struct scriptnode *parse_script(struct scriptroot *root, int lvl, struct scriptn
 				continue;
 
 			case TOKEN_TYPE_WHILE:
-				if (get_number(root->ses, token->str))
+				if (get_number_eval(root->ses, token->str))
 				{
 					token = parse_script(root, lvl + 1, token->next, token);
 				}

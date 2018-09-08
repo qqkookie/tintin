@@ -129,10 +129,11 @@ int is_number(char *str)
 				break;
 
 			case '!':
+			case '?':			
 			case '~':
 			case '+':
 			case '-':
-				if (ptr != str)
+				if (ptr != str || !ptr[1])
 				{
 					return FALSE;
 				}

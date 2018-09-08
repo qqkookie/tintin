@@ -30,6 +30,7 @@
 #define EXP_VARIABLE         0
 #define EXP_STRING           1
 #define EXP_OPERATOR         2
+#define EXP_WORD             3
 
 #define EXP_PR_DICE          0
 #define EXP_PR_INTMUL        1
@@ -63,13 +64,13 @@ DO_COMMAND(do_math)
 
 	arg = get_arg_in_braces(ses, arg, right, GET_ALL);
 
-	if (*left == 0 || *right == 0)
+	if (*left == 0)
 	{
 		show_error(ses, LIST_VARIABLE, "#SYNTAX: #MATH {variable} {expression}.");
 	}
 	else
 	{
-		result = get_number(ses, right);
+		result = get_number_eval(ses, right);
 
 		node = set_nest_node(ses->list[LIST_VARIABLE], left, "%.*f", precision, result);
 
@@ -93,6 +94,66 @@ double get_number(struct session *ses, char *str)
 
 	val = tintoi(result);
 
+	return val;
+}
+
+// Similar to get_number(), but with string evaluation. 
+double get_number_eval(struct session *ses, char *str)
+{
+	double val;
+	char result[BUFFER_SIZE];
+
+	mathexp(ses, str, result, 0);
+
+	val = tintoi(result);
+
+	if (!HAS_BIT(ses->flags, SES_FLAG_MATHEVAL))
+		return val;
+
+	// tintin_printf(ses, "get_number_eval(): str = [%s], resut = [%s]", str, result);
+
+	if (val == 0.0 && !is_number(result))
+	{
+		char *p = result, op = '\0', quote = '\0'; 
+		long long hash = 0;
+		int len = 0;
+
+		while (isspace(*p)) p++;
+
+		if ( *p == '+')
+			return 0.0;
+
+		if ( *p == '!' || *p == '?' ) 
+		 	op = *p++;
+
+		while (isspace(*p)) p++;
+
+		if (*p == '"')
+			quote = *p++;
+
+		if ( *p != '$' && *p != '%')
+		{
+			while (*p && (!quote || *p != '"' ))
+			{
+				hash = (hash <<1) + (*p -' ' + 1);
+				len ++; p++;
+			}
+			
+			hash += len;
+			if (hash == 0 && len != 0)
+				hash  += len;
+		}	
+		else		// undefined variable
+			hash = 0;
+
+		if ( op == '!' )
+			hash = !hash;
+		else if ( op == '?' )
+			hash = (hash != 0);	
+
+		val = (double) hash; 
+	}
+	
 	return val;
 }
 
@@ -252,6 +313,7 @@ int mathexp_tokenize(struct session *ses, char *str, int seed, int debug)
 						break;
 
 					case '!':
+					case '?':					
 					case '~':
 					case '+':
 					case '-':
@@ -341,6 +403,13 @@ int mathexp_tokenize(struct session *ses, char *str, int seed, int debug)
 						break;
 
 					default:
+						if ( isgraph(*pti))
+						{
+							status = EXP_WORD;
+							*pta++ = '"';
+							*pta = 0;
+							break;
+						}
 						*pta++ = *pti++;
 						*pta = 0;
 
@@ -365,6 +434,16 @@ int mathexp_tokenize(struct session *ses, char *str, int seed, int debug)
 					default:
 						*pta++ = *pti++;
 						break;
+				}
+				break;
+
+			case EXP_WORD:		// unquoted non-numeric word
+				*pta++ = *pti++;			
+				*pta = '\0';			
+				if ( !*pti || *pti == ' ' || *pti == '\t' )	// look ahead
+				{
+					*pta++ = '"' ; *pta = '\0';
+					MATH_NODE(FALSE, EXP_PR_VAR, EXP_OPERATOR);
 				}
 				break;
 
@@ -816,6 +895,7 @@ double tintoi(char *str)
 	switch (*ptr)
 	{
 		case '!':
+		case '?':			
 		case '~':
 		case '+':
 		case '-':
@@ -874,10 +954,11 @@ double tintoi(char *str)
 				break;
 
 			case '!':
+			case '?':				
 			case '~':
 			case '+':
 			case '-':
-				if (ptr == str)
+				if (ptr == str && ptr[1])
 				{
 					break;
 				}
@@ -909,6 +990,8 @@ double tintoi(char *str)
 	{
 		case '!':
 			return !(values[0] + values[1] + values[2] + values[3] + values[4]);
+		case '?':
+			return ((values[0] + values[1] + values[2] + values[3] + values[4]) != 0);			
 		case '~':
 			return ~ (long long) (values[0] + values[1] + values[2] + values[3] + values[4]);
 		case '+':
@@ -918,7 +1001,7 @@ double tintoi(char *str)
 		default:
 			return (values[0] + values[1] + values[2] + values[3] + values[4]);
 	}
-
+/*
 	switch (str[0])
 	{
 		case '!':
@@ -979,6 +1062,7 @@ double tintoi(char *str)
 		default:
 			return atof(str);
 	}
+*/	
 }
 
 double tincmp(char *left, char *right)

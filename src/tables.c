@@ -254,6 +254,13 @@ struct config_type config_table[] =
 	},
 
 	{
+		"MATH",
+		"Compatible #math, #if behavior",
+		"String is evaluated non-zero for #math, #if",
+		config_math
+	},	
+
+	{
 		"MCCP",
 		"MCCP is enabled.",
 		"MCCP is disabled.",
