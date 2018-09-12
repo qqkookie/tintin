@@ -174,7 +174,6 @@ void close_handler(int signal)
 int main(int argc, char **argv)
 {
 	int greeting = TRUE;
-	char filename[256];
 
 	#ifdef SOCKS
 		SOCKSinit(argv[0]);
@@ -239,18 +238,6 @@ int main(int argc, char **argv)
 	}
 
 	init_tintin(greeting);
-
-	strcpy(filename, gtd->home);
-
-	if (mkdir(filename, 0755) || errno == EEXIST)
-	{
-		sprintf(filename, "%s/%s", gtd->home, HISTORY_FILE);
-
-		if (access(filename, F_OK ) != -1)
-		{
-			history_read(gts, filename);		
-		}
-	}
 
 	if (argc > 1)
 	{
@@ -362,33 +349,47 @@ void init_tintin(int greeting)
 
 	gtd->input_off      = 1;
 
-	char *usrhome = getenv("HOME");
+	char ttdir[256], filename[256];
+	char *home = getenv("HOME");
 
 #ifdef __CYGWIN__
-	if ( !*usrhome || access(usrhome, F_OK ) == -1)
+	if (!check_filepath(home, TRUE))
 	{
-		char winhome[BUFFER_SIZE], *cp = winhome;
 		char *prof = getenv("USERPROFILE");
-
 		if (prof)
 		{
-			strcpy (winhome,  prof);
+			strcpy (filename,  prof);
+			char *cp = filename;
 			while ((cp = strchr(cp, '\\')))
 				*cp = '/';
 
-			usrhome = winhome;
+			home = filename;
 		}
 	}
 #endif
 
-	if (!usrhome)
-		usrhome = ".";
+	if (!home)
+		home = ".";
 
-	char ttdir[BUFFER_SIZE];
+	sprintf(ttdir, "%s/%s", home, TINTIN_DIR);	
 
-	sprintf(ttdir, "%s/%s", usrhome, TINTIN_DIR);
+	if (mkdir(ttdir, 0755) || errno == EEXIST)
+	{
+#ifdef __CYGWIN__		
+		if (home == filename && !getenv("SHELL"))
+		{
+			chdir(ttdir);
+		}
+#endif
+		sprintf(filename, "%s/%s", ttdir, HISTORY_FILE);
 
-	gtd->home           = strdup(ttdir);
+		if (check_filepath(filename, FALSE))
+		{
+			history_read(gts, filename);		
+		}
+	}
+
+	gtd->home           = strdup(ttdir);	
 	gtd->term           = strdup(getenv("TERM") ? getenv("TERM") : "UNKNOWN");
 
 	for (index = 0 ; index < 100 ; index++)
@@ -453,11 +454,15 @@ void init_tintin(int greeting)
 	insert_node_list(gts->list[LIST_PATHDIR], "sw", "ne", "12");
 
 	// Help/chat string color code default
-	insert_node_list(gts->list[LIST_VARIABLE], "_TK81", "<078>", "" );
-	insert_node_list(gts->list[LIST_VARIABLE], "_TK82", "<178>", "" );
-	insert_node_list(gts->list[LIST_VARIABLE], "_TK83", "<068>", "" );
-	insert_node_list(gts->list[LIST_VARIABLE], "_TK84", "<068>", "" );	
-	insert_node_list(gts->list[LIST_VARIABLE], "_TK85", "<078>", "" );
+	struct listroot *root = gts->list[LIST_VARIABLE];
+	
+	insert_node_list(root, "_TTDIR", gtd->home, "" );
+
+	set_nest_node(root, "_TK[81]", "%s", "<078>");
+	add_nest_node(root, "_TK[82]", "%s", "<178>");
+	add_nest_node(root, "_TK[83]", "%s", "<068>");
+	add_nest_node(root, "_TK[84]", "%s", "<068>");
+	add_nest_node(root, "_TK[85]", "%s", "<078>");
 
 	init_terminal();
 

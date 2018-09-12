@@ -45,14 +45,15 @@ DO_COMMAND(do_read)
 	get_arg_in_braces(ses, arg, filename, TRUE);
 	substitute(ses, filename, filename, SUB_VAR|SUB_FUN);
 
-	if ( !*filename && lastfile)
+	if ( !*filename && lastfile && *lastfile)
 		strcpy(filename, lastfile);
 
-	if ( access(filename, F_OK ) == -1 && filename[0] != '/'  && filename[2] != ':' )
+	if (filename[0] && filename[0] != '/' && filename[1] != ':' 
+		&& check_filepath(filename, FALSE))
 	{
 		sprintf(temp, "%s/%s", gtd->home, filename);
 
-		if ( access(temp, F_OK ) != -1 )
+		if (check_filepath(temp, FALSE))
 		{
 			 strcpy(filename, temp);
 		}			 
@@ -383,6 +384,8 @@ DO_COMMAND(do_read)
 		free(lastfile);
 	lastfile = strdup(filename);
 
+	set_nest_node(ses->list[LIST_VARIABLE], "_fileread", "%s", filename );
+
 	fclose(fp);
 
 	free(bufi);
@@ -494,3 +497,16 @@ void write_node(struct session *ses, int list, struct listnode *node, FILE *file
 	return;
 }
 
+int check_filepath(char *filepath, int dir)
+{
+	struct stat st_buf;
+
+	if ( !filepath || !*filepath || stat(filepath, &st_buf) != 0 )
+		return FALSE;
+	
+	if (( !dir && S_ISREG( st_buf.st_mode ))
+		|| ( dir && S_ISDIR( st_buf.st_mode )))
+		return ( access( filepath, F_OK ) == 0 );
+	
+	return FALSE;
+}

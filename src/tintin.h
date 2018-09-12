@@ -1505,6 +1505,7 @@ extern DO_COMMAND(do_read);
 extern DO_COMMAND(do_write);
 
 extern void write_node(struct session *ses, int mode, struct listnode *node, FILE *file);
+extern int check_filepath(char *filepath, int dir);
 
 #endif 
 

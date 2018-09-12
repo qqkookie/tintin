@@ -47,7 +47,7 @@ DO_COMMAND(do_highlight)
 	{
 		show_list(ses->list[LIST_HIGHLIGHT], 0);
 	}
-	else if (*arg1 && *arg2 == 0)
+	else if (*arg1 && *arg2 == 0 && !gtd->quiet)
 	{
 		if (show_node_with_wild(ses, arg1, ses->list[LIST_HIGHLIGHT]) == FALSE)
 		{
@@ -56,10 +56,19 @@ DO_COMMAND(do_highlight)
 	}
 	else
 	{
+		if (*arg2 == '\0' && gtd->quiet)
+		{
+			strcpy(arg2, "bold");	// default color while reading tintin file	
+		}
+
 		if (get_highlight_codes(ses, arg2, temp) == FALSE)
 		{
 			tintin_printf2(ses, "#HIGHLIGHT: VALID COLORS ARE:\n");
-			tintin_printf2(ses, "reset, bold, light, faint, dim, dark, underscore, blink, reverse, black, red, green, yellow, blue, magenta, cyan, white, b black, b red, b green, b yellow, b blue, b magenta, b cyan, b white, azure, ebony, jade, lime, orange, pink, silver, tan, violet.");
+			tintin_printf2(ses, 
+			"none reset bold dim under blink reverse normal ununder unblink unreverse\n"
+			"black red green yellow blue magenta cyan white default and [bg] <color>\n"
+			"azure ebony jade lime orange pink silver tan violet and [bg|lt] <color>\n"
+			"Prefix 'bg' and 'lt' for background and light color. #help highlight for list.");
 		}
 		else
 		{
@@ -149,55 +158,97 @@ void check_all_highlights(struct session *ses, char *original, char *line)
 
 int get_highlight_codes(struct session *ses, char *string, char *result)
 {
-	int cnt;
+	int cnt, bg, light, prefix = 0;
+	bg = light = FALSE;
 
 	*result = 0;
 
-	if (*string == '<')
-	{
-		substitute(ses, string, result, SUB_COL);
-
-		return TRUE;
-	}
-
-	if (*string == '\\')
-	{
-		substitute(ses, string, result, SUB_ESC);
-
-		return TRUE;
-	}
-
 	while (*string)
 	{
-		if (isalpha((int) *string))
+		char buf[255], *span, span1, *del;
+		span = buf+10;
+		
+		string = get_arg_stop_spaces(ses, string, span, 0);
+
+		del = strpbrk(span, " \t,;{}");
+		if (del)
 		{
-			for (cnt = 0 ; *color_table[cnt].name ; cnt++)
+			string -= strlen(span) - (del - span);
+			*del ='\0';
+		}
+		span1 = *span;
+
+		if (isalpha((int) span1) || span1 == '+' || span1 == '-' || span1 == '!')
+		{
+			if ( !bg && span1 == '+')
 			{
-				if (is_abbrev(color_table[cnt].name, string))
+				span++;
+			}
+			if (light && span1 != '!')
+			{
+				span--; *span = '!';
+			}			
+			if (bg && span1 != '-')
+			{
+				span--; *span = '-';
+			}			
+
+			for (cnt = 0; *color_table[cnt].name ; cnt++)
+			{
+				if (is_abbrev(span, color_table[cnt].name))
 				{
-					substitute(ses, color_table[cnt].code, result, SUB_COL);
+					prefix = atoi(color_table[cnt].code);
+					if (prefix)
+					{
+						if (prefix == 1)
+							bg = FALSE;
+						else if (prefix == 2)
+							bg = TRUE;
+						else if (prefix == 3)
+							light = TRUE;			
+					}
+					else 
+					{
+						substitute(ses, color_table[cnt].code, result, SUB_COL);
 
-					result += strlen(result);
-
-					break;
+						result += strlen(result);
+					}
+					break;					
 				}
 			}
 
 			if (*color_table[cnt].name == 0)
 			{
 				return FALSE;
-			}
-
-			string += strlen(color_table[cnt].name);
+			}	
 		}
-
-		switch (*string)
+		else if (span1 == '<')
 		{
-			case ' ':
+			int len = strchr(span, '>') - span +1;
+
+			if ( len >= 5 )
+			{
+				substitute(ses, span, result, SUB_COL);
+
+				result += strlen(result);
+			}
+		}
+		else if (span1 == '\\')
+		{
+			substitute(ses, span, result, SUB_ESC);
+
+			result += strlen(result);
+		}
+		else switch (span1)
+		{
 			case ';':
 			case ',':
 			case '{':
 			case '}':
+				prefix = 0;
+				/*FALLTHRU*/			
+			case ' ':
+			case '\t':
 				string++;
 				break;
 
@@ -206,7 +257,9 @@ int get_highlight_codes(struct session *ses, char *string, char *result)
 
 			default:
 				return FALSE;
-		}
+		}	
+		if (!prefix)
+			bg = light = FALSE;
 	}
 	return TRUE;
 }

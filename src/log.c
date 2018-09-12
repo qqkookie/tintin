@@ -85,6 +85,8 @@ DO_COMMAND(do_log)
 				write_html_header(ses, ses->logfile);
 			}
 			show_message(ses, LIST_COMMAND, "#LOG: LOGGING OUTPUT TO '%s' FILESIZE: %ld", right, ftell(ses->logfile));
+
+			set_nest_node(ses->list[LIST_VARIABLE], "_filelog", "%s", right );
 		}
 		else
 		{
@@ -105,6 +107,8 @@ DO_COMMAND(do_log)
 				write_html_header(ses, ses->logfile);
 			}
 			show_message(ses, LIST_COMMAND, "#LOG: LOGGING OUTPUT TO '%s'", right);
+
+			set_nest_node(ses->list[LIST_VARIABLE], "_filelog", "%s", right );
 		}
 		else
 		{

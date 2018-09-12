@@ -1,160 +1,195 @@
---------------------------------------------------------------------------------
+================================================================================
 
 Sun Aug 26 12:00:00 2018 Akorn Farmer <cantata@gmail.com> (qqKookie@GitHub)
 
 GitHub repository:https://github.com/qqkookie/tintin
 
 * tinexpr.c
-
 1) 24 bit true color color code
-24 bit colr can be specified with 6 hexadecimal digits.
-Use "<xhhhhhh>" (lowercase 'x' prefix) for foreground RGB888 color, 
-"<Xhhhhhh>" (uppercase 'X' prefix) for background RGB888 color.
-Hexdecimal digits 'h' are 0-9, a-f, A-F, upper/lowcase ignored.
+  24 bit colr can be specified with 6 hexadecimal digits.
+  Use "<xhhhhhh>" (lowercase 'x' prefix) for foreground RGB888 color, 
+  "<Xhhhhhh>" (uppercase 'X' prefix) for background RGB888 color.
+  Hexdecimal digits 'h' are 0-9, a-f, A-F, upper/lowcase ignored.
 
-Example: #highlight {^The Temple Of Midgaard$} {<XFFFF00><188>} 
+  Example: #highlight {^The Temple Of Midgaard$} {<XFFFF00><188>} 
 
-2) Custom, user-defined, numbered color code. 
-Similar to "<g32>" or "<G32>" color code for gray colors,
-user can define color of "<K00>"-"<K99>" color code and use it. 
-To set actual color for "<Kdd>" color code with other color code, 
-set global variable ${_TKT00}-${_KT99}. For example:
+2) Custom, user-defined, numbered color code
+  Similar to "<g32>" or "<G32>" color code for gray colors,
+  user can define color of "<K00>"-"<K99>" color code and use it. 
+  To set actual color for "<Kdd>" color code with other color code, 
+  set global array variable ${_TK[00]}-${_KT[99]}. For example:
 
-#var {_TK14} {<X0000ff><188>} ==> <K14> code to bold blue BG color.
+  #var {_TK[14]} {<X0000ff><188>} ==> <K14> code to bold blue BG color.
 
-#highlight {^The Temple Of Midgaard$} {<K14>}
+  #highlight {^The Temple Of Midgaard$} {<K14>}
 
-<K81>~<K85>codes  are pre-defined for help strings and chat color code. 
-<K86>~<K99> are reserved for future internal use.
+  <K81>~<K85>codes are pre-defined for help strings and chat color code. 
+  <K86>~<K99> are reserved for future internal use.
 
 * net.c:
 * parse.c:
+- "MIXED" CHARSET option for #CONFIG CHARSET
+  Option for player uses UTF-8 charset terminal to play MUD in MBCS encoding
+  With this mixed charset option, player plays old MUD that uses legacy 
+  multibyte codepage (ISO-8859-x, double byte DBCS EUC-KR, EUC-JP, etc) 
+  with terminal setting to use UTF-8 charset to display/enter UTF-8 text. 
+  To use the mode: #CONFIG CHARSET {MIXED}
 
-- "MIXED" CHARSET option for #CONFIG CHARSET. 
-Option for player uses UTF-8 charset terminal to play MUD in MBCS encoding.
-With this mixed charset option, player plays old MUD that uses legacy multibyte 
-codepage (ISO-8859-x, double byte DBCS EUC-KR, EUC-JP, etc) 
-with terminal setting to use UTF-8 charset to display/enter UTF-8 text. 
-To use the mode: #CONFIG CHARSET {MIXED}
+- By using UTF-8, instead of MBCS EUC-KR, various patterns for
+  #action, #highlight, written in Asian UTF-8 text can be successfully 
+  matched and triggred. MUD codepage is assumed to be same as player's 
+  ANSI codepage like CP949.	Tintin text file also uses UTF-8 encoding. 
+  This feature is avaiable only on MS Windows WinTin++.
 
-- By using UTF-8, instead of MBCS EUC-KR, various patterns for #action, #highlight,
-written in MBCS text can be successfully matched and triggred.
-MUD codepage is assumed to be same as player's ANSI codepage like CP949.	
-Tintin text file also uses UTF-8 encoding. 
-This feature is avaiable only on MS Windows WinTin++.
-
-config.c
+* config.c
 - Add "MIXED" option for #CONFIG CHARSET
 
-help.c:
+* help.c:
 - User can modify #HELP display color. 
-Using the custom <Kdd> color code, user can set colrs of help text 
-and chatting. Useful for player uses black text on white background.
-<K81>, <K82>, <K83> for help text colors, <K84>, <K85> for chat color.
+  Using the custom <Kdd> color code, user can set colrs of help text 
+  and chatting. Useful for player uses black text on white background.
+  <K81>, <K82>, <K83> for help text colors, <K84>, <K85> for chat color.
 
 - Shorten "Example:" and "Comment:" to be less stand out.
 - Text color reset to nomal default color after displaying #HELP text.
-- Add help text for 24 bit color and help/chat color. 
+- Add help text for 24 bit color and help/chat color
 
-chat.c:
+* chat.c:
 - User can modify chatting text color.
-- Minor change to silence gcc buffer overflow warning.
+- Minor change to silence gcc buffer overflow warning
 
-main.c:
+* main.c:
 - Default help text / chatting colors are defined here.
 
-input.c:
+* input.c:
 - Allow vertical scroll bar, even in #split mode, if top row is 0.
  Example: #SPLIT 0 2; #PROMPT {[%1,%2,%3]} {[%1, %2, %3] } {1}
 
-tintin.h:
-- session flags are defined explicitly as 64 bit long long integer.
-- tentative version number
+* tintin.h:
+- Session flags are defined explicitly as 64 bit long long integer.
+- Tentative version number
 
-Makefile.in
-- Add BUILDDIR and *.o file dependacy on header files.
+* Makefile.in
+- Add BUILDDIR and *.o file dependacy on header files
 
-.gitignore:
-- Add new file for GitHub source file control.
+* .gitignore:
+- Add new file for GitHub source file control
 
-File name and ext of mods/*.mods files are changed from *.mods to mods.*.md,
-and they all are moved to docs/ directory for better organization.
-ex) mods/igr.mods => docs/mods.igr.md
+* File name and ext of mods/*.mods files are changed from *.mods to mods.*.md,
+  and they all are moved to docs/ directory for better organization.
+  ex) mods/igr.mods => docs/mods.igr.md
 
-Add files from WnTin++ installation. Credit to WinTin++, not Akorn Farmer.
+* Add files from WnTin++ installation. Credit to WinTin++, not Akorn Farmer
 
 - docs/wintin.COPYIMG.txt	(for CygWin/mintty)
 - docs/wintin.FAQ.txt		(addtional Window FAQs)
 - docs/wintin.mintty.con	(mintty config file)
 - docs/wintin.tt.ico		(Wintin++ icon file) 
 
-Added aditinal 16 ANSI color definition entries in wintin.mintty.con.
+* Add aditinal 16 ANSI color definition entries in wintin.mintty.con
 
------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 Sun Sep 2 12:00:00 2018 Akorn Farmer
 
-system.c:
-    * Lua 5.2 interpreter integration.
-    * Added do_lua() command code.
+* system.c:
+- Lua 5.2 interpreter integration
+- Add do_lua() command code
 
-Configure.h.in:
-Configure.h.in:
-Configure:
-    * To add lua header/library/DLL dependancy and clean up.
+* Configure.h.in:
+* Configure.h.in:
+* Configure:
+- To add lua header/library/DLL dependancy and clean up
 
-tintin.h:
-tables.h:
-    * Added new #LUA command.
+* tintin.h:
+* tables.h:
+- Add new #LUA command
 
-help.h:
-    * Added #LUA command help.
-    * Added group #action / #unaction, #read, #history
+* help.h:
+- Add #LUA command help
+- Add group #action / #unaction, #read, #history
 
-net.c :
-parse.c:
-system.c:
-    * Port to freebsd, minor fix.
+* net.c :
+* parse.c:
+* system.c:
+- Port to freebsd, minor fix
 
-data.c:
-    * Named group action/unaction.
+* data.c:
+- Named group action/unaction
 
-file.c:
-    * /// starts single-line comment in C++ // comment style in command file.
-    * Better #read file handing on cygwin Windows environment.
-      #read will remembers old filename and use it as default filename.   
-    * If #read can't find named file first, files in the .tintin directory 
-      will be tried as second guess.
+* file.c:
+- /// starts single-line comment in C++ // comment style in command file.
+- Better #read file handing on MS Windows CygWin environment.
+- #read will remembers old filename and use it as default filename.   
+- If #read can't find named file first, files in the .tintin directory 
+  will be tried as second guess.
+  
+* ssl.c: 
+- #ssl will trys to find certificate in the .tintin dir itself.
 
-ssl.c: 
-    * #ssl will trys to find certificate in the .tintin dir itself.
+* session.c:
+- History of non-starting sessions are also preserve in history.txt file
+  and shared across/among non-starting sessions.
 
-session.c:
-    * history of non-starting sessions are also preserve in history.txt file
-      and shared across/among non-starting sessions.
-
------------------------------------------------------------
+--------------------------------------------------------------------------------
 
 Sat Sep 9 12:00:00 2018 Akorn Farmer
 
-math.c:
-utils.c:
-tokenize.c:
-    * For #math, #if, #elseif and #while statement, non-empty string 
-      is evaluated as non-zero number value. This can be enabled
-      by setting #config math eval. Default is compat.
-    * Better handling of unquoted single word string in #math and others.      
-    * Add ? unary operator to test non-zero numbers. Opposite of ! operator.
-      ! and ? operators work for string too to test empty/non-empty string.
-    * Add + opeator for string to test it is string or number.
+* math.c:
+* utils.c:
+* tokenize.c:
+- For #math, #if, #elseif and #while statement, non-empty string is evaluated
+  as non-zero number value. This can be enabled by setting #config math eval.
+  Default is compat.
+- Better handling of unquoted single word string in #math and others.      
+- Add ? unary operator to test non-zero numbers. Opposite of ! operator.
+  ! and ? operators work for string too to test empty/non-empty string.
+- Add + opeator for string to test it is string or number
 
-config.c:
-tables.c:
-tintin.h:
-    *  Add #config math option for above #math behavior.
+* config.c:
+* tables.c:
+* tintin.h:
+- Add #config math option for above #math behavior
 
-help.h:
-    * #math change    
+* help.h:
+- #math change    
  
 --------------------------------------------------------------------------------
+Wed Sep 12 12:00:00 2018 Akorn Farmer
+
+* main.c:
+- More graceful exit on SIGHUP (Windows mintty close)
+- History save file directory fix
+- Set $_TTDIR variable
+- On MS Windows CygWin environment and not run on CygWin bash shell, 
+  (i.e. on Windows Explorer), tintin trys to change directory to .tintin 
+  directory and run there, instead of WinTin++ install bin directory.
+
+* log.c:
+- Set $_filelog variable
+- Relative log file name is relatieve to uer's .tintin directory.
+
+* line.c:
+- #line log sets $_linelog variable. If first argument is empty ({}),
+  it uses $_linelog or $_filelog as default filename argument.
+
+* file.c:
+- Sets $_fileread variable
+- Add check_filepath() using stat() and access()
+
+* highlight.c:
+* table.c:
+- More flexible multiple highlight color args
+- Some highlight name change: none, normal, unreverse, default, bg, lt, etc
+- Remove confusing highlight names: faint, dark, light, no-reverse, etc
+- While reading tintin file, if highligh color is missing, default is bold.
+
+* tinexp.c:
+- Add <6dd> spercial color code.
+- Change custom color varible name from $_TKdd to array varibale $_TK[dd]
+
+* help.c:
+- #highlight, special color code change
+
+--------------------------------------------------------------------------------    
 <EOT>

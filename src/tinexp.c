@@ -770,6 +770,17 @@ int substitute(struct session *ses, char *string, char *result, int flags)
 									break;
 								case '8':
 									break;
+								case '6':
+									if ( pti[2] == '2' 
+										|| (pti[2] == '3' && pti[3] == '9')
+										|| (pti[2] == '4' && pti[3] == '9'))
+									{
+										*pto++ = pti[2];
+										*pto++ = pti[3];
+										*pto++ = 'm';
+										pti[1] = '8'; pti[2] = '8';
+									}
+									break;		
 								default:
 									*pto++ = pti[1];
 									*pto++ = ';';
@@ -898,12 +909,12 @@ int substitute(struct session *ses, char *string, char *result, int flags)
 						pti += 9;	// "<xhhhhhh>"
 					}
 
-					// <K00>~<K99>: custom, numbered 'K'olors. To set these kolors, set ${_TK00} ~ ${_TK99} global vaiable. 
-					// Ex: #var {_TK07} {<XFFFF00><188>} to set <K07> to bold and yellow background. 
+					// <K00>~<K99>: custom, numbered 'K'olors. To set these kolors, set ${_TK[00]} ~ ${_TK[99]} global vaiable. 
+					// Ex: #var {_TK[07]} {<XFFFF00><188>} to set <K07> to bold and yellow background. 
 					else if (pti[1] == 'K' && isdigit((int) pti[2]) && isdigit((int) pti[3]) && pti[4] == '>')
 					{
 						char kolor[16];
-						sprintf(kolor, "${_TK%c%c}", pti[2], pti[3]);
+						sprintf(kolor, "${_TK[%c%c]}", pti[2], pti[3]);
 						
 						substitute(ses, kolor, pto, (SUB_COL|SUB_VAR));
 						pto += strlen(pto);

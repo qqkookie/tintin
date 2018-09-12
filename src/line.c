@@ -73,6 +73,24 @@ DO_LINE(line_gag)
 	return ses;
 }
 
+static int get_linelog(struct session *ses, char *log)
+{
+	substitute(ses, "$_linelog", log, SUB_VAR);
+
+	if (*log && *log != '$')
+		return TRUE;
+
+	if (ses->logfile)
+	{
+		substitute(ses, "$_filelog", log, SUB_VAR);
+		if (*log && *log != '$')
+			return TRUE;
+	}
+
+	*log = '\0';
+	return FALSE;
+}	
+
 // Without an argument mark next line to be logged, otherwise log the given line to file.
 
 DO_LINE(line_log)
@@ -82,6 +100,12 @@ DO_LINE(line_log)
 
 	arg = sub_arg_in_braces(ses, arg, left, GET_ONE, SUB_VAR|SUB_FUN|SUB_ESC);
 	arg = sub_arg_in_braces(ses, arg, temp, GET_ALL, SUB_VAR|SUB_FUN);
+
+	if (!*left && !get_linelog(ses, left))
+	{
+		show_error(ses, LIST_COMMAND, "#ERROR: #LINE LOG {filename} {text}");
+		return ses;
+	}		
 
 	if ((logfile = fopen(left, "a")))
 	{
@@ -111,6 +135,8 @@ DO_LINE(line_log)
 			}
 			ses->logline = logfile;
 		}
+
+		set_nest_node(ses->list[LIST_VARIABLE], "_linelog", "%s", left );
 	}
 	else
 	{
@@ -128,6 +154,12 @@ DO_LINE(line_logverbatim)
 	arg = sub_arg_in_braces(ses, arg, left,  GET_ONE, SUB_VAR|SUB_FUN);
 	arg = get_arg_in_braces(ses, arg, right, 1);
 
+	if (!*left && !get_linelog(ses, left))
+	{
+		show_error(ses, LIST_COMMAND, "#ERROR: #LINE LOGVERBATIM {filename} {text}");
+		return ses;
+	}	
+
 	if ((logfile = fopen(left, "a")))
 	{
 		if (HAS_BIT(ses->flags, SES_FLAG_LOGHTML))
@@ -143,6 +175,8 @@ DO_LINE(line_logverbatim)
 		logit(ses, right, logfile, TRUE);
 
 		fclose(logfile);
+
+		set_nest_node(ses->list[LIST_VARIABLE], "_linelog", "%s", left );
 	}
 	else
 	{
