@@ -40,13 +40,12 @@ DO_COMMAND(do_read)
 	char *bufi, *bufo, filename[BUFFER_SIZE], temp[BUFFER_SIZE], *pti, *pto, last = 0;
 	int lvl, cnt, com, lnc, fix, ok;
 	int counter[LIST_MAX];
-	static char *lastfile = NULL;
 
 	get_arg_in_braces(ses, arg, filename, TRUE);
 	substitute(ses, filename, filename, SUB_VAR|SUB_FUN);
 
-	if ( !*filename && lastfile && *lastfile)
-		strcpy(filename, lastfile);
+	if ( !*filename && gtd->fileread && *gtd->fileread)
+		strcpy(filename, gtd->fileread);
 
 	if (filename[0] && filename[0] != '/' && filename[1] != ':' 
 		&& check_filepath(filename, FALSE))
@@ -380,9 +379,9 @@ DO_COMMAND(do_read)
 		}
 	}
 
-	if (lastfile)
-		free(lastfile);
-	lastfile = strdup(filename);
+	if (gtd->fileread)
+		free(gtd->fileread);
+	gtd->fileread = strdup(filename);
 
 	set_nest_node(ses->list[LIST_VARIABLE], "_fileread", "%s", filename );
 

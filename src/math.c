@@ -107,7 +107,7 @@ double get_number_eval(struct session *ses, char *str)
 
 	val = tintoi(result);
 
-	if (!HAS_BIT(ses->flags, SES_FLAG_MATHEVAL))
+	if (!HAS_BIT(ses->flags, SES_FLAG_MATHSTR))
 		return val;
 
 	// tintin_printf(ses, "get_number_eval(): str = [%s], resut = [%s]", str, result);

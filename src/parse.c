@@ -755,7 +755,7 @@ void write_mud(struct session *ses, char *command, int flags)
 		}
 	}
 	
-	if ( HAS_BIT(ses->flags, SES_FLAG_MIXED) && HAS_BIT(ses->flags, SES_FLAG_UTF8))
+	if ( HAS_BIT(ses->flags, SES_FLAG_U8CONV) && HAS_BIT(ses->flags, SES_FLAG_UTF8))
 	{
 		int len = utf8convert(TRUE , output, size);
 		if ( len > 0 )

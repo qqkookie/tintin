@@ -262,3 +262,6 @@
 /* Define to 1 if you have <lua.h>. */
 #undef HAVE_LUA_H
 
+/* Define to 1 if you have <iconv.h>. */
+#undef HAVE_ICONV_H
+

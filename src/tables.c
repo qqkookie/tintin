@@ -169,22 +169,22 @@ struct config_type config_table[] =
 {
 	{
 		"AUTO TAB",
-		"",
 		"Scroll back buffer lines used for tab completion",
+		"",
 		config_autotab
 	},
 
 	{
 		"BUFFER SIZE",
-		"",
 		"The size of the scroll back buffer",
+		"",
 		config_buffersize
 	},
 
 	{
 		"CHARSET",
-		"",
 		"The character set encoding used by TinTin++",
+		"",		
 		config_charset
 	},
 
@@ -197,8 +197,8 @@ struct config_type config_table[] =
 
 	{
 		"CONNECT RETRY",
-		"",
 		"Seconds TinTin++ sessions try to connect on failure.",
+		"",
 		config_connectretry
 	},
 
@@ -218,8 +218,8 @@ struct config_type config_table[] =
 
 	{
 		"COMMAND COLOR",
-		"",
 		"The color of echoed commands",
+		"",		
 		config_commandcolor
 	},
 
@@ -234,15 +234,15 @@ struct config_type config_table[] =
 
 	{
 		"HISTORY SIZE",
-		"",
 		"The size of the command history",
+		"",		
 		config_historysize
 	},
 
 	{
 		"LOG",
-		"",
 		"The data format of the log files",
+		"",		
 		config_log
 	},
 
@@ -254,10 +254,10 @@ struct config_type config_table[] =
 	},
 
 	{
-		"MATH",
+		"MATHSTR",
+		"String is evaluated non-zero for #math, #if",	
 		"Compatible #math, #if behavior",
-		"String is evaluated non-zero for #math, #if",
-		config_math
+		config_mathstr
 	},	
 
 	{
@@ -269,8 +269,8 @@ struct config_type config_table[] =
 
 	{
 		"PACKET PATCH",
-		"",
 		"Seconds TinTin++ will try to patch broken packets",
+		"",		
 		config_packetpatch
 	},
 
@@ -283,8 +283,8 @@ struct config_type config_table[] =
 
 	{
 		"REPEAT CHAR",
-		"",
 		"The character used for repeating commands",
+		"",		
 		config_repeatchar
 	},
 
@@ -304,9 +304,16 @@ struct config_type config_table[] =
 
 	{
 		"TINTIN CHAR",
-		"",
 		"The character used for TinTin++ commands",
+		"",		
 		config_tintinchar
+	},
+
+	{
+		"UTF8DW",
+		"CJK double-width char and/or legacy MBCS host",
+		"Normal single-width UTF-8 host",		
+		config_utf8dw
 	},
 
 	{
@@ -318,8 +325,8 @@ struct config_type config_table[] =
 
 	{
 		"VERBATIM CHAR",
-		"",
 		"The character used for unparsed text",
+		"",		
 		config_verbatimchar
 	},
 
@@ -581,55 +588,55 @@ struct cursor_type cursor_table[] =
 	{
 		"BACKSPACE",
 		"Delete backward character",
-		"",
+		"\010",		// ^H backspace
 		cursor_backspace
 	},
 	{
 		"BACKWARD",
 		"Move cursor backward",
-		"",
+		"\002",		// ^B
 		cursor_left
 	},
 	{
 		"CLEAR LEFT",
 		"Delete from cursor to start of input",
-		"",
+		"\025",		// ^U
 		cursor_clear_left
 	},
 	{
 		"CLEAR LINE",
 		"Delete the input line",
-		"",
+		"\003",		// ^C
 		cursor_clear_line
 	},
 	{
 		"CLEAR RIGHT",
 		"Delete from cursor to end of input",
-		"",
+		"\013",		// ^K
 		cursor_clear_right
 	},
 	{
 		"CONVERT META",
 		"Meta convert the next character",
-		"",
+		"\026",		// ^V
 		cursor_convert_meta
 	},
 	{
 		"CTRL DELETE",
 		"Delete one character, exit on an empty line",
-		"",
+		"\004",		// ^D
 		cursor_delete_or_exit
 	},
 	{
 		"DELETE",
 		"Delete character at cursor",
-		"[3~",
+		"\033[3~",
 		cursor_delete
 	},
 	{
 		"DELETE WORD LEFT",
 		"Delete backwards till next space",
-		"",
+		"\027",		// ^W
 		cursor_delete_word_left
 	},
 	{
@@ -653,7 +660,7 @@ struct cursor_type cursor_table[] =
 	{
 		"END",
 		"Move cursor to end of input",
-		"",
+		"\005",		// ^E
 		cursor_end
 	},
 	{
@@ -671,7 +678,7 @@ struct cursor_type cursor_table[] =
 	{
 		"FORWARD",
 		"Move cursor forward",
-		"",
+		"\006",		// ^F
 		cursor_right
 	},
 	{
@@ -683,25 +690,25 @@ struct cursor_type cursor_table[] =
 	{
 		"HISTORY NEXT",
 		"Select next command history entry",
-		"",
+		"\016",		// ^N
 		cursor_history_next
 	},
 	{
 		"HISTORY PREV",
 		"Select previous command history entry",
-		"",
+		"\020",		// ^P
 		cursor_history_prev
 	},
 	{
 		"HISTORY SEARCH",
 		"Search command history",
-		"",
+		"\022",		// ^R
 		cursor_history_search
 	},
 	{
 		"HOME",
 		"Move the cursor to start of input",
-		"",
+		"\001",		// ^A
 		cursor_home
 	},
 	{
@@ -719,37 +726,37 @@ struct cursor_type cursor_table[] =
 	{
 		"MIXED TAB BACKWARD",
 		"Tab completion on last word, search backward",
-		"[Z", // shift-tab
+		"\033[Z", 	// shift-tab
 		cursor_mixed_tab_backward
 	},
 	{
 		"MIXED TAB FORWARD",
 		"Tab completion on last word, search forward",
-		"\t",
+		"\t",		// ^I tab
 		cursor_mixed_tab_forward
 	},
 	{
 		"NEXT WORD",
 		"Move cursor to the next word",
-		"f",
+		"\033f",
 		cursor_right_word
 	},
 	{
 		"PASTE BUFFER",
 		"Paste the previously deleted input text",
-		"",
+		"\031",		// ^Y
 		cursor_paste_buffer
 	},
 	{
 		"PREV WORD",
 		"Move cursor to the previous word",
-		"b",
+		"\033b",
 		cursor_left_word
 	},
 	{
 		"REDRAW INPUT",
 		"Redraw the input line",
-		"",
+		"\014",		// ^L
 		cursor_redraw_input
 	},
 	{
@@ -761,7 +768,7 @@ struct cursor_type cursor_table[] =
 	{
 		"SUSPEND",
 		"Suspend program, return with fg",
-		"",
+		"\032",		// ^Z
 		cursor_suspend
 	},
 	{
@@ -778,74 +785,74 @@ struct cursor_type cursor_table[] =
 	},
 
 	{
-		"", "", "[5~",   cursor_buffer_up
+		"", "", "\033[5~",  cursor_buffer_up
 	},
 	{
-		"", "", "[6~",   cursor_buffer_down
+		"", "", "\033[6~",  cursor_buffer_down
 	},
 
 	{
-		"", "", "",      cursor_buffer_lock
+		"", "", "\024",     cursor_buffer_lock	// ^T
 	},
 	{
-		"", "", "OM",    cursor_enter
+		"", "", "\033OM",   cursor_enter
 	},
 	{
-		"", "", "[7~",   cursor_home
+		"", "", "\033[7~",  cursor_home
 	},
 	{
-		"", "", "[1~",   cursor_home
+		"", "", "\033[1~",  cursor_home
 	},
 	{
-		"", "", "OH",    cursor_home
+		"", "", "\033OH",   cursor_home
 	},
 	{
-		"", "", "[H",    cursor_home
+		"", "", "\033[H",   cursor_home
 	},
 	{
-		"", "", "OD",    cursor_left
+		"", "", "\033OD",   cursor_left
 	},
 	{
-		"", "", "[D",    cursor_left
+		"", "", "\033[D",   cursor_left
 	},
 	{
-		"", "", "[8~",   cursor_end
+		"", "", "\033[8~",  cursor_end
 	},
 	{
-		"", "", "[4~",   cursor_end
+		"", "", "\033[4~",  cursor_end
 	},
 	{
-		"", "", "OF",    cursor_end
+		"", "", "\033OF",   cursor_end
 	},
 	{
-		"", "", "[F",    cursor_end
+		"", "", "\033[F",   cursor_end
 	},
 	{
-		"", "", "OC",    cursor_right
+		"", "", "\033OC",   cursor_right
 	},
 	{
-		"", "", "[C",    cursor_right
+		"", "", "\033[C",   cursor_right
 	},
 	{
-		"", "", "",      cursor_backspace
+		"", "", "\177",     cursor_backspace	// ^? DEL
 	},
 	{
-		"", "", "OB",    cursor_history_next
+		"", "", "\033OB",   cursor_history_next
 	},
 	{
-		"", "", "[B",    cursor_history_next
+		"", "", "\033[B",   cursor_history_next
 	},
 	{
-		"", "", "OA",    cursor_history_prev
+		"", "", "\033OA",   cursor_history_prev
 	},
 	{
-		"", "", "[A",    cursor_history_prev
+		"", "", "\033[A",   cursor_history_prev
 	},
 	{
-		"", "", "",     cursor_delete_word_left
+		"", "", "\033\177", cursor_delete_word_left
 	},
 	{
-		"", "", "d",     cursor_delete_word_right
+		"", "", "\033d",    cursor_delete_word_right
 	},
 	{
 		"",

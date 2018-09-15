@@ -51,7 +51,8 @@ DO_COMMAND(do_configure)
 				tintin_printf2(ses, "[%-13s] [%8s] %s", 
 					node->left,
 					node->right,
-					strcmp(node->right, "ON") == 0 ? config_table[index].msg_on : config_table[index].msg_off);
+					( !*node->right || strcasecmp(node->right, "OFF") == 0 )
+					? config_table[index].msg_off : config_table[index].msg_on );
 			}
 		}
 
@@ -511,36 +512,6 @@ DO_CONFIG(config_autotab)
 	return ses;
 }
 
-DO_CONFIG(config_charset)
-{
-	DEL_BIT(ses->flags, SES_FLAG_BIG5);
-	DEL_BIT(ses->flags, SES_FLAG_UTF8);
-	DEL_BIT(ses->flags, SES_FLAG_MIXED);	
-	if (!strcasecmp(arg, "BIG5"))
-	{
-		SET_BIT(ses->flags, SES_FLAG_BIG5);
-	}
-	else if (!strcasecmp(arg, "UTF-8"))
-	{
-		SET_BIT(ses->flags, SES_FLAG_UTF8);
-	}
-	else if (!strcasecmp(arg, "MIXED"))
-	{
-		// Mixed mode: MUD uses legacy multibyte codepage. User uses UTF-8 terminal and tintin file.
-		SET_BIT(ses->flags, SES_FLAG_UTF8);
-		SET_BIT(ses->flags, SES_FLAG_MIXED);
-	}
-	else if (strcasecmp(arg, "ASCII") != 0)
-	{
-		show_error(ses, LIST_CONFIG, "#SYNTAX: #CONFIG {%s} <ASCII|BIG5|UTF-8|MIXED>", config_table[index].name);
-
-		return NULL;
-	}
-	update_node_list(ses->list[LIST_CONFIG], config_table[index].name, capitalize(arg), "");
-
-	return ses;
-}
-
 DO_CONFIG(config_256color)
 {
 	if (!strcasecmp(arg, "AUTO"))
@@ -573,19 +544,91 @@ DO_CONFIG(config_256color)
 	return ses;
 }
 
-DO_CONFIG(config_math)
+DO_CONFIG(config_charset)
 {
-	if (!strcasecmp(arg, "COMPAT"))
+	DEL_BIT(ses->flags, SES_FLAG_BIG5);
+	DEL_BIT(ses->flags, SES_FLAG_UTF8);
+	if (!strcasecmp(arg, "BIG5"))
 	{
-		DEL_BIT(ses->flags, SES_FLAG_MATHEVAL);
+		SET_BIT(ses->flags, SES_FLAG_BIG5);
+		free(gtd->hostcp) ; gtd->hostcp = strdup("BIG5");
 	}
-	else if (!strcasecmp(arg, "EVAL"))
+	else if (!strcasecmp(arg, "UTF8") ||!strcasecmp(arg, "UTF-8"))
 	{
-		SET_BIT(ses->flags, SES_FLAG_MATHEVAL);
+		SET_BIT(ses->flags, SES_FLAG_UTF8);
+		free(gtd->hostcp) ; gtd->hostcp = strdup("UTF-8");
+	}
+	else if (strcasecmp(arg, "ASCII") == 0)
+	{
+		free(gtd->hostcp) ; gtd->hostcp = strdup("ASCII");
 	}
 	else
 	{
-		show_error(ses, LIST_CONFIG, "#SYNTAX: #CONFIG MATH <COMPAT|EVAL>");
+		show_error(ses, LIST_CONFIG, "#SYNTAX: #CONFIG {%s} <ASCII|BIG5|UTF8>", config_table[index].name);
+
+		return NULL;
+	}
+	update_node_list(ses->list[LIST_CONFIG], config_table[index].name, capitalize(arg), "");
+
+	return ses;
+}
+
+DO_CONFIG(config_utf8dw)
+{
+	int cpid;
+
+	if (!HAS_BIT(ses->flags, SES_FLAG_UTF8))
+	{
+		show_error(ses, LIST_CONFIG, "#ERROR: #CONFIG UTF8: NOT UTF8 CHARSET.");
+		return NULL;
+	}
+
+	if (!strcasecmp(arg, "ON"))		
+	{
+		SET_BIT(ses->flags, SES_FLAG_U8DW);
+	}	
+	else if (!strcasecmp(arg, "OFF"))
+	{
+		DEL_BIT(ses->flags, SES_FLAG_U8DW);
+		DEL_BIT(ses->flags, SES_FLAG_U8CONV);
+		gtd->hostcp = 0;
+	}
+	else if ((cpid = CPNameToCPID(arg)) > 0)
+	{
+		// Mixed mode: MUD uses legacy multibyte codepage. 
+		// Player uses UTF-8 terminal and tintin file.
+		SET_BIT(ses->flags, SES_FLAG_U8CONV);
+
+		free(gtd->hostcp) ; gtd->hostcp = strdup(capitalize(arg));
+		// CJK codepage uses double-width char.
+		if (cpid == 936 || cpid == 950 || cpid == 932 || cpid == 949)
+		{
+			SET_BIT(ses->flags, SES_FLAG_U8DW);
+		}
+	}
+	else
+	{
+		show_error(ses, LIST_CONFIG, "#SYNTAX: #CONFIG UTF8DW <ON|OFF|<host codepage>>");
+		return NULL;
+	}
+	update_node_list(ses->list[LIST_CONFIG], config_table[index].name, capitalize(arg), "");
+	
+	return ses;
+}
+
+DO_CONFIG(config_mathstr)
+{
+	if (!strcasecmp(arg, "ON"))
+	{
+		SET_BIT(ses->flags, SES_FLAG_MATHSTR);
+	}
+	if (!strcasecmp(arg, "OFF"))
+	{
+		DEL_BIT(ses->flags, SES_FLAG_MATHSTR);
+	}
+	else
+	{
+		show_error(ses, LIST_CONFIG, "#SYNTAX: #CONFIG MATHSTR <ON|OFF>");
 
 		return NULL;
 	}

@@ -167,6 +167,11 @@ int word_wrap(struct session *ses, char *textin, char *textout, int display)
 			else if (HAS_BIT(ses->flags, SES_FLAG_UTF8) && (*pti & 192) == 192)
 			{
 				*pto++ = *pti++;
+			
+				if (HAS_BIT(ses->flags, SES_FLAG_U8DW) && (pti[0] & 192) == 128 && (pti[1] & 192) == 128 )
+				{
+					ses->cur_col++;
+				}
 
 				while ((*pti & 192) == 128)
 				{
@@ -298,6 +303,10 @@ int word_wrap_split(struct session *ses, char *textin, char *textout, int skip, 
 			{
 				*pto++ = *pti++;
 
+				if (HAS_BIT(ses->flags, SES_FLAG_U8DW) && (pti[0] & 192) == 128 && (pti[1] & 192) == 128 )
+				{
+					ses->cur_col++;
+				}
 				while ((*pti & 192) == 128)
 				{
 					*pto++ = *pti++;

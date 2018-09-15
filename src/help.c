@@ -1156,7 +1156,8 @@ struct help_type help_table[] =
 		"\n"
 		"         Non-empty string can be evaluated as non-zero number value.\n"
 		"         Same applies to #if, #elseif and #while test statement.\n"
-		"         This and below behaviors are controlled by #config math compat|eval.\n"	
+		"         This and below behaviors are controlled by #config {mathstr} on/off.\n"
+		"\n"		
 		"         Unary ! and ? operator can test string. Empty string or undefined\n"
 		"         variable are considered as number 0. To test if number or string,\n"
 		"         unary operator + on string always evaluated as number 0,\n"
@@ -1806,7 +1807,7 @@ DO_COMMAND(do_help)
 			tintin_printf2(ses, "No help found for '%s'", left);
 		}
 		else
-			tintin_puts2(ses, "\e[0m");	// Reset terminal back to normal default
+			tintin_puts2(ses, "\033[0m");	// Reset terminal back to normal default
 	}
 	return ses;
 }

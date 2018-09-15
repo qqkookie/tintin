@@ -66,8 +66,8 @@ DO_COMMAND(do_highlight)
 			tintin_printf2(ses, "#HIGHLIGHT: VALID COLORS ARE:\n");
 			tintin_printf2(ses, 
 			"none reset bold dim under blink reverse normal ununder unblink unreverse\n"
-			"black red green yellow blue magenta cyan white default and [bg] <color>\n"
-			"azure ebony jade lime orange pink silver tan violet and [bg|lt] <color>\n"
+			"black red green yellow blue magenta cyan white default and <bg> <color>\n"
+			"azure ebony jade lime orange pink silver tan violet and <bg|lt> <color>\n"
 			"Prefix 'bg' and 'lt' for background and light color. #help highlight for list.");
 		}
 		else

@@ -477,8 +477,9 @@ void init_tintin(int greeting)
 		else
 		{
 			tintin_printf2(gts,
-				"\e[0;37mT I N T I N + +   %s"
-				"\n\n\e[0;36mT\e[0;37mhe K\e[0;36mi\e[0;37mcki\e[0;36mn\e[0;37m \e[0;36mT\e[0;37mickin D\e[0;36mi\e[0;37mkuMUD Clie\e[0;36mn\e[0;37mt\n\n"
+				"\033[0;37mT I N T I N + +   %s"
+				"\n\n\033[0;36mT\033[0;37mhe K\033[0;36mi\033[0;37mcki\033[0;36mn\033[0;37m "
+				"\033[0;36mT\033[0;37mickin D\033[0;36mi\033[0;37mkuMUD Clie\033[0;36mn\033[0;37mt\n\n"
 				"Code by Peter Unold, Bill Reis, and Igor van den Hoven\n",
 				CLIENT_VERSION);
 		}

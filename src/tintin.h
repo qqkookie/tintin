@@ -336,10 +336,11 @@ enum operators
 #define SES_FLAG_SCROLLSTOP           (1LL << 23)
 #define SES_FLAG_CONVERTMETA          (1LL << 24)
 #define SES_FLAG_RUN                  (1LL << 25)
-#define SES_FLAG_UTF8                 (1LL << 26)
-#define SES_FLAG_BIG5                 (1LL << 27)
-#define SES_FLAG_MIXED                (1LL << 28)
-#define SES_FLAG_MATHEVAL             (1LL << 29)
+#define SES_FLAG_BIG5                 (1LL << 26)
+#define SES_FLAG_UTF8                 (1LL << 27)
+#define SES_FLAG_U8DW                 (1LL << 28)
+#define SES_FLAG_U8CONV               (1LL << 29)
+#define SES_FLAG_MATHSTR              (1LL << 30)
 #define SES_FLAG_256COLOR             (1LL << 32)
 #define SES_FLAG_IGNORELINE           (1LL << 33)
 #define SES_FLAG_CLOSED               (1LL << 34)
@@ -702,6 +703,8 @@ struct tintin_data
 	char                  * vars[100];
 	char                  * cmds[100];
 	int                     args[100];
+	char                  * hostcp;
+	char                  * fileread;
 };
 
 struct chat_data
@@ -1382,8 +1385,9 @@ extern DO_CONFIG(config_colorpatch);
 extern DO_CONFIG(config_mccp);
 extern DO_CONFIG(config_autotab);
 extern DO_CONFIG(config_charset);
+extern DO_CONFIG(config_utf8dw);
+extern DO_CONFIG(config_mathstr);
 extern DO_CONFIG(config_256color);
-extern DO_CONFIG(config_math);
 
 #endif
 
@@ -1698,6 +1702,7 @@ extern int read_buffer_mud(struct session *ses);
 extern void readmud(struct session *ses);
 extern void process_mud_output(struct session *ses, char *linebuf, int prompt);
 extern int utf8convert(int fromutf, char *linebuf, int inlen);
+extern int CPNameToCPID(char *arg);
 
 #endif
 #ifndef __TELOPT_H__

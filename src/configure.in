@@ -74,10 +74,14 @@ AC_CHECK_HEADERS([pcre.h],,
 	[AC_MSG_ERROR([pcre header file not found, is the development part present])])
 AC_CHECK_HEADERS([gnutls/gnutls.h],
 	[AC_DEFINE([HAVE_GNUTLS_H],,
-	[Define to 1 if you have <gnutls/gnutls.h>.])],
-	[AC_MSG_WARN([gnutls header file not found, is the develoment part present])])
-AC_CHECK_HEADERS([lua.h],[AC_DEFINE([HAVE_LUA_H]),,
-	[Define to 1 if you have <lua.h>.],)
+		[Define to 1 if you have <gnutls/gnutls.h>.])],
+		[AC_MSG_WARN([gnutls header file not found, is the develoment part present])])
+AC_CHECK_HEADERS([lua.h],
+	[AC_DEFINE([HAVE_LUA_H],,
+		[Define to 1 if you have <lua.h>.])],,)
+AC_CHECK_HEADERS([iconv.h],
+	[AC_DEFINE([HAVE_ICONV_H],,
+		[Define to 1 if you have <iconv.h>.])],,)
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
@@ -113,6 +117,9 @@ AC_CHECK_LIB(gnutls, gnutls_init)
 AC_CHECK_LIB(m, sqrt)
 AC_CHECK_LIB(lua, luaL_newstate,,
 	[AC_MSG_WARN([Lua runtime library not working, and the corresponding development (header) file])])
+AC_CHECK_LIB(iconv, iconv_open,,
+	[AC_MSG_WARN([If libiconv.a has no iconv_open. May redefined as libiconv_open])])	
+AC_CHECK_LIB(iconv, libiconv_open,,)
 
 
 AC_CHECK_PROGS(MAKE, gmake make)

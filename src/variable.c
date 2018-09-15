@@ -472,6 +472,11 @@ void wrapstring(struct session *ses, char *str)
 			{
 				pti++;
 
+				if (HAS_BIT(ses->flags, SES_FLAG_U8DW) && (pti[0] & 192) == 128 && (pti[1] & 192) == 128 )
+				{
+					col++;
+				}
+
 				while ((*pti & 192) == 128)
 				{
 					pti++;

@@ -377,14 +377,14 @@ void process_mud_output(struct session *ses, char *linebuf, int prompt)
 
 	if (HAS_BIT(ses->flags, SES_FLAG_COLORPATCH))
 	{
-		sprintf(line, "%s%s%s", ses->color, linebuf, "\e[0m");
+		sprintf(line, "%s%s%s", ses->color, linebuf, "\033[0m");
 
 		get_color_codes(ses->color, linebuf, ses->color);
 
 		linebuf = line;
 	}
 
-	if ( HAS_BIT(ses->flags, SES_FLAG_MIXED) && HAS_BIT(ses->flags, SES_FLAG_UTF8))
+	if ( HAS_BIT(ses->flags, SES_FLAG_U8CONV) && HAS_BIT(ses->flags, SES_FLAG_UTF8))
 	{
 		utf8convert(FALSE, linebuf, -1);
 	}
@@ -429,31 +429,94 @@ void process_mud_output(struct session *ses, char *linebuf, int prompt)
 	return;
 }
 
-#ifdef __CYGWIN__
-#include <windows.h>
+#if defined(__CYGWIN__) && !defined(HAVE_ICONV_H)
 
-// For Cywin Wintin++ only. CyWin iconv(3) not woking.
+// For Cywin Wintin++ only. CyWin iconv(3) not woking without iconv DLL.
+#include <windows.h>
 
 int utf8convert(int fromutf, char *linebuf, int inlen)
 {
-	static int codepage = -1;
-	if (codepage == CP_UTF8)
-		return 0;
+	static char *cpname = NULL;
+	static int CPid = -1;
 
-	if (codepage == -1)
-		codepage = GetACP();
+	if (gtd->hostcp && gtd->hostcp != cpname)
+	{
+		cpname = gtd->hostcp;
+		CPid = CPNameToCPID(cpname);
+	}
+	
+	if (!cpname || CPid == CP_UTF8)
+		return 0;
 
 	wchar_t wcbuf[STRING_SIZE];
 
-	int wlen = MultiByteToWideChar((fromutf ? CP_UTF8 : CP_ACP), 0, linebuf, inlen, wcbuf, STRING_SIZE);
+	int wlen = MultiByteToWideChar((fromutf ? CP_UTF8 : CPid ), 0, linebuf, inlen, wcbuf, STRING_SIZE);
 		
 	int  olen = -1;
 	if ( wlen > 0 )
 	{
-		olen = WideCharToMultiByte((fromutf ? CP_ACP : CP_UTF8), 0, wcbuf, wlen, linebuf, STRING_SIZE, NULL, NULL);
+		olen = WideCharToMultiByte((fromutf ? CPid : CP_UTF8), 0, wcbuf, wlen, linebuf, STRING_SIZE, NULL, NULL);
 	}
+
 	return olen;
 }
+
+#else
+
+#include <iconv.h>
+
+int utf8convert(int fromutf, char *linebuf, int inlen) 
+{
+	static char *cpname = NULL;
+	static iconv_t cd_to = (iconv_t)-1, cd_from = (iconv_t)-1;
+
+	if (gtd->hostcp != cpname)
+	{
+		if ( cd_to != (void*)-1)
+		{
+			 iconv_close(cd_to);
+			 iconv_close(cd_from);
+		}
+
+		cpname = gtd->hostcp;
+
+		if ( cpname && *cpname && strcmp(cpname, "UTF-8" ) != 0 )
+		{
+			cd_from  = iconv_open(cpname, "UTF-8");
+			cd_to = iconv_open("UTF-8", cpname);			
+		}
+		else
+		{
+ 			cd_to = (iconv_t)-1;
+			cd_from = (iconv_t)-1;
+		}
+	}
+
+	if (!cpname || cd_to == (iconv_t)-1)
+	{
+		return 0;
+	}
+
+	char buf[STRING_SIZE];	
+	char *inbuf = linebuf, *outbuf = buf;
+	size_t conv, inleft, outleft = sizeof buf -1;;
+
+	inleft = (inlen >= 0 ? inlen : strlen(linebuf)+1);
+
+	conv = iconv((fromutf ? cd_from : cd_to), &inbuf, &inleft, &outbuf, &outleft );
+	// conv += iconv((fromutf ? cd_from : cd_to), NULL, NULL, &outbuf, &outleft );
+
+	if ( conv == (size_t)-1)
+	{
+		return 0;
+	}	
+	strcpy(linebuf, buf);
+
+	return (outbuf-buf);
+}
+
+#endif
+
 /*
 	Test string : "이것은 한글입니다. Happy life! 안녕"
 
@@ -469,8 +532,62 @@ int utf8convert(int fromutf, char *linebuf, int inlen)
 		0xa4, 0x2e, 0x20, 0x48, 0x61, 0x70, 0x70, 0x79, 0x20, 0x6c, 0x69, 0x66,
 		0x65, 0x21, 0x20, 0xec, 0x95, 0x88, 0xeb, 0x85, 0x95, 0x00,
 	};
-*/	
-#else
-int utf8convert(int fromutf, char *linebuf, int inlen) 
-	{ return 0; } 	// Dummy
-#endif
+*/
+
+struct cp_map {
+	char *name;
+	int cpid;
+};
+
+struct cp_map cp_table[] =
+{
+	{ "CP437",	 			437		},	// US ASCII
+	{ "ASCII", 				437		},
+	{ "ANSI_X3.4-1968",		437		},	
+	{ "CP1252",	 			1252	},	// MS Windows US/Europe
+	{ "CP850",	 			850		},	// Latin-1, Western Europe
+	{ "ISO-8859-1",	 		850		},
+
+	{ "CP936",	 			936		},	// Simplified Chinese
+	{ "GB2312",	 			936		},
+	{ "EUC-CN",	 			936		},
+	{ "CP950",	 			950		},	// Traditional Chinese, Big5
+	{ "BIG5",	 			950		},
+	{ "CP932",	 			932		},	// SHift JIS Japanese
+	{ "SJIS",	 			932		},
+	{ "EUC-JP",	 			932		},
+	{ "CP949",	 			949		},	// Korean KSC-5601
+	{ "EUC-KR",	 			949		},	
+
+	{ "UTF-8",	 			65001	},
+	{ "UTF8",	 			65001	},
+
+	{ "C",	 				0		},
+	{ "ACP",	 			0		},
+	{ NULL,	 				0		},
+};
+
+int CPNameToCPID(char *arg)
+{
+	struct cp_map *cpp;
+	int cpid = -1;;
+
+	for ( cpp = cp_table; cpp->name; cpp++ )
+	{
+		if ( strcasecmp(cpp->name, arg) == 0 )
+		{
+			cpid = cpp->cpid;
+			break;
+		}
+	}
+
+	if (cpid < 0)
+	{
+		if (strncasecmp(arg, "CP", 2 ) == 0 || atoi(arg+2) > 0)
+		{
+			cpid = atoi(arg+2);
+		}
+	}
+
+	return cpid; 
+}
