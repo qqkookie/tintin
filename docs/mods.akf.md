@@ -236,9 +236,17 @@ Sat Sep 15 12:00:00 2018 Akorn Farmer
 * tintin.h:
 - Add global data gtd->hostcp, gtd->fileread
 
-* Configigure.in
-* config.h
+* Configigure.in:
+* config.h:
 - Fix to add HAVE_ICONV_H and -liconv libray autoconfigure.
+
+--------------------------------------------------------------------------------
+
+Sun Sep 16 12:00:00 2018 Akorn Farmer
+
+* cursor.c:
+* input.c:
+- Fix input position error for double-width characters in input line
 
 --------------------------------------------------------------------------------
 <EOT>

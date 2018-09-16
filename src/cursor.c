@@ -94,7 +94,10 @@ int inputline_str_str_len(int start, int end)
 				&& (gtd->input_buf[raw_cnt+2] & 192) == 128 )
 				{
 					str_cnt++;
-					ret_cnt++;
+					if (str_cnt > start)
+					{
+						ret_cnt++;
+					}
 				}
 
 			raw_cnt++;
@@ -137,9 +140,9 @@ int inputline_raw_str_len(int start, int end)
 			if (HAS_BIT(gtd->ses->flags, SES_FLAG_U8DW) 
 				&& (gtd->input_buf[raw_cnt+1] & 192) == 128 
 				&& (gtd->input_buf[raw_cnt+2] & 192) == 128 )
-				{
-					ret_cnt++;
-				}
+			{
+				ret_cnt++;
+			}
 
 			raw_cnt++;
 
@@ -177,10 +180,9 @@ int inputline_str_raw_len(int start, int end)
 			if (HAS_BIT(gtd->ses->flags, SES_FLAG_U8DW) 
 				&& (gtd->input_buf[raw_cnt+1] & 192) == 128 
 				&& (gtd->input_buf[raw_cnt+2] & 192) == 128 )
-				{
-					ret_cnt += (str_cnt >= start) ? 1 : 0;
-					str_cnt++;	
-				}
+			{
+				str_cnt++;
+			}
 
 			raw_cnt++;
 
@@ -200,40 +202,15 @@ int inputline_str_raw_len(int start, int end)
 	return ret_cnt;
 }
 
-/*
 int inputline_raw_raw_len(int start, int end)
 {
-	int raw_cnt, ret_cnt;
-
-	raw_cnt = ret_cnt = 0;
-
-	while (raw_cnt < gtd->input_len)
+	if (gtd->input_len < end)
 	{
-		if (raw_cnt >= end)
-		{
-			break;
-		}
-
-		if (HAS_BIT(gtd->ses->flags, SES_FLAG_UTF8) && (gtd->input_buf[raw_cnt] & 192) == 192)
-		{
-			ret_cnt += (raw_cnt >= start) ? 1 : 0;
-			raw_cnt++;
-
-			while (raw_cnt < gtd->input_len && (gtd->input_buf[raw_cnt] & 192) == 128)
-			{
-				ret_cnt += (raw_cnt >= start) ? 1 : 0;
-				raw_cnt++;
-			}
-		}
-		else
-		{
-			ret_cnt += (raw_cnt >= start) ? 1 : 0;
-			raw_cnt++;
-		}
+		end = gtd->input_len;
 	}
-	return ret_cnt;
+
+	return (end > start ? end-start : 0);
 }
-*/
 
 // Get string length of the input area
 
@@ -350,7 +327,7 @@ DO_CURSOR(cursor_check_line)
 {
 	if (gtd->input_pos - gtd->input_hid > inputline_max_str_len() - 3)
 	{
-		return cursor_redraw_line(ses, "");
+		return cursor_redraw_line(ses, ""); 
 	}
 
 	if (gtd->input_hid && gtd->input_pos - gtd->input_hid < 2)
@@ -527,6 +504,14 @@ DO_CURSOR(cursor_delete_word_left)
 		if (!HAS_BIT(ses->flags, SES_FLAG_UTF8) || (gtd->input_buf[gtd->input_cur] & 192) != 128)
 		{
 			gtd->input_pos--;
+
+			if (HAS_BIT(ses->flags, SES_FLAG_UTF8) && HAS_BIT(ses->flags, SES_FLAG_U8DW)
+				&& (gtd->input_buf[gtd->input_cur] & 192) == 192
+				&& (gtd->input_buf[gtd->input_cur+1] & 192) == 128 
+				&& (gtd->input_buf[gtd->input_cur+2] & 192) == 128 )
+			{
+				gtd->input_pos--;
+			}
 		}
 
 		gtd->input_cur--;
@@ -980,6 +965,14 @@ DO_CURSOR(cursor_left_word)
 		if (!HAS_BIT(ses->flags, SES_FLAG_UTF8) || (gtd->input_buf[gtd->input_cur] & 192) != 128)
 		{
 			gtd->input_pos--;
+
+			if (HAS_BIT(ses->flags, SES_FLAG_UTF8) && HAS_BIT(ses->flags, SES_FLAG_U8DW)
+				&& (gtd->input_buf[gtd->input_cur] & 192) == 192
+				&& (gtd->input_buf[gtd->input_cur+1] & 192) == 128 
+				&& (gtd->input_buf[gtd->input_cur+2] & 192) == 128 )
+			{
+				gtd->input_pos--;
+			}
 		}
 		gtd->input_cur--;
 	}
@@ -1022,7 +1015,7 @@ DO_CURSOR(cursor_redraw_input)
 
 		gtd->input_cur = gtd->input_len;
 
-		gtd->input_pos = gtd->input_len % ses->cols;
+		gtd->input_pos = inputline_raw_str_len(0, gtd->input_len) % ses->cols;
 	}
 }
 
@@ -1159,6 +1152,14 @@ DO_CURSOR(cursor_right_word)
 		if (!HAS_BIT(ses->flags, SES_FLAG_UTF8) || (gtd->input_buf[gtd->input_cur] & 192) != 128)
 		{
 			gtd->input_pos++;
+
+			if (HAS_BIT(ses->flags, SES_FLAG_UTF8) && HAS_BIT(ses->flags, SES_FLAG_U8DW)
+				&& (gtd->input_buf[gtd->input_cur] & 192) == 192
+				&& (gtd->input_buf[gtd->input_cur+1] & 192) == 128 
+				&& (gtd->input_buf[gtd->input_cur+2] & 192) == 128 )
+			{
+				gtd->input_pos++;
+			}			
 		}
 		gtd->input_cur++;
 	}
@@ -1376,7 +1377,7 @@ void cursor_show_completion(int input_now, int show_last_node)
 
 	gtd->input_len = input_now + strlen(node->left);
 	gtd->input_cur = gtd->input_len;
-	gtd->input_pos = gtd->input_len;
+	gtd->input_pos = inputline_raw_str_len(0, gtd->input_len);
 
 	cursor_redraw_line(gtd->ses, "");
 

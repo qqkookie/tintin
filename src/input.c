@@ -186,6 +186,14 @@ void read_line()
 					gtd->input_pos++;
 				}
 
+				if (HAS_BIT(gtd->ses->flags, SES_FLAG_UTF8) && HAS_BIT(gtd->ses->flags, SES_FLAG_U8DW) 
+					&& (gtd->input_buf[gtd->input_cur-3] & 192) == 192
+					&& (gtd->input_buf[gtd->input_cur-2] & 192) == 128
+					&& (gtd->input_buf[gtd->input_cur-1] & 192) == 128 )
+				{
+					gtd->input_pos++;
+				}
+
 				if (gtd->input_len != gtd->input_cur)
 				{
 					if (HAS_BIT(gtd->ses->flags, SES_FLAG_UTF8) && (gtd->macro_buf[cnt] & 192) == 128)
@@ -201,7 +209,7 @@ void read_line()
 				{
 					input_printf("%c", gtd->macro_buf[cnt]);
 				}
-
+	
 				gtd->macro_buf[0] = 0;
 				gtd->input_tmp[0] = 0;
 				gtd->input_buf[gtd->input_len] = 0;
