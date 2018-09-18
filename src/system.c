@@ -266,10 +266,12 @@ DO_COMMAND(do_textin)
 // 	#lua {<return_variable>} {<LUA_script>} arg1, arg2, ... 
 //	EX) #lua {aaa} {$script} a b c d ...
 
+static char cmdbuf[BUFFER_SIZE], *pbuf;
+
 DO_COMMAND(do_lua)
 {
 	int argc, error;
-	char var[BUFFER_SIZE], script[BUFFER_SIZE], arglist[20][BUFFER_SIZE], buf[BUFFER_SIZE];
+	char var[BUFFER_SIZE], script[BUFFER_SIZE], arglist[20][BUFFER_SIZE], rvbuf[BUFFER_SIZE];
 
 	arg = sub_arg_in_braces(ses, arg, var, GET_ONE, SUB_VAR|SUB_FUN);
 
@@ -285,13 +287,24 @@ DO_COMMAND(do_lua)
 		arg = sub_arg_in_braces(ses, arg, arglist[argc], GET_ONE, SUB_VAR|SUB_FUN);
 	}
 
+	extern int tt_lua_print(lua_State* Lx);
+	extern int tt_lua_write(lua_State* Lx);	
+	static const struct luaL_Reg printlib [] = 
+	{
+		{ "print", 	tt_lua_print	},
+		{ "write", 	tt_lua_write	},
+		{ NULL, 	NULL	}
+	};	
+
 	lua_State *Lx = luaL_newstate();	// opens Lua VM
+
 	while(Lx != NULL) 
 	{
 		luaL_openlibs(Lx);            	// opens libraries
 
 		error = luaL_loadstring(Lx, script); 
-		if (error) break;
+		if (error) 
+			break;
 
 		// add arg[1]-arg[20] global vars.
 		lua_createtable(Lx, argc, 0);
@@ -305,17 +318,30 @@ DO_COMMAND(do_lua)
 				lua_settable(Lx, -3);
 			}
 		}
+		
 		lua_setglobal(Lx,"arg");
 
+		// register my print() function
+		lua_getglobal(Lx, "_G");
+
+		// luaL_register(Lx, NULL, printlib); // for Lua versions < 5.2
+		luaL_setfuncs(Lx, printlib, 0);  // for Lua versions 5.2 or greater
+		
+		lua_pop(Lx, 1);
+
+		pbuf = cmdbuf; *pbuf = '\0';
+
+		// DO IT!
 		error = lua_pcall(Lx, 0, 1, 0);
-		if (error) break; 
+		if (error)
+			break; 
 		// tintin_printf2(ses, "LUA TYPE = [%s]", lua_typename(Lx, lua_type( Lx, 0)));
 
 		if (lua_type( Lx, 0) == LUA_TTABLE )
 		{
 			lua_pushvalue(Lx, 0);	// copy return value table
 			lua_pushnil(Lx);		// dummy key
-			buf[0] = '\0';
+			rvbuf[0] = '\0';
 
 			while (lua_next(Lx, -2))
 			{
@@ -325,23 +351,28 @@ DO_COMMAND(do_lua)
 				const char *value = lua_tostring(Lx, -2);
 				
 				if ( key )
-					cat_sprintf(buf, "{%s}{%s}", key , value ? value : "" );
+					cat_sprintf(rvbuf, "{%s}{%s}", key , value ? value : "" );
 
 				lua_pop (Lx, 2);
 			}			
 		}
-		else{
+		else
+		{
 			const char *val = lua_tostring(Lx, 0);
-			strcpy( buf, ( val ? val : "" ));
+			strcpy( rvbuf, ( val ? val : "" ));
 		}			
 	
-		set_nest_node(ses->list[LIST_VARIABLE], var, "%s", buf);	
+		set_nest_node(ses->list[LIST_VARIABLE], var, "%s", rvbuf);	
 		
-		// tintin_printf2(ses, "TT var [%s] = [%s]", var, buf);
+		// tintin_printf2(ses, "TT var [%s] = [%s], cmd = [%s]", var, rvbuf, cmdbuf);
+
+		if (*cmdbuf)
+			script_driver(ses, LIST_COMMAND, cmdbuf);
+
 		break;
 	}
 	
-	if ( error )
+	if (error)
 	{
 		show_error(ses, LIST_COMMAND, "#LUA: SCRIPT ERROR: %s", lua_tostring(Lx, -1) );
 		lua_pop(Lx, 1);  // pop error message from the stack
@@ -352,6 +383,64 @@ DO_COMMAND(do_lua)
 	refresh_terminal();
 
 	return ses;
+}
+
+int print_helper(lua_State* Lx, char *prbuf, char *delim)
+{
+    int nargs = lua_gettop(Lx);
+	const char *str;
+
+	prbuf[0] = '\0';
+
+    for (int i=1; i <= nargs; i++) 
+	{
+		str = NULL;
+        if (lua_isstring(Lx, i)) 
+		{
+			str = lua_tostring(Lx, i);
+			if (str)
+			{
+				if (delim && prbuf[0] )
+					strcat(prbuf, delim);
+				strcat(prbuf, str);	
+			}
+        }
+		else if (lua_isnumber(Lx, i))
+		{
+			lua_pushvalue(Lx, i);
+
+			str = lua_tostring(Lx, 1);
+			if (str && *str)
+			{
+				if (delim && prbuf[0])
+					strcat(prbuf, delim);
+				strcat(prbuf, str);
+			}
+
+			lua_pop(Lx, 1);
+		}
+		// non-string, non-numeric print() arg is discarded.
+    }
+
+	return strlen(prbuf);;
+}
+
+int tt_lua_print(lua_State* Lx)
+{
+	int len = print_helper(Lx, pbuf, "\t");
+
+	strcat(pbuf, "\n");
+	pbuf += len+1;
+
+	return len +1;
+}
+
+int tt_lua_write(lua_State* Lx)
+{
+	int len = print_helper(Lx, pbuf, NULL);
+	pbuf += len;
+
+	return len;
 }
 
 #else

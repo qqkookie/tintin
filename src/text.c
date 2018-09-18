@@ -155,6 +155,12 @@ int word_wrap(struct session *ses, char *textin, char *textout, int display)
 					pti = chi = lis;
 					pti++;
 				}
+				
+				if (HAS_BIT(ses->flags, SES_FLAG_INDENT))
+				{
+					*pto++ = ' '; *pto++ = ' ';
+					ses->cur_col = 3;
+				}
 			}
 		}
 		else

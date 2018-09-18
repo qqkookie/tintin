@@ -44,7 +44,7 @@ hhhhhh 는 6 글자 16 진수 (0-9, a-f, A-F ) 사용 가능
 
 <K81> , <K82>, <K83> 의 색을 바꿔서  #help 의 색을 바꿀 수 있습니다.
 
-ex: #var {_TK[81]}    {<058>} 이런식.
+ex: #var {_TK[81]}    {<058>} 이런 식.
 
 '{' 와 '<' 숫자 '>' '}' 사이에 공백이 없습니다.
 
@@ -94,6 +94,8 @@ ex: #var {_TK[81]}    {<058>} 이런식.
 즉 #if { $xxx == abc } 도  #if { "$xxx" == "abc" } 와 동일 해집니다.
 
 ? + ! unary 연산자도 스트링에 적용됩니다. 
+
+아직 정의되지 않은 변수는 empty 스트링으로 취급됩니다.
 
 ? 연산자는 0 이나 empty str 이면 0, 문자나 0 아닌 숫자는 1.
 
@@ -166,7 +168,13 @@ Lua 프로그램을 스트링 변수로 받아서 그걸 수행해서 결과를 
 
 array 형태의 값으로 반환하면 틴틴의 네스트 변수, 순서 리스트가 됩니다.
 
-이건 앞으로 Lua print 출력도 틴틴 명령으로 받을 수 있게 기능추가 예정임.
+Lua print() 문의 출력은 틴틴 명령으로 받아 수행됩니다.
+
+ex) #lua rv { print("#echo {HELLO, TINTIN. PI=", 3.14, "}")}
+
+Lua print() 문은 인수 사이에 탭 문자가 들어가고 끝에 newline 이 출력됩니다.
+
+Lua write() 문은 print()와 같은 데 탭이나 newline이 출력되지 않습니다.
 
 ------------------------------------------
 
@@ -190,6 +198,20 @@ ex) #alias {reload}	{ #KILL; #READ {} }
 
 -----------------------------------------------------------
 
+#TICKER 명령어에 자동 sync 기능이 추가되었습니다.
+
+#TICK {name} {SYNC} 나 #TICK {name} {DIFF} 는 타이머를 리스타트 합니다.
+
+#TICK {name} {DIFF} 는 추가로 타이머의 SYNC 시간 차이를 표시합니다. 
+
+#TICK {name} {TIME}은 다음 틱 까지 남은 시간 표시
+
+#TICK {name} {SHOW} 는 그 ticker가 정의된 정보를 표시합니다.
+
+나래머드의 tick 주기는 48.2 초 입니다.
+
+-----------------------------------------------------------
+
 히스토리 기능이 강화 되었습니다. 전에는 기본 session 의 히스토리만 파일에 저장되었는데 
 
 이젠 나중에 생성된 세션의 히스토리도 파일로 저장되고 재 실행시 각 세션간에 공유됩니다.
@@ -199,6 +221,12 @@ ex) #alias {reload}	{ #KILL; #READ {} }
 이제 #SPLIT 모드에서도 수직 스크롤바가 활성화 됩니다. 단  TOP row 는  0 이어야 합니다.
 
 예를 들어 "#SPLIT 0 2; #PROMPT {[%1,%2,%3]} {[%1, %2, %3] } {1}
+
+-----------------------------------------------------------
+
+#CONFIG WORDWRAP INDENT 라고 설정하면 긴 줄을 끊어 넘기고
+
+2번째 줄부터는 줄 앞에 2칸 공백을 삽입합니다.
 
 --------------------------------------------------------------------------------
 <EOT>
@@ -446,11 +474,30 @@ Sat Sep 15 12:00:00 2018 Akorn Farmer
 
 --------------------------------------------------------------------------------
 
-Sun Sep 16 12:00:00 2018 Akorn Farmer
+Wed Sep 19 12:00:00 2018 Akorn Farmer
 
 * cursor.c:
 * input.c:
 - Fix input position error for double-width characters in input line
+
+* system.c:
+- Lua print()/write() output is processed as tintin command script.
+
+* README:
+- Apply spelling correction and clean up of README document by icedwater@GITHUB
+- Add #math change summary.
+
+* text.c:
+- Add INDENT wordwrap option by rfrancis@GITHUB. 
+  But not separate option, but sub-option as #config wordwrap {indent}
+
+* tintin.h:
+- Add SES_FLAG_INDENT 
+- Reorganize SES_FLAG_* ordering
+
+* ticker.c:
+- #TICKER special command: {SHOW}, {TIME}, {SYNC}, {DIFF}
+  auto syncing and time reporting
 
 --------------------------------------------------------------------------------
 <EOT>

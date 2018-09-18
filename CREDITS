@@ -23,7 +23,7 @@ Bryan Turner                       see docs/mods.igr.md Mapper enhancements
 David Champion                     see docs/mods.igr.md Solaris forkpty fix
 Ben Love                           see docs/mods.igr.md Tab enhancements
 Adam Borowski                      see docs/mods.igr.md SSL implementation
-Akorn Farmer                       see docs/mods.akf.md Lua script, 24 bit truecolor, mixed CP option
+Akorn Farmer                       see docs/mods.akf.md All ver 2.1 changes
 
 Modification History
 --------------------
@@ -33,7 +33,7 @@ Modification History
  mods.rse.md aug 1998 mar 1999
  mods.dsc.md oct 1999 oct 2001
  mods.igr.md feb 2004
- mods.akf.md aug 2018
+ mods.akf.md sep 2018 ver 2.1
 
 Current Tintin++ Development Team
 ---------------------------------

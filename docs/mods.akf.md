@@ -242,11 +242,30 @@ Sat Sep 15 12:00:00 2018 Akorn Farmer
 
 --------------------------------------------------------------------------------
 
-Sun Sep 16 12:00:00 2018 Akorn Farmer
+Wed Sep 19 12:00:00 2018 Akorn Farmer
 
 * cursor.c:
 * input.c:
 - Fix input position error for double-width characters in input line
+
+* system.c:
+- Lua print()/write() output is processed as tintin command script.
+
+* README:
+- Apply spelling correction and clean up of README document by icedwater@GITHUB
+- Add #math change summary.
+
+* text.c:
+- Add INDENT wordwrap option by rfrancis@GITHUB. 
+  But not separate option, but sub-option as #config wordwrap {indent}
+
+* tintin.h:
+- Add SES_FLAG_INDENT 
+- Reorganize SES_FLAG_* ordering
+
+* ticker.c:
+- #TICKER special command: {SHOW}, {TIME}, {SYNC}, {DIFF}
+  auto syncing and time reporting
 
 --------------------------------------------------------------------------------
 <EOT>

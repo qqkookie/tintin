@@ -38,32 +38,69 @@ DO_COMMAND(do_tick)
 	arg = get_arg_in_braces(ses, arg, arg2, 1);
 	arg = get_arg_in_braces(ses, arg, arg3, 1);
 
-	if (*arg3 == 0)
-	{
-		strcpy(arg3, "60");
-	}
-	else
-	{
-		get_number_string(ses, arg3, arg3);
-	}
-
 	if (*arg1 == 0)
 	{
 		show_list(ses->list[LIST_TICKER], 0);
 	}
-	else if (*arg1 && *arg2 == 0)
+	else if (*arg2 && !strcasecmp(arg2, "SHOW"))
 	{
-		if (show_node_with_wild(ses, arg1, ses->list[LIST_TICKER]) == FALSE) 
+		if (show_node_with_wild(ses, arg1, ses->list[LIST_TICKER]) == FALSE)
+			goto not_found;
+	}
+	else if (!*arg2 || !strcasecmp(arg2, "TIME"))
+	{
+		struct listnode *node = search_node_list(ses->list[LIST_TICKER], arg1);
+		if (!node)
+			goto not_found;
+
+		tintin_printf(ses, "#TICKER {%s} TIME: %.2f", node->left, (node->data - gtd->time) / 1000000.0);
+	}
+	else if (!strcasecmp(arg2, "SYNC") || !strcasecmp(arg2, "DIFF"))
+	{	
+		struct listnode *node = search_node_list(ses->list[LIST_TICKER], arg1);
+		if (!node)
+			goto not_found;			
+
+		int tick = get_number(ses, node->pr) * 100;
+
+		int dif = (node->data - gtd->time) / 10000L; 		// in 1/100 sec.
+		if (dif > tick * 2 / 3)
+			dif -= tick;
+
+		if (!strcasecmp(arg2, "DIFF"))
 		{
-			show_message(ses, LIST_TICKER, "#TICK, NO MATCH(ES) FOUND FOR {%s}.", arg1);
+			tintin_printf(ses, "#TICKER {%s} DIFF: %+.2f", node->left, dif / 100.0);
+		}					
+
+		if (tick >= 1000)
+		{
+			if (dif < 0 && -dif < (tick/10 + 100))
+			{
+				node->data = gtd->time + tick * 10000LL;
+			}
+			else if (dif > 100 || dif < 0 )
+			{
+				node->data = gtd->time + 100;
+			}
 		}
 	}
-	else
+	else 
 	{
+		get_number_string(ses, arg3, arg3);
+
+		if (*arg3 == 0 || !strcmp(arg3, "0"))
+		{
+			strcpy(arg3, "60");
+		}
+
 		update_node_list(ses->list[LIST_TICKER], arg1, arg2, arg3);
 
 		show_message(ses, LIST_TICKER, "#OK {%s} NOW EXECUTES {%s} EVERY {%s} SECONDS.", arg1, arg2, arg3);
-	}
+	}		
+	return ses;
+
+not_found:
+	show_message(ses, LIST_TICKER, "#TICK, NO MATCH(ES) FOUND FOR {%s}.", arg1);
 	return ses;
 }
 

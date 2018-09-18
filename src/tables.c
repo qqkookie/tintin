@@ -193,6 +193,20 @@ struct config_type config_table[] =
 		"TinTin++ will properly color the start of each line",
 		"TinTin++ will leave color handling to the server",
 		config_colorpatch
+	},	
+
+	{
+		"COMMAND COLOR",
+		"The color of echoed commands",
+		"",		
+		config_commandcolor
+	},
+
+	{
+		"COMMAND ECHO",
+		"Your commands are echoed in split mode",
+		"Your commands are not echoed in split mode",
+		config_commandecho
 	},
 
 	{
@@ -215,22 +229,6 @@ struct config_type config_table[] =
 		"You do not see telnet negotatiations",
 		config_debugtelnet
 	},
-
-	{
-		"COMMAND COLOR",
-		"The color of echoed commands",
-		"",		
-		config_commandcolor
-	},
-
-	{
-		"COMMAND ECHO",
-		"Your commands are echoed in split mode",
-		"Your commands are not echoed in split mode",
-		config_commandecho
-	},
-
-
 
 	{
 		"HISTORY SIZE",
@@ -339,7 +337,7 @@ struct config_type config_table[] =
 
 	{
 		"WORDWRAP",
-		"Mud output is word wrapped",
+		"Mud output is word wrapped, may indented",
 		"Mud output is line wrapped",
 		config_wordwrap
 	},

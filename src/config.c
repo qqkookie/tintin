@@ -210,10 +210,16 @@ DO_CONFIG(config_wordwrap)
 	else if (!strcasecmp(arg, "OFF"))
 	{
 		DEL_BIT(ses->flags, SES_FLAG_WORDWRAP);
+		DEL_BIT(ses->flags, SES_FLAG_INDENT);			
 	}
+	else if (!strcasecmp(arg, "INDENT"))
+	{
+		SET_BIT(ses->flags, SES_FLAG_WORDWRAP);
+		SET_BIT(ses->flags, SES_FLAG_INDENT);		
+	}	
 	else
 	{
-		show_error(ses, LIST_CONFIG, "#SYNTAX: #CONFIG {%s} <ON|OFF>", config_table[index].name);
+		show_error(ses, LIST_CONFIG, "#SYNTAX: #CONFIG {%s} <ON|OFF|INDENT>", config_table[index].name);
 
 		return NULL;
 	}
@@ -591,7 +597,7 @@ DO_CONFIG(config_utf8dw)
 	{
 		DEL_BIT(ses->flags, SES_FLAG_U8DW);
 		DEL_BIT(ses->flags, SES_FLAG_U8CONV);
-		gtd->hostcp = 0;
+		free(gtd->hostcp); gtd->hostcp = NULL;
 	}
 	else if ((cpid = CPNameToCPID(arg)) > 0)
 	{
@@ -622,7 +628,7 @@ DO_CONFIG(config_mathstr)
 	{
 		SET_BIT(ses->flags, SES_FLAG_MATHSTR);
 	}
-	if (!strcasecmp(arg, "OFF"))
+	else if (!strcasecmp(arg, "OFF"))
 	{
 		DEL_BIT(ses->flags, SES_FLAG_MATHSTR);
 	}

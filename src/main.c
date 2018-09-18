@@ -427,6 +427,7 @@ void init_tintin(int greeting)
 	do_configure(gts, "{CHARSET}         {ASCII}");
 	do_configure(gts, "{HISTORY SIZE}     {1000}");
 	do_configure(gts, "{LOG}               {RAW}");
+	do_configure(gts, "{MATHSTR}           {OFF}");	
 	do_configure(gts, "{PACKET PATCH}     {0.00}");
 	do_configure(gts, "{REPEAT CHAR}         {!}");
 	do_configure(gts, "{REPEAT ENTER}      {OFF}");
