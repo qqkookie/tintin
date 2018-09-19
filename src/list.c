@@ -85,18 +85,22 @@ DO_ARRAY(array_add)
 
 	index = list->root->used + 1;
 
-	while (*arg)
+	 while (*arg)
 	{
 		arg = sub_arg_in_braces(ses, arg, arg1, GET_ONE, SUB_VAR|SUB_FUN);
 
-		str = arg1;
+		delim_list(arg1);
+
+		str = arg1;	
 
 		while (*str)
 		{
 			str = get_arg_in_braces(ses, str, arg2, GET_ALL);
 
-			set_nest_node(list->root, ntos(index++), "%s", arg2);
-
+			if (*arg2)
+			{
+				set_nest_node(list->root, ntos(index++), "%s", arg2);
+			}
 //			insert_node_list(list->root, ntos(index++), arg2, "");
 
 			if (*str == COMMAND_SEPARATOR)
@@ -143,14 +147,18 @@ DO_ARRAY(array_create)
 	{
 		arg = get_arg_in_braces(ses, arg, arg1, GET_ONE);
 
+		delim_list(arg1);
+
 		str = arg1;
 
 		while (*str)
 		{
 			str = get_arg_in_braces(ses, str, arg2, GET_ALL);
 
-			set_nest_node(list->root, ntos(index++), "%s", arg2);
-
+			if (*arg2)
+			{
+				set_nest_node(list->root, ntos(index++), "%s", arg2);
+			}
 //			insert_node_list(list->root, ntos(index++), arg2, "");
 
 			if (*str == COMMAND_SEPARATOR)
@@ -499,4 +507,29 @@ DO_ARRAY(array_tokenize)
 		set_nest_node(list->root, ntos(index++), "%s", tmp);
 	}
 	return ses;
+}
+
+int delim_list(char *arg)
+{
+	char *p = arg, *q = arg;
+	if (!strpbrk(arg, ";{}") && strpbrk(arg, " \t,"))
+	{
+		while (*p)
+		{
+			if (isspace(*p) || *p == ',')
+			{
+				p++;
+				if (!isspace(*p) && *p != ',' && q > arg && *p)
+					*q++ = ';';
+				continue;
+			}
+			if (p > q)
+			{
+				*q = *p;	
+			}
+			p++; q++;
+		}
+		*q = '\0';
+	}
+	return (q-arg);
 }

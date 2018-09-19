@@ -515,7 +515,7 @@ struct help_type help_table[] =
 		"     <K82>Ex<K81>: #forall {{a}{b}{c}{d}} {say &0}\n"
 		"         Both equal: say a;say b;say c;say d\n"
 		"\n"	
-		"   <K82>Note<K81>: Use of #forall is deprecated. Use #foreach instead.\n"		
+		"   <K82>Note<K81>: The #forall command is obsolete. Use #foreach instead.\n"		
 	},
 	{
 		"FOREACH",
@@ -524,9 +524,12 @@ struct help_type help_table[] =
 		"         For each item in the provided list the foreach statement will update\n"
 		"         the given variable and execute the command part of the statement. List\n"
 		"         elements must be separated by braces or semicolons.\n"
+		"         List separated by spaces and commas only is also accepted.\n"
 		"\n"
 		"     <K82>Ex<K81>: #foreach {bob;tim;kim} {name} {tell $name Hello}\n"
 		"     <K82>Ex<K81>: #foreach {{bob}{tim}{kim}} {name} {tell $name Hello}\n"
+		"     <K82>Ex<K81>: #foreach { bob tim,kim, } {name} {tell $name Hello}\n"		
+		
 	},
 	{
 		"FORMAT",
@@ -823,6 +826,7 @@ struct help_type help_table[] =
 		"\n"
 		"         The add and create options allow using multiple items, as well\n"
 		"         as semicolon separated items.\n"
+		"         They also accepts list delimetered by space and commas only.\n"
 		"\n"
 		"         A length of 0 is returned for an empty or non existant list.\n"
 		"\n"

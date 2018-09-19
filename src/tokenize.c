@@ -229,6 +229,9 @@ char *addforeachtoken(struct scriptroot *root, int lvl, int opr, int cmd, char *
 	char arg[BUFFER_SIZE], var[BUFFER_SIZE];
 
 	str = get_arg_in_braces(root->ses, str, arg, FALSE);
+
+	delim_list(arg);
+
 	str = get_arg_in_braces(root->ses, str, var, FALSE);
 
 	addtoken(root, lvl, opr, cmd, var);

@@ -267,5 +267,13 @@ Wed Sep 19 12:00:00 2018 Akorn Farmer
 - #TICKER special command: {SHOW}, {TIME}, {SYNC}, {DIFF}
   auto syncing and time reporting
 
+* table.c:
+- Move codepage table from net.c to table.c
+
+* list.c:
+* tokenize.c:
+- #foreach and #list add option accepts space or comma separated list 
+  as item list.
+
 --------------------------------------------------------------------------------
 <EOT>

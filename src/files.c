@@ -379,9 +379,7 @@ DO_COMMAND(do_read)
 		}
 	}
 
-	if (gtd->fileread)
-		free(gtd->fileread);
-	gtd->fileread = strdup(filename);
+	RESTRING(gtd->fileread, filename);
 
 	set_nest_node(ses->list[LIST_VARIABLE], "_fileread", "%s", filename );
 

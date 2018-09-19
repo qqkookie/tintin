@@ -913,6 +913,12 @@ struct term_type
 	int                    flag;
 };
 
+struct cpid_type 
+{
+	char 				* name;
+	int 				  cpid;
+};
+
 struct str_data
 {
 	unsigned int              max;
@@ -1118,6 +1124,7 @@ extern DO_ARRAY(array_size);
 extern DO_ARRAY(array_set);
 extern DO_ARRAY(array_sort);
 extern DO_ARRAY(array_tokenize);
+extern int delim_list(char *arg);
 
 #endif
 
@@ -1910,6 +1917,7 @@ extern struct history_type history_table[];
 extern struct buffer_type buffer_table[];
 extern struct telopt_type telopt_table[];
 extern struct term_type term_table[];
+extern struct cpid_type codepage_table[];
 
 #endif
 

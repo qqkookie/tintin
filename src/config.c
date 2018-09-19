@@ -557,16 +557,16 @@ DO_CONFIG(config_charset)
 	if (!strcasecmp(arg, "BIG5"))
 	{
 		SET_BIT(ses->flags, SES_FLAG_BIG5);
-		free(gtd->hostcp) ; gtd->hostcp = strdup("BIG5");
+		RESTRING(gtd->hostcp, "BIG5");
 	}
 	else if (!strcasecmp(arg, "UTF8") ||!strcasecmp(arg, "UTF-8"))
 	{
 		SET_BIT(ses->flags, SES_FLAG_UTF8);
-		free(gtd->hostcp) ; gtd->hostcp = strdup("UTF-8");
+		RESTRING(gtd->hostcp, "UTF-8");
 	}
 	else if (strcasecmp(arg, "ASCII") == 0)
 	{
-		free(gtd->hostcp) ; gtd->hostcp = strdup("ASCII");
+		RESTRING(gtd->hostcp, "ASCII");
 	}
 	else
 	{
@@ -605,7 +605,7 @@ DO_CONFIG(config_utf8dw)
 		// Player uses UTF-8 terminal and tintin file.
 		SET_BIT(ses->flags, SES_FLAG_U8CONV);
 
-		free(gtd->hostcp) ; gtd->hostcp = strdup(capitalize(arg));
+		capitalize(arg); RESTRING(gtd->hostcp, arg);
 		// CJK codepage uses double-width char.
 		if (cpid == 936 || cpid == 950 || cpid == 932 || cpid == 949)
 		{

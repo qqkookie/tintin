@@ -212,6 +212,12 @@ ex) #alias {reload}	{ #KILL; #READ {} }
 
 -----------------------------------------------------------
 
+#FOREACH 와 #LIST ADD 가 {a;b;c} 같은 리스트 뿐만 아니라 
+
+{ a b, c } 같은 공백과 콤마로 분리된 리스트도 받아들입니다.
+
+-----------------------------------------------------------
+
 히스토리 기능이 강화 되었습니다. 전에는 기본 session 의 히스토리만 파일에 저장되었는데 
 
 이젠 나중에 생성된 세션의 히스토리도 파일로 저장되고 재 실행시 각 세션간에 공유됩니다.
@@ -498,6 +504,14 @@ Wed Sep 19 12:00:00 2018 Akorn Farmer
 * ticker.c:
 - #TICKER special command: {SHOW}, {TIME}, {SYNC}, {DIFF}
   auto syncing and time reporting
+
+* table.c:
+- Move codepage table from net.c to table.c
+
+* list.c:
+* tokenize.c:
+- #foreach and #list add option accepts space or comma separated list 
+  as item list.
 
 --------------------------------------------------------------------------------
 <EOT>

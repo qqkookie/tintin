@@ -534,45 +534,14 @@ int utf8convert(int fromutf, char *linebuf, int inlen)
 	};
 */
 
-struct cp_map {
-	char *name;
-	int cpid;
-};
 
-struct cp_map cp_table[] =
-{
-	{ "CP437",	 			437		},	// US ASCII
-	{ "ASCII", 				437		},
-	{ "ANSI_X3.4-1968",		437		},	
-	{ "CP1252",	 			1252	},	// MS Windows US/Europe
-	{ "CP850",	 			850		},	// Latin-1, Western Europe
-	{ "ISO-8859-1",	 		850		},
-
-	{ "CP936",	 			936		},	// Simplified Chinese
-	{ "GB2312",	 			936		},
-	{ "EUC-CN",	 			936		},
-	{ "CP950",	 			950		},	// Traditional Chinese, Big5
-	{ "BIG5",	 			950		},
-	{ "CP932",	 			932		},	// SHift JIS Japanese
-	{ "SJIS",	 			932		},
-	{ "EUC-JP",	 			932		},
-	{ "CP949",	 			949		},	// Korean KSC-5601
-	{ "EUC-KR",	 			949		},	
-
-	{ "UTF-8",	 			65001	},
-	{ "UTF8",	 			65001	},
-
-	{ "C",	 				0		},
-	{ "ACP",	 			0		},
-	{ NULL,	 				0		},
-};
 
 int CPNameToCPID(char *arg)
 {
-	struct cp_map *cpp;
+	struct cpid_type *cpp;
 	int cpid = -1;;
 
-	for ( cpp = cp_table; cpp->name; cpp++ )
+	for ( cpp = codepage_table; cpp->name; cpp++ )
 	{
 		if ( strcasecmp(cpp->name, arg) == 0 )
 		{
