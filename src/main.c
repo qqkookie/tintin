@@ -350,28 +350,37 @@ void init_tintin(int greeting)
 	gtd->input_off      = 1;
 
 	char ttdir[256], filename[256];
-	char *home = getenv("HOME");
+	char *home = getenv("TINTIN");
+
+	if ( home && check_filepath(home, TRUE))
+	{
+		strcpy(ttdir, home);
+	}
+	else
+	{
+		home = getenv("HOME");
 
 #ifdef __CYGWIN__
-	if (!check_filepath(home, TRUE))
-	{
-		char *prof = getenv("USERPROFILE");
-		if (prof)
+		if (!check_filepath(home, TRUE))
 		{
-			strcpy (filename,  prof);
-			char *cp = filename;
-			while ((cp = strchr(cp, '\\')))
-				*cp = '/';
+			char *prof = getenv("USERPROFILE");
+			if (prof)
+			{
+				strcpy (filename,  prof);
+				char *cp = filename;
+				while ((cp = strchr(cp, '\\')))
+					*cp = '/';
 
-			home = filename;
+				home = filename;
+			}
 		}
-	}
 #endif
 
-	if (!home)
-		home = ".";
+		if (!home)
+			home = ".";
 
-	sprintf(ttdir, "%s/%s", home, TINTIN_DIR);	
+		sprintf(ttdir, "%s/%s", home, TINTIN_DIR);
+	}
 
 	if (mkdir(ttdir, 0755) || errno == EEXIST)
 	{

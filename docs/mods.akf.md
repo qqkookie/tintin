@@ -272,8 +272,18 @@ Wed Sep 19 12:00:00 2018 Akorn Farmer
 
 * list.c:
 * tokenize.c:
-- #foreach and #list add option accepts space or comma separated list 
+- #foreach and #list add/create option accepts space or comma separated list 
   as item list.
+  
+--------------------------------------------------------------------------------
+Sun Sep 30 12:00:00 2018 Akorn Farmer
+
+* main.c:
+- User can set tintin directory (default: $HOME/.tintin) 
+  by setting $TINTIN (Unix/Windows) environment variable.
+
+* tokenize.c:
+- #foreach list bug fix
 
 --------------------------------------------------------------------------------
 <EOT>

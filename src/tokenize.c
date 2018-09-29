@@ -230,8 +230,6 @@ char *addforeachtoken(struct scriptroot *root, int lvl, int opr, int cmd, char *
 
 	str = get_arg_in_braces(root->ses, str, arg, FALSE);
 
-	delim_list(arg);
-
 	str = get_arg_in_braces(root->ses, str, var, FALSE);
 
 	addtoken(root, lvl, opr, cmd, var);
@@ -254,6 +252,8 @@ void resetforeachtoken(struct session *ses, struct scriptnode *token)
 	str = token->data->cpy;
 
 	str = sub_arg_in_braces(ses, str, arg, GET_ONE, SUB_VAR|SUB_FUN);
+
+	delim_list(arg);	
 
 	RESTRING(token->data->str, arg);
 
