@@ -1,7 +1,7 @@
 
 ================== 꾸키 버전의 개선점 --------------------------
 
-윈도 틴틴을 쓰고 있는데 흰색 배경에 검은 글씨로 사용하니 도움말등이 잘 안보이고 
+윈도 틴틴을 쓰고 있는데 흰색 배경에 검은 글씨로 사용하니 도움말등이 잘 안보이고
 
 한글도 문제가 있어서 몇가지 손을 봤습니다.
 
@@ -19,7 +19,7 @@
 
 1) 24 비트 트루칼라 지원이 됩니다.
 
-칼라 코드에 <x004D37> 이런 식으로 24 비트 색을 지정할 수 있습니다. 
+칼라 코드에 <x004D37> 이런 식으로 24 비트 색을 지정할 수 있습니다.
 
 소문자 x <xhhhhhh> 는 글자색, 대문자 X <Xhhhhhh> 는 배경색을 지정할 수 있습니다.
 
@@ -27,11 +27,11 @@ hhhhhh 는 6 글자 16 진수 (0-9, a-f, A-F ) 사용 가능
 
 #showme <x00FFFF> Cyan text and  <XE0FFFF>Light cyan BG
 
-2) 커스텀 칼라 지정도 됩니다. 
+2) 커스텀 칼라 지정도 됩니다.
 
-칼라코드는 <178> 이런식으로 3자리 숫자로 지정하는데 
+칼라코드는 <178> 이런식으로 3자리 숫자로 지정하는데
 
-회색코드인 <G33> 처럼 <K13> 이런 식으로 커스텀 두자리 숫자 로 칼라 지정을 할 수 있습니다,. 
+회색코드인 <G33> 처럼 <K13> 이런 식으로 커스텀 두자리 숫자 로 칼라 지정을 할 수 있습니다,.
 
 /// BG Light cyan
 #var {_TK[13]}    {<XE0FFFF><188>}
@@ -49,30 +49,30 @@ ex: #var {_TK[81]}    {<058>} 이런 식.
 '{' 와 '<' 숫자 '>' '}' 사이에 공백이 없습니다.
 
  --------------------------------------------------------------------------
- 
+
 
 현재는 나래를 하려면 터미널 문자세트를 EUC-KR 로 한글이 되는데
 
-문제는 WinTin++ 이 한글용으로 개발된게 아니라서 
+문제는 WinTin++ 이 한글용으로 개발된게 아니라서
 
 #action 이나 #highligh 등에 패턴에 한글이 들어가면 매치가 안됩니다.
 
-그래서 윈틴 터미널의 텍스트 문자셋을  UTF-8 모드로 하고 
+그래서 윈틴 터미널의 텍스트 문자셋을  UTF-8 모드로 하고
 
 #CONFIG CHARSET {UTF8}
 #CONFIG UTF8DW	{EUC-KR}
 
 로 하면 나래머드를 사용하면서도 한글이 들어간 패턴들이 매칭이 제대로 됩니다.
 
-그리고 한글 채팅 할 때도 한글이 영문 2 글자 폭으로 제대로 처리되어 
+그리고 한글 채팅 할 때도 한글이 영문 2 글자 폭으로 제대로 처리되어
 
 커서를 좌우로 움직이거나 중간 편집을 해도 한글이 깨지지 않고 제대로 표시됩니다.
 
 이건 좀더 시험이 필요하지만 기본적인 건 다 됩니다.
 
-5) 윈도 MINTTY 의 경우 한글로 명령어나 채팅 을  타이핑 하다가  이스케이프 키나 
+5) 윈도 MINTTY 의 경우 한글로 명령어나 채팅 을  타이핑 하다가  이스케이프 키나
 
-리턴 키를 치면 영문모드로 자동 복귀합니다. 그래서 영문 명령어 타이핑이 이상해 지는 
+리턴 키를 치면 영문모드로 자동 복귀합니다. 그래서 영문 명령어 타이핑이 이상해 지는
 
 걸 방지하죠. 한글 PuTTY 의 중요 기능 중에 하나죠.
 
@@ -93,7 +93,7 @@ ex: #var {_TK[81]}    {<058>} 이런 식.
 
 즉 #if { $xxx == abc } 도  #if { "$xxx" == "abc" } 와 동일 해집니다.
 
-? + ! unary 연산자도 스트링에 적용됩니다. 
+? + ! unary 연산자도 스트링에 적용됩니다.
 
 아직 정의되지 않은 변수는 empty 스트링으로 취급됩니다.
 
@@ -111,13 +111,13 @@ ex: #var {_TK[81]}    {<058>} 이런 식.
 
 #action/ #unaction 에 그룹을 지정할 수 있습니다.
 
-#action의 3번째 우선순위 인수로 숫자가 아닌 그룹 이름을 지정하면 
+#action의 3번째 우선순위 인수로 숫자가 아닌 그룹 이름을 지정하면
 
-같은 그룹 이름의 액션은 같은 그룹에 속하게 되고  #unaction 시에 
+같은 그룹 이름의 액션은 같은 그룹에 속하게 되고  #unaction 시에
 
 #unaction { GROUP <그룹이름>} 으로 그룹내 액션이 전부 한번에 삭제 됩니다.
 
-예를 들어 
+예를 들어
 
 #action {^XXXXX} {say OK} {actg1}
 #action {^YYYYY} {say Thank you} {actg1}
@@ -130,7 +130,7 @@ ex: #var {_TK[81]}    {<058>} 이런 식.
 
 틴틴파일에 C++ 스타일의 상글 라인 코멘트를 쓸 수 있습니다.
 
-다만 // 슬러시 2개가 아니고  /// 슬러시 3개 + 1 공백인데 
+다만 // 슬러시 2개가 아니고  /// 슬러시 3개 + 1 공백인데
 
 /// + 공백 이후 그 줄 끝까지 내용은 /* ... */ 처럼 무시됩니다.
 
@@ -140,7 +140,7 @@ ex) #alias {ff} {cast 'full' } /// Full fire
 
 하이라이트 색 지정이 보다 간편해졌습니다. #HELP COLOR 를 참고하세요.
 
-rev yel 등 긴 색깔 이름 등 하이라이트 이름에서 앞부분만 짧게 사용도 가능해졌습니다. 
+rev yel 등 긴 색깔 이름 등 하이라이트 이름에서 앞부분만 짧게 사용도 가능해졌습니다.
 
 여러가지 하이트라이트를 공백이나 , 로 구분해 하나의 하이라이트 문에 쓸 수 있습니다.
 
@@ -148,13 +148,13 @@ rev yel 등 긴 색깔 이름 등 하이라이트 이름에서 앞부분만 짧�
 
 #high {^XXX} {bold Yel}
 
-#high {^YYY} {under, fg Oran, bg black } 
+#high {^YYY} {under, fg Oran, bg black }
 
-등등 
+등등
 
 -----------------------------------------------------------
 
-#LUA 명령어가 추가 되었습니다. 
+#LUA 명령어가 추가 되었습니다.
 
 Lua 프로그램을 스트링 변수로 받아서 그걸 수행해서 결과를 변수에 대입합니다.
 
@@ -164,7 +164,7 @@ Lua 프로그램을 스트링 변수로 받아서 그걸 수행해서 결과를 
 
 그외는 루아 프로그램에 대한 인수가 됩니다. #HELP LUA 해보세요.
 
-단일 반환값은 숫자나 스트링으로, 여러 값을 반환하려면 lua keyed table 이나 
+단일 반환값은 숫자나 스트링으로, 여러 값을 반환하려면 lua keyed table 이나
 
 array 형태의 값으로 반환하면 틴틴의 네스트 변수, 순서 리스트가 됩니다.
 
@@ -184,13 +184,13 @@ ex) #alias {reload}	{ #KILL; #READ {} }
 
 이 파일 이름은  $_fileread 변수에 기록됩니다.
 
-상대 파일이름을 지정하면 현재 디렉토리 뿐 아니라 .tintin 디렉토리에서도 
+상대 파일이름을 지정하면 현재 디렉토리 뿐 아니라 .tintin 디렉토리에서도
 
-그 이름의 파일을 찾습니다. 
+그 이름의 파일을 찾습니다.
 
 #HELP READ를 참고하세요.
 
-#LOG 로그 파일이나 #LINE LOG 파일도 파일 이름을 기억해서 
+#LOG 로그 파일이나 #LINE LOG 파일도 파일 이름을 기억해서
 
 인수가 없으면 저번에 #LOG 로 지정한 파일을 디폴트로 씁니다.
 
@@ -202,7 +202,7 @@ ex) #alias {reload}	{ #KILL; #READ {} }
 
 #TICK {name} {SYNC} 나 #TICK {name} {DIFF} 는 타이머를 리스타트 합니다.
 
-#TICK {name} {DIFF} 는 추가로 타이머의 SYNC 시간 차이를 표시합니다. 
+#TICK {name} {DIFF} 는 추가로 타이머의 SYNC 시간 차이를 표시합니다.
 
 #TICK {name} {TIME}은 다음 틱 까지 남은 시간 표시
 
@@ -212,13 +212,13 @@ ex) #alias {reload}	{ #KILL; #READ {} }
 
 -----------------------------------------------------------
 
-#FOREACH 와 #LIST ADD 가 {a;b;c} 같은 리스트 뿐만 아니라 
+#FOREACH 와 #LIST ADD 가 {a;b;c} 같은 리스트 뿐만 아니라
 
 { a b, c } 같은 공백과 콤마로 분리된 리스트도 받아들입니다.
 
 -----------------------------------------------------------
 
-히스토리 기능이 강화 되었습니다. 전에는 기본 session 의 히스토리만 파일에 저장되었는데 
+히스토리 기능이 강화 되었습니다. 전에는 기본 session 의 히스토리만 파일에 저장되었는데
 
 이젠 나중에 생성된 세션의 히스토리도 파일로 저장되고 재 실행시 각 세션간에 공유됩니다.
 
@@ -234,57 +234,63 @@ ex) #alias {reload}	{ #KILL; #READ {} }
 
 2번째 줄부터는 줄 앞에 2칸 공백을 삽입합니다.
 
+-----------------------------------------------------------
+
+tintin 디렉토리 ($HOME/.tintin) 를 변경하려면 Unix나 윈도의
+
+$TINTIN 환경변수를 바꾸세요.
+
 --------------------------------------------------------------------------------
 <EOT>
 ================================================================================
 
 Sun Aug 26 12:00:00 2018 Akorn Farmer <cantata@gmail.com> (qqKookie@GitHub)
 
-GitHub repository:https://github.com/qqkookie/tintin
+GitHub repository:https://github.com/qqkookie/tintin/tree/cookie
 
 * tinexpr.c:
-1) 24 bit true color color code
+- 24 bit true color color code
   24 bit colr can be specified with 6 hexadecimal digits.
-  Use "<xhhhhhh>" (lowercase 'x' prefix) for foreground RGB888 color, 
+  Use "<xhhhhhh>" (lowercase 'x' prefix) for foreground RGB888 color,
   "<Xhhhhhh>" (uppercase 'X' prefix) for background RGB888 color.
   Hexdecimal digits 'h' are 0-9, a-f, A-F, upper/lowcase ignored.
 
-  Example: #highlight {^The Temple Of Midgaard$} {<XFFFF00><188>} 
+  Example: #highlight {^The Temple Of Midgaard$} {<XFFFF00><188>}
 
-2) Custom, user-defined, numbered color code
+- Custom, user-defined, numbered color code
   Similar to "<g32>" or "<G32>" color code for gray colors,
-  user can define color of "<K00>"-"<K99>" color code and use it. 
-  To set actual color for "<Kdd>" color code with other color code, 
+  user can define color of "<K00>"-"<K99>" color code and use it.
+  To set actual color for "<Kdd>" color code with other color code,
   set global array variable ${_TK[00]}-${_KT[99]}. For example:
 
   #var {_TK[14]} {<X0000ff><188>} ==> <K14> code to bold blue BG color.
 
   #highlight {^The Temple Of Midgaard$} {<K14>}
 
-  <K81>~<K85>codes are pre-defined for help strings and chat color code. 
+  <K81>~<K85>codes are pre-defined for help strings and chat color code.
   <K86>~<K99> are reserved for future internal use.
 
 * net.c:
 * parse.c:
 - "MIXED" CHARSET option for #CONFIG CHARSET
   Option for player uses UTF-8 charset terminal to play MUD in MBCS encoding
-  With this mixed charset option, player plays old MUD that uses legacy 
-  multibyte codepage (ISO-8859-x, double byte DBCS EUC-KR, EUC-JP, etc) 
-  with terminal setting to use UTF-8 charset to display/enter UTF-8 text. 
+  With this mixed charset option, player plays old MUD that uses legacy
+  multibyte codepage (ISO-8859-x, double byte DBCS EUC-KR, EUC-JP, etc)
+  with terminal setting to use UTF-8 charset to display/enter UTF-8 text.
   To use the mode: #CONFIG CHARSET {MIXED}
 
 - By using UTF-8, instead of MBCS EUC-KR, various patterns for
-  #action, #highlight, written in Asian UTF-8 text can be successfully 
-  matched and triggred. MUD codepage is assumed to be same as player's 
-  ANSI codepage like CP949.	Tintin text file also uses UTF-8 encoding. 
+  #action, #highlight, written in Asian UTF-8 text can be successfully
+  matched and triggred. MUD codepage is assumed to be same as player's
+  ANSI codepage like CP949.	Tintin text file also uses UTF-8 encoding.
   This feature is avaiable only on MS Windows WinTin++.
 
 * config.c:
 - Add "MIXED" option for #CONFIG CHARSET
 
 * help.c:
-- User can modify #HELP display color. 
-  Using the custom <Kdd> color code, user can set colrs of help text 
+- User can modify #HELP display color.
+  Using the custom <Kdd> color code, user can set colrs of help text
   and chatting. Useful for player uses black text on white background.
   <K81>, <K82>, <K83> for help text colors, <K84>, <K85> for chat color.
 
@@ -319,10 +325,10 @@ GitHub repository:https://github.com/qqkookie/tintin
 
 * Add files from WnTin++ installation. Credit to WinTin++, not Akorn Farmer
 
-- docs/wintin.COPYIMG.txt	(for CygWin/mintty)
+- docs/wintin.COPYING.txt	(for CygWin/mintty)
 - docs/wintin.FAQ.txt		(addtional Window FAQs)
 - docs/wintin.mintty.con	(mintty config file)
-- docs/wintin.tt.ico		(Wintin++ icon file) 
+- docs/wintin.tt.ico		(Wintin++ icon file)
 
 * Add aditinal 16 ANSI color definition entries in wintin.mintty.con
 
@@ -359,11 +365,11 @@ Sun Sep 2 12:00:00 2018 Akorn Farmer
 * file.c:
 - /// starts single-line comment in C++ // comment style in command file.
 - Better #read file handing on MS Windows CygWin environment.
-- #read will remembers old filename and use it as default filename.   
-- If #read can't find named file first, files in the .tintin directory 
+- #read will remembers old filename and use it as default filename.
+- If #read can't find named file first, files in the .tintin directory
   will be tried as second guess.
-  
-* ssl.c: 
+
+* ssl.c:
 - #ssl will trys to find certificate in the .tintin dir itself.
 
 * session.c:
@@ -380,7 +386,7 @@ Sat Sep 9 12:00:00 2018 Akorn Farmer
 - For #math, #if, #elseif and #while statement, non-empty string is evaluated
   as non-zero number value. This can be enabled by setting #config math eval.
   Default is compat.
-- Better handling of unquoted single word string in #math and others.      
+- Better handling of unquoted single word string in #math and others.
 - Add ? unary operator to test non-zero numbers. Opposite of ! operator.
   ! and ? operators work for string too to test empty/non-empty string.
 - Add + opeator for string to test it is string or number
@@ -391,8 +397,8 @@ Sat Sep 9 12:00:00 2018 Akorn Farmer
 - Add #config mathstr option for above #math behavior
 
 * help.h:
-- #math change    
- 
+- #math change
+
 --------------------------------------------------------------------------------
 
 Wed Sep 12 12:00:00 2018 Akorn Farmer
@@ -401,8 +407,8 @@ Wed Sep 12 12:00:00 2018 Akorn Farmer
 - More graceful exit on SIGHUP (Windows mintty close)
 - History save file directory fix
 - Set $_TTDIR variable
-- On MS Windows CygWin environment and not run on CygWin bash shell, 
-  (i.e. on Windows Explorer), tintin trys to change directory to .tintin 
+- On MS Windows CygWin environment and not run on CygWin bash shell,
+  (i.e. on Windows Explorer), tintin trys to change directory to .tintin
   directory and run there, instead of WinTin++ install bin directory.
 
 * log.c:
@@ -436,7 +442,7 @@ Wed Sep 12 12:00:00 2018 Akorn Farmer
 Sat Sep 15 12:00:00 2018 Akorn Farmer
 
 * table.c:
-- More portable and less cryptic control characters 
+- More portable and less cryptic control characters
   in config_table[] in table.c source code
 - Better config_table[] organization.
 
@@ -445,7 +451,7 @@ Sat Sep 15 12:00:00 2018 Akorn Farmer
 
 * net.c:
 - Use gtd->hostcp instead of static variable
-- Use iconv() library routine for UTF8 conversion on Windows CygWin 
+- Use iconv() library routine for UTF8 conversion on Windows CygWin
   envioronment. iconv-2.dll is needed.
 - Add CPNameToCPID()
 
@@ -461,13 +467,13 @@ Sat Sep 15 12:00:00 2018 Akorn Farmer
 
   Usage :   #config utf8dw <on|off|<host codepage>>
   This config works only when #config charset is set to UTF8.
-- If utf8dw option is on, double-width (or full-width) CJK character is 
+- If utf8dw option is on, double-width (or full-width) CJK character is
   handled correctly on input line cursor movement.
-- <host codepage> is codepage of remote MUD host. It is used when host 
+- <host codepage> is codepage of remote MUD host. It is used when host
   does not supports UTF-8 code, but uses legacy MBCS code.
-  If host codepage is specified, input/output are converted to/from UTF-8
+  If host codepage is specified, input/output are converted from/to UTF-8
   and double-width option is turn on for CJK codepage.
-  Supported codepage names: 
+  Supported codepage names:
   CP1252 CP850 ISO-8859-1 and most CPXXX codepage names
   CP936 GB2312 EUC-CN CP950 BIG5 CP932 SJIS EUC-JP CP949 EUC-KR
 
@@ -494,11 +500,11 @@ Wed Sep 19 12:00:00 2018 Akorn Farmer
 - Add #math change summary.
 
 * text.c:
-- Add INDENT wordwrap option by rfrancis@GITHUB. 
+- Add INDENT wordwrap option by rfrancis@GITHUB.
   But not separate option, but sub-option as #config wordwrap {indent}
 
 * tintin.h:
-- Add SES_FLAG_INDENT 
+- Add SES_FLAG_INDENT
 - Reorganize SES_FLAG_* ordering
 
 * ticker.c:
@@ -510,8 +516,25 @@ Wed Sep 19 12:00:00 2018 Akorn Farmer
 
 * list.c:
 * tokenize.c:
-- #foreach and #list add option accepts space or comma separated list 
+- #foreach and #list add/create option accepts space or comma separated list
   as item list.
+
+--------------------------------------------------------------------------------
+Sun Sep 30 12:00:00 2018 Akorn Farmer
+
+* main.c:
+- User can set tintin directory (default: $HOME/.tintin)
+  by setting $TINTIN (Unix/Windows) environment variable.
+
+* tokenize.c:
+- #foreach list bug fix
+
+* parser.c:
+- get_arg_stop_spaces() will not stop at spaces in quoted string.
+- Quote has the highest precedence over brace or semicolon ({}[];\)
+- Quoted string is tread as single token/argument.
+- So no more need to enclose multi-word string in #case label.
+- Old : #case {"my apple"} New: #case "my apple"
 
 --------------------------------------------------------------------------------
 <EOT>

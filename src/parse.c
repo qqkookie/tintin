@@ -449,6 +449,8 @@ char *get_arg_stop_spaces(struct session *ses, char *string, char *result, int f
 	pti = space_out(string);
 	pto = result;
 
+	int quoted = FALSE;
+
 	while (*pti)
 	{
 		if (HAS_BIT(ses->flags, SES_FLAG_BIG5) && *pti & 128 && pti[1] != 0)
@@ -458,35 +460,43 @@ char *get_arg_stop_spaces(struct session *ses, char *string, char *result, int f
 			continue;
 		}
 
-		if (*pti == '\\' && pti[1] == COMMAND_SEPARATOR)
+		if (*pti == '"')
 		{
-			*pto++ = *pti++;
+			quoted = !quoted;
 		}
-		else if (*pti == COMMAND_SEPARATOR && nest == 0)
+		else if (!quoted)
 		{
-			break;
+			if (*pti == '\\' && pti[1] == COMMAND_SEPARATOR)
+			{
+				*pto++ = *pti++;
+			}
+			else if (*pti == COMMAND_SEPARATOR && nest == 0)
+			{
+				break;
+			}
+			else if (isspace((int) *pti) && nest == 0)
+			{
+				pti++;
+				break;
+			}
+			else if (*pti == DEFAULT_OPEN)
+			{
+				nest++;
+			}
+			else if (*pti == '[' && HAS_BIT(flag, GET_NST))
+			{
+				nest++;
+			}
+			else if (*pti == DEFAULT_CLOSE)
+			{
+				nest--;
+			}
+			else if (*pti == ']' && HAS_BIT(flag, GET_NST))
+			{
+				nest--;
+			}
 		}
-		else if (isspace((int) *pti) && nest == 0)
-		{
-			pti++;
-			break;
-		}
-		else if (*pti == DEFAULT_OPEN)
-		{
-			nest++;
-		}
-		else if (*pti == '[' && HAS_BIT(flag, GET_NST))
-		{
-			nest++;
-		}
-		else if (*pti == DEFAULT_CLOSE)
-		{
-			nest--;
-		}
-		else if (*pti == ']' && HAS_BIT(flag, GET_NST))
-		{
-			nest--;
-		}
+
 		*pto++ = *pti++;
 	}
 	*pto = '\0';

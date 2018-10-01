@@ -2,51 +2,51 @@
 
 Sun Aug 26 12:00:00 2018 Akorn Farmer <cantata@gmail.com> (qqKookie@GitHub)
 
-GitHub repository:https://github.com/qqkookie/tintin
+GitHub repository:https://github.com/qqkookie/tintin/tree/cookie
 
 * tinexpr.c:
-1) 24 bit true color color code
+- 24 bit true color color code
   24 bit colr can be specified with 6 hexadecimal digits.
-  Use "<xhhhhhh>" (lowercase 'x' prefix) for foreground RGB888 color, 
+  Use "<xhhhhhh>" (lowercase 'x' prefix) for foreground RGB888 color,
   "<Xhhhhhh>" (uppercase 'X' prefix) for background RGB888 color.
   Hexdecimal digits 'h' are 0-9, a-f, A-F, upper/lowcase ignored.
 
-  Example: #highlight {^The Temple Of Midgaard$} {<XFFFF00><188>} 
+  Example: #highlight {^The Temple Of Midgaard$} {<XFFFF00><188>}
 
-2) Custom, user-defined, numbered color code
+- Custom, user-defined, numbered color code
   Similar to "<g32>" or "<G32>" color code for gray colors,
-  user can define color of "<K00>"-"<K99>" color code and use it. 
-  To set actual color for "<Kdd>" color code with other color code, 
+  user can define color of "<K00>"-"<K99>" color code and use it.
+  To set actual color for "<Kdd>" color code with other color code,
   set global array variable ${_TK[00]}-${_KT[99]}. For example:
 
   #var {_TK[14]} {<X0000ff><188>} ==> <K14> code to bold blue BG color.
 
   #highlight {^The Temple Of Midgaard$} {<K14>}
 
-  <K81>~<K85>codes are pre-defined for help strings and chat color code. 
+  <K81>~<K85>codes are pre-defined for help strings and chat color code.
   <K86>~<K99> are reserved for future internal use.
 
 * net.c:
 * parse.c:
 - "MIXED" CHARSET option for #CONFIG CHARSET
   Option for player uses UTF-8 charset terminal to play MUD in MBCS encoding
-  With this mixed charset option, player plays old MUD that uses legacy 
-  multibyte codepage (ISO-8859-x, double byte DBCS EUC-KR, EUC-JP, etc) 
-  with terminal setting to use UTF-8 charset to display/enter UTF-8 text. 
+  With this mixed charset option, player plays old MUD that uses legacy
+  multibyte codepage (ISO-8859-x, double byte DBCS EUC-KR, EUC-JP, etc)
+  with terminal setting to use UTF-8 charset to display/enter UTF-8 text.
   To use the mode: #CONFIG CHARSET {MIXED}
 
 - By using UTF-8, instead of MBCS EUC-KR, various patterns for
-  #action, #highlight, written in Asian UTF-8 text can be successfully 
-  matched and triggred. MUD codepage is assumed to be same as player's 
-  ANSI codepage like CP949.	Tintin text file also uses UTF-8 encoding. 
+  #action, #highlight, written in Asian UTF-8 text can be successfully
+  matched and triggred. MUD codepage is assumed to be same as player's
+  ANSI codepage like CP949.	Tintin text file also uses UTF-8 encoding.
   This feature is avaiable only on MS Windows WinTin++.
 
 * config.c:
 - Add "MIXED" option for #CONFIG CHARSET
 
 * help.c:
-- User can modify #HELP display color. 
-  Using the custom <Kdd> color code, user can set colrs of help text 
+- User can modify #HELP display color.
+  Using the custom <Kdd> color code, user can set colrs of help text
   and chatting. Useful for player uses black text on white background.
   <K81>, <K82>, <K83> for help text colors, <K84>, <K85> for chat color.
 
@@ -81,10 +81,10 @@ GitHub repository:https://github.com/qqkookie/tintin
 
 * Add files from WnTin++ installation. Credit to WinTin++, not Akorn Farmer
 
-- docs/wintin.COPYIMG.txt	(for CygWin/mintty)
+- docs/wintin.COPYING.txt	(for CygWin/mintty)
 - docs/wintin.FAQ.txt		(addtional Window FAQs)
 - docs/wintin.mintty.con	(mintty config file)
-- docs/wintin.tt.ico		(Wintin++ icon file) 
+- docs/wintin.tt.ico		(Wintin++ icon file)
 
 * Add aditinal 16 ANSI color definition entries in wintin.mintty.con
 
@@ -121,11 +121,11 @@ Sun Sep 2 12:00:00 2018 Akorn Farmer
 * file.c:
 - /// starts single-line comment in C++ // comment style in command file.
 - Better #read file handing on MS Windows CygWin environment.
-- #read will remembers old filename and use it as default filename.   
-- If #read can't find named file first, files in the .tintin directory 
+- #read will remembers old filename and use it as default filename.
+- If #read can't find named file first, files in the .tintin directory
   will be tried as second guess.
-  
-* ssl.c: 
+
+* ssl.c:
 - #ssl will trys to find certificate in the .tintin dir itself.
 
 * session.c:
@@ -142,7 +142,7 @@ Sat Sep 9 12:00:00 2018 Akorn Farmer
 - For #math, #if, #elseif and #while statement, non-empty string is evaluated
   as non-zero number value. This can be enabled by setting #config math eval.
   Default is compat.
-- Better handling of unquoted single word string in #math and others.      
+- Better handling of unquoted single word string in #math and others.
 - Add ? unary operator to test non-zero numbers. Opposite of ! operator.
   ! and ? operators work for string too to test empty/non-empty string.
 - Add + opeator for string to test it is string or number
@@ -153,8 +153,8 @@ Sat Sep 9 12:00:00 2018 Akorn Farmer
 - Add #config mathstr option for above #math behavior
 
 * help.h:
-- #math change    
- 
+- #math change
+
 --------------------------------------------------------------------------------
 
 Wed Sep 12 12:00:00 2018 Akorn Farmer
@@ -163,8 +163,8 @@ Wed Sep 12 12:00:00 2018 Akorn Farmer
 - More graceful exit on SIGHUP (Windows mintty close)
 - History save file directory fix
 - Set $_TTDIR variable
-- On MS Windows CygWin environment and not run on CygWin bash shell, 
-  (i.e. on Windows Explorer), tintin trys to change directory to .tintin 
+- On MS Windows CygWin environment and not run on CygWin bash shell,
+  (i.e. on Windows Explorer), tintin trys to change directory to .tintin
   directory and run there, instead of WinTin++ install bin directory.
 
 * log.c:
@@ -198,7 +198,7 @@ Wed Sep 12 12:00:00 2018 Akorn Farmer
 Sat Sep 15 12:00:00 2018 Akorn Farmer
 
 * table.c:
-- More portable and less cryptic control characters 
+- More portable and less cryptic control characters
   in config_table[] in table.c source code
 - Better config_table[] organization.
 
@@ -207,7 +207,7 @@ Sat Sep 15 12:00:00 2018 Akorn Farmer
 
 * net.c:
 - Use gtd->hostcp instead of static variable
-- Use iconv() library routine for UTF8 conversion on Windows CygWin 
+- Use iconv() library routine for UTF8 conversion on Windows CygWin
   envioronment. iconv-2.dll is needed.
 - Add CPNameToCPID()
 
@@ -223,13 +223,13 @@ Sat Sep 15 12:00:00 2018 Akorn Farmer
 
   Usage :   #config utf8dw <on|off|<host codepage>>
   This config works only when #config charset is set to UTF8.
-- If utf8dw option is on, double-width (or full-width) CJK character is 
+- If utf8dw option is on, double-width (or full-width) CJK character is
   handled correctly on input line cursor movement.
-- <host codepage> is codepage of remote MUD host. It is used when host 
+- <host codepage> is codepage of remote MUD host. It is used when host
   does not supports UTF-8 code, but uses legacy MBCS code.
-  If host codepage is specified, input/output are converted to/from UTF-8
+  If host codepage is specified, input/output are converted from/to UTF-8
   and double-width option is turn on for CJK codepage.
-  Supported codepage names: 
+  Supported codepage names:
   CP1252 CP850 ISO-8859-1 and most CPXXX codepage names
   CP936 GB2312 EUC-CN CP950 BIG5 CP932 SJIS EUC-JP CP949 EUC-KR
 
@@ -256,11 +256,11 @@ Wed Sep 19 12:00:00 2018 Akorn Farmer
 - Add #math change summary.
 
 * text.c:
-- Add INDENT wordwrap option by rfrancis@GITHUB. 
+- Add INDENT wordwrap option by rfrancis@GITHUB.
   But not separate option, but sub-option as #config wordwrap {indent}
 
 * tintin.h:
-- Add SES_FLAG_INDENT 
+- Add SES_FLAG_INDENT
 - Reorganize SES_FLAG_* ordering
 
 * ticker.c:
@@ -272,18 +272,25 @@ Wed Sep 19 12:00:00 2018 Akorn Farmer
 
 * list.c:
 * tokenize.c:
-- #foreach and #list add/create option accepts space or comma separated list 
+- #foreach and #list add/create option accepts space or comma separated list
   as item list.
-  
+
 --------------------------------------------------------------------------------
 Sun Sep 30 12:00:00 2018 Akorn Farmer
 
 * main.c:
-- User can set tintin directory (default: $HOME/.tintin) 
+- User can set tintin directory (default: $HOME/.tintin)
   by setting $TINTIN (Unix/Windows) environment variable.
 
 * tokenize.c:
 - #foreach list bug fix
+
+* parser.c:
+- get_arg_stop_spaces() will not stop at spaces in quoted string.
+- Quote has the highest precedence over brace or semicolon ({}[];\)
+- Quoted string is tread as single token/argument.
+- So no more need to enclose multi-word string in #case label.
+- Old : #case {"my apple"} New: #case "my apple"
 
 --------------------------------------------------------------------------------
 <EOT>
