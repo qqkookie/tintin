@@ -45,7 +45,7 @@ DO_COMMAND(do_list)
 
 	if (*arg1 == 0 || *arg2 == 0)
 	{
-		show_error(ses, LIST_VARIABLE, "#SYNTAX: #LIST {variable} {ADD|CLE|CRE|DEL|FIN|GET|INS|SET|SIM|SIZ|SOR} {argument}");
+		show_error(ses, LIST_VARIABLE, "#SYNTAX: #LIST {variable} {ADD|CLE|CRE|DEL|FIN|GET|INS|SET|SIM|SIZ|SOR|EXP} {argument}");
 	}
 	else
 	{
@@ -91,7 +91,7 @@ DO_ARRAY(array_add)
 
 		delim_list(arg1);
 
-		str = arg1;	
+		str = arg1;
 
 		while (*str)
 		{
@@ -462,7 +462,7 @@ DO_ARRAY(array_sort)
 	return ses;
 }
 
-DO_ARRAY(array_tokenize)
+DO_ARRAY(array_explode)
 {
 	char buf[BUFFER_SIZE], tmp[BUFFER_SIZE];
 	int index = 1, i;
@@ -509,25 +509,78 @@ DO_ARRAY(array_tokenize)
 	return ses;
 }
 
+DO_COMMAND(do_parse)
+{
+	char destvar[BUFFER_SIZE], buffer[BUFFER_SIZE];
+
+	arg = get_arg_in_braces(ses, arg, destvar, GET_ONE);
+
+	if (*destvar == 0)
+	{
+		show_error(ses, LIST_VARIABLE, "#SYNTAX: #PARSE {variable} {string}");
+
+		return ses;
+	}
+
+	sprintf(buffer, "{%s} CREATE %s", destvar, arg);
+
+	do_list(ses, buffer);
+
+	sprintf(buffer, "${%s}", destvar);
+
+	sub_arg_in_braces(ses, buffer, buffer, GET_ONE, SUB_VAR);
+
+	show_message(ses, LIST_VARIABLE, "#OK. LIST {%s} HAS BEEN SET TO {%s}.", destvar, buffer);
+
+	return ses;
+}
+
+int array2simple(struct session *ses, char *arg)
+{
+	char item[BUFFER_SIZE], result[BUFFER_SIZE], *str;
+	str = arg ; *result = 0;
+
+	do {
+		str = get_arg_in_braces(ses, str, item, GET_ONE);
+		if (!atoi(item))
+			break;
+
+		str = get_arg_in_braces(ses, str, item, GET_ONE);
+		if (!*item)
+			break;
+
+		cat_sprintf(result, "{%s}", item);
+
+	} while (*str);
+
+	int ok = (*str == '\0' && *item);
+	if (ok)
+		strcpy(arg, result);
+
+	return ok;
+}
+
 int delim_list(char *arg)
 {
 	char *p = arg, *q = arg;
 	if (!strpbrk(arg, ";{}") && strpbrk(arg, " \t,"))
 	{
+		int quoted = FALSE;
+
 		while (*p)
 		{
-			if (isspace(*p) || *p == ',')
+			if ( *p == '"')
+			{
+				quoted = ! quoted;
+			}
+			else if (!quoted && (isspace(*p) || *p == ','))
 			{
 				p++;
 				if (!isspace(*p) && *p != ',' && q > arg && *p)
 					*q++ = ';';
 				continue;
 			}
-			if (p > q)
-			{
-				*q = *p;	
-			}
-			p++; q++;
+			*q++ = *p++;
 		}
 		*q = '\0';
 	}

@@ -219,8 +219,8 @@ enum operators
 	TOKEN_TYPE_IF,
 	TOKEN_TYPE_LOOP,
 	TOKEN_TYPE_BROKEN_LOOP,
-	TOKEN_TYPE_PARSE,
-	TOKEN_TYPE_BROKEN_PARSE,
+	// TOKEN_TYPE_PARSE,
+	// TOKEN_TYPE_BROKEN_PARSE,
 	TOKEN_TYPE_REGEX,
 	TOKEN_TYPE_RETURN,
 	TOKEN_TYPE_SESSION,
@@ -266,11 +266,11 @@ enum operators
 #define CHAT_FILE_START                 20
 #define CHAT_FILE_DENY                  21
 #define CHAT_FILE_BLOCK_REQUEST         22
-#define CHAT_FILE_BLOCK                 23     
+#define CHAT_FILE_BLOCK                 23
 #define CHAT_FILE_END                   24
 #define CHAT_FILE_CANCEL                25
-#define CHAT_PING_REQUEST               26 
-#define CHAT_PING_RESPONSE              27 
+#define CHAT_PING_REQUEST               26
+#define CHAT_PING_RESPONSE              27
 
 #define CHAT_PEEK_CONNECTIONS           28
 #define CHAT_PEEK_LIST                  29
@@ -350,8 +350,8 @@ enum operators
 
 #define TELOPT_FLAG_SGA               (1 <<  0)
 #define TELOPT_FLAG_ECHO              (1 <<  1)
-#define TELOPT_FLAG_NAWS              (1 <<  2) 
-#define TELOPT_FLAG_PROMPT            (1 <<  3) 
+#define TELOPT_FLAG_NAWS              (1 <<  2)
+#define TELOPT_FLAG_PROMPT            (1 <<  3)
 #define TELOPT_FLAG_DEBUG             (1 <<  4)
 #define TELOPT_FLAG_TSPEED            (1 <<  5)
 #define TELOPT_FLAG_TTYPE             (1 <<  6)
@@ -539,7 +539,7 @@ enum operators
 #define SET_BIT(bitvector, bit)   ((bitvector) |= (bit))
 #define DEL_BIT(bitvector, bit)   ((bitvector) &= (~(bit)))
 #define TOG_BIT(bitvector, bit)   ((bitvector) ^= (bit))
-#define FFS_BIT(bitvector)        ((ffs(bitvector) - 1)) 
+#define FFS_BIT(bitvector)        ((ffs(bitvector) - 1))
 
 /*
 	Generic
@@ -877,7 +877,7 @@ struct timer_type
 struct path_type
 {
 	char                  * name;
-	PATH                  * fun; 	
+	PATH                  * fun;
 };
 
 struct line_type
@@ -913,7 +913,7 @@ struct term_type
 	int                    flag;
 };
 
-struct cpid_type 
+struct cpid_type
 {
 	char 				* name;
 	int 				  cpid;
@@ -1123,7 +1123,9 @@ extern DO_ARRAY(array_simplify);
 extern DO_ARRAY(array_size);
 extern DO_ARRAY(array_set);
 extern DO_ARRAY(array_sort);
-extern DO_ARRAY(array_tokenize);
+extern DO_ARRAY(array_explode);
+extern DO_COMMAND(do_parse);
+extern int array2simple(struct session *ses, char *arg);
 extern int delim_list(char *arg);
 
 #endif
@@ -1520,7 +1522,7 @@ extern DO_COMMAND(do_write);
 extern void write_node(struct session *ses, int mode, struct listnode *node, FILE *file);
 extern int check_filepath(char *filepath, int dir);
 
-#endif 
+#endif
 
 #ifndef __FUNCTION_H__
 #define __FUNCTION_H__

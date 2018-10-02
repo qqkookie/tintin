@@ -276,14 +276,11 @@ Wed Sep 19 12:00:00 2018 Akorn Farmer
   as item list.
 
 --------------------------------------------------------------------------------
-Sun Sep 30 12:00:00 2018 Akorn Farmer
+Tue Oct 2 12:00:00 2018 Akorn Farmer
 
 * main.c:
 - User can set tintin directory (default: $HOME/.tintin)
   by setting $TINTIN (Unix/Windows) environment variable.
-
-* tokenize.c:
-- #foreach list bug fix
 
 * parser.c:
 - get_arg_stop_spaces() will not stop at spaces in quoted string.
@@ -291,6 +288,25 @@ Sun Sep 30 12:00:00 2018 Akorn Farmer
 - Quoted string is tread as single token/argument.
 - So no more need to enclose multi-word string in #case label.
 - Old : #case {"my apple"} New: #case "my apple"
+
+* tokeniszer.c:
+* list.c:
+* tintin.h:
+- #foreach list bug fix
+- #parse is no longer character scan/loop statement. It is just a command.
+  It breaks string into words and store them in numbered word list (array).
+  Same as #list {var} create {arg}
+- #foreach accepts numbered array made by #list command as loop list without
+  list simplification. Bare {$list} form is OK as well as {$list[%*]}.
+  Ex: #list arr create {bob tim}; #foreach {$arr} {n} {tell $n OK}
+
+* table.c:
+- #list tokenize subcommand name is changed to #list explode.
+  To parse string into character array and lopp over it:
+  #list {cl} explode {Hello World}; #foreach {$cl} {c} {#showme $c}
+
+* help.c
+- #parse, #foreach, #list explode command change
 
 --------------------------------------------------------------------------------
 <EOT>

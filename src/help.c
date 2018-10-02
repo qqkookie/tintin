@@ -100,7 +100,7 @@ struct help_type help_table[] =
 		"         Default priority is 5, but for named group actions, always 3.\n"
 		"\n"
 		"     <K82>Ex<K81>: #act {^haste: %1 hrs$} {#var Haste %1} {Aff1}\n"
-		"     <K82>Ex<K81>: #unact {GROUP {Aff1}}\n"	
+		"     <K82>Ex<K81>: #unact {GROUP {Aff1}}\n"
 	},
 	{
 		"ALIAS",
@@ -153,8 +153,8 @@ struct help_type help_table[] =
 		"BREAK",
 		"<K82>Command<K81>: #break\n"
 		"\n"
-		"         The break command can be used inside the #FOREACH, #LOOP, #PARSE,\n"
-		"         #WHILE and #SWITCH statements. When #BREAK is found, tintin will stop\n"
+		"         The break command can be used inside the #FOREACH, #LOOP, #WHILE\n"
+		"         and #SWITCH statements. When #BREAK is found, tintin will stop\n"
 		"         executing the statement it is currently in and move on to the next.\n"
 		"\n"
 		"     <K82>Ex<K81>: #while {1} {#math cnt $cnt + 1;#if {$cnt == 20} {#break}}\n"
@@ -222,7 +222,7 @@ struct help_type help_table[] =
 		"         #chat {who}                           Show all connections\n"
 		"         #chat {zap}        {buddy}            Close a connection\n"
 		"\n"
-		"         Display color of chat text can be changed by user.\n" 
+		"         Display color of chat text can be changed by user.\n"
 		"         <<888>K84> and <<888>K85> are user-defined color code used to display chat text.\n"
 		"         #var {_TK84}  {<<888>007>} will display black on white chat text.\n"
 	},
@@ -256,7 +256,7 @@ struct help_type help_table[] =
 		"         2 - Dim\n"
 		"         4 - Underscore\n"
 		"         5 - Blink\n"
-		"         6 - Special code, see below"	
+		"         6 - Special code, see below"
 		"         7 - Reverse\n"
 		"         8 - Skip (use previous code)\n"
 		"\n"
@@ -288,7 +288,7 @@ struct help_type help_table[] =
 		"     <K82>Ex<K81>: #showme <<888>acf>Azure    <<888>afc>Jade     <<888>caf>Violet\n"
 		"     <K82>Ex<K81>: #showme <<888>cfa>Lime     <<888>fac>Pink     <<888>fca>Orange\n"
 		"\n"
-		"         To use 24 bit true colors on termimal that supports it, use <<888>xhhhhhh> code\n" 
+		"         To use 24 bit true colors on termimal that supports it, use <<888>xhhhhhh> code\n"
 		"         for foreground RGB color and <<888>Xhhhhhh> code for background RGB color.\n"
 		"         hhhhhh is 3 bytes RGB color in six digit hexadecimal number.\n"
 		"         Hex digit is 0-9, a-f, A-F range and case-ignored.\n"
@@ -326,8 +326,8 @@ struct help_type help_table[] =
 		"CONTINUE",
 		"<K82>Command<K81>: #continue\n"
 		"\n"
-		"         The continue command can be used inside the #FOREACH, #LOOP, #PARSE,\n"
-		"         #WHILE and #SWITCH commands. When #CONTINUE is found, tintin will go\n"
+		"         The continue command can be used inside the #FOREACH, #LOOP, #WHILE\n"
+		"         and #SWITCH commands. When #CONTINUE is found, tintin will go\n"
 		"         to the end of the command and proceed as normal, which may be to\n"
 		"         reiterate the command.\n"
 		"\n"
@@ -514,8 +514,8 @@ struct help_type help_table[] =
 		"     <K82>Ex<K81>: #forall {a;b;c;d} {say &0}\n"
 		"     <K82>Ex<K81>: #forall {{a}{b}{c}{d}} {say &0}\n"
 		"         Both equal: say a;say b;say c;say d\n"
-		"\n"	
-		"   <K82>Note<K81>: The #forall command is obsolete. Use #foreach instead.\n"		
+		"\n"
+		"   <K82>Note<K81>: The #forall command is obsolete. Use #foreach instead.\n"
 	},
 	{
 		"FOREACH",
@@ -524,12 +524,15 @@ struct help_type help_table[] =
 		"         For each item in the provided list the foreach statement will update\n"
 		"         the given variable and execute the command part of the statement. List\n"
 		"         elements must be separated by braces or semicolons.\n"
-		"         List separated by spaces and commas only is also accepted.\n"
+		"         List separated by spaces and commas only is accepted.\n"
+		"         Numbered list (array) by #list is accepted as loop list without\n"
+		"         list simplification. Bare {$array} is OK as well as {$array[%*]}.\n"
 		"\n"
 		"     <K82>Ex<K81>: #foreach {bob;tim;kim} {name} {tell $name Hello}\n"
 		"     <K82>Ex<K81>: #foreach {{bob}{tim}{kim}} {name} {tell $name Hello}\n"
-		"     <K82>Ex<K81>: #foreach { bob tim,kim, } {name} {tell $name Hello}\n"		
-		
+		"     <K82>Ex<K81>: #foreach { bob tim,kim, } {name} {tell $name Hello}\n"
+		"     <K82>Ex<K81>: #foreach {{1}{bob}{2}{tim}{3}{kim}} {name} {tell $name Hello}\n"
+		"     <K82>Ex<K81>: #list arr create {bob tim}; #foreach {$arr} {n} {tell $n OK}\n"
 	},
 	{
 		"FORMAT",
@@ -655,7 +658,7 @@ struct help_type help_table[] =
 		"\n"
 		"         Using #help %* will display all help entries.\n"
 		"\n"
-		"         Display color of help keyword and text can be changed by user.\n" 
+		"         Display color of help keyword and text can be changed by user.\n"
 		"         <<888>K81>, <<888>K82>, <<888>K83> are user-defined color code used to display help text.\n"
 		"         #var {_TK81}  {<<888>007>} will display black on white help text.\n"
 	},
@@ -815,7 +818,8 @@ struct help_type help_table[] =
 		"         #list {var} {simplify} {variable}      Copy simple list to {variable}\n"
 		"         #list {var} {size} {variable}          Copy list size to {variable}\n"
 		"         #list {var} {sort} {string}            Insert item in alphabetic order\n"
-		"         #list {var} {tokenize} {string}        Create a character list\n"
+		"         #list {var} {explode} {string}         Create a character list\n"
+		"         #list {var} {parse} {string}           Create a word list\n"
 		"\n"
 		"         The index should be between 1 and the list's length. You can also give\n"
 		"         a negative value, in which case -1 equals the last item in the list, -2\n"
@@ -888,12 +892,12 @@ struct help_type help_table[] =
 		"         Value returned from lua to tintin is via top-level lua return\n"
 		"         statement with value. Return value is string or numeric value\n"
 		"         like #variable command.\n"
-		"\n"		
+		"\n"
 		"         To return multiple values, return as lua 'keyed' table or \n"
 		"         numbered array. Lua table or numbered array will be converted\n"
 		"         to tintin++ keyed 'table' / nested variable, or nummbered list.\n"
 		"\n"
-		"     <K82>Ex<K81>: on lua: { aaa = 1234, xy =\"hello\" } or { 22, 33, \"ok\" }\n"	
+		"     <K82>Ex<K81>: on lua: { aaa = 1234, xy =\"hello\" } or { 22, 33, \"ok\" }\n"
 		"     <K82>Ex<K81>: on tintin: $var_name[aaa], $result.xy or $result[2]\n"
 		"\n"
 		"         Result string is not substituted with variable or color code etc.\n"
@@ -902,16 +906,16 @@ struct help_type help_table[] =
 		"         as arg[1]-arg[20], as well as normal %1-%99 in the script.\n"
 		"\n"
 		"         Lua print() statment output are colleced and processed as tintin\n"
-		"         command input, as simialr to #script command, but sets variable, too.\n"		
+		"         command input, as simialr to #script command, but sets variable, too.\n"
 		"         Lua print() prints string and numeric argument only.\n"
 		"         Each argumemt is delimetered by single tab and a newline at end.\n"
-		"         Lua write() is same as print(), but without tab delimeter or newline.\n" 
+		"         Lua write() is same as print(), but without tab delimeter or newline.\n"
 		"\n"
 		"     <K82>Ex<K81>: #lua result {return { arg[1], arg[2]} } 123 \"abc\"\n"
-		"     <K82>Ex<K81>: #lua rv   {return { aa = 123, bbb = \"abc\" } }\n"	
+		"     <K82>Ex<K81>: #lua rv   {return { aa = 123, bbb = \"abc\" } }\n"
 		"     <K82>Ex<K81>: #lua {rv} {$script} aa bb cc 123\n"
 		"     <K82>Ex<K81>: #lua rv { print(\"#echo {HELLO. PI=\", 3.14, \"}\")}\n"
-		"     <K82>Ex<K81>: #lua rv { write(\"#echo {HELLO. PI=\\t\", 3.14, \"\\t}\\n\")}\n"	
+		"     <K82>Ex<K81>: #lua rv { write(\"#echo {HELLO. PI=\\t\", 3.14, \"\\t}\\n\")}\n"
 		"\n"
 		"   <K82>Note<K81>: This feature on CygWin MS Windows client requires\n"
 		"         Lua DLL like cyglua-5.2.dll.\n"
@@ -1169,13 +1173,13 @@ struct help_type help_table[] =
 		"         Non-empty string can be evaluated as non-zero number value.\n"
 		"         Same applies to #if, #elseif and #while test statement.\n"
 		"         This and below behaviors are controlled by #config {mathstr} on/off.\n"
-		"\n"		
+		"\n"
 		"         Unary ! and ? operator can test string. Empty string or undefined\n"
 		"         variable are considered as number 0. To test if number or string,\n"
 		"         unary operator + on string always evaluated as number 0,\n"
 		"         including empty or numeric string and undefined variable.\n"
 		"         Before doing math, make sure operands are number with + test.\n"
-		"         To test single word or empty string, quoting is optional.\n"		
+		"         To test single word or empty string, quoting is optional.\n"
 		"\n"
 		"         The #if and #switch commands use #math. Several commands accepting\n"
 		"         integer input allow math operations as well.\n"
@@ -1196,7 +1200,7 @@ struct help_type help_table[] =
 		"     <K82>Ex<K81>: #action {%0 tells %1}\n"
 		"           {#if {\"\%0\" == \"Bubba\" && $afk} {reply I'm away, my friend.}}\n"
 		"         When you are away from keyboard, it will only reply to your friend.\n"
-		"\n"	
+		"\n"
 		"     <K82>Ex<K81>: #if { + %1 && %1 > 100 } { drop %1 coin }\n"
 		"         You must check argument is number and do numeric comparison.\n"
 	},
@@ -1230,13 +1234,18 @@ struct help_type help_table[] =
 	},
 	{
 		"PARSE",
-		"<K82>Command<K81>: #parse <K82>{<K81>string<K82>} {<K81>variable<K82>} {<K81>commands<K82>}<K81>\n"
+		"<K82>Command<K81>: #parse <K82>{<K81>variable<K82>} {<K81>string<K82>}\n"
 		"\n"
-		"         Like the loop statement, parse will loop from start to finish through\n"
-		"         the given string.  The value of the current character is stored in the\n"
-		"         provided variable.\n"
+		"         #parse breaks string into words and stores them in the variable\n"
+		"         as word array list. Semicolon and brace/bracket pair (;{}[])\n"
+		"         separeate words. If none such, space and comma ( ,) will do.\n"
+		"         #parse {var} {string} is same as #list {var} create {string}.\n"
 		"\n"
-		"     <K82>Ex<K81>: #parse {hello world} {char} {#showme $char}\n"
+		"         #parse no longer scans each character in string. To do so, use\n"
+		"         #list {var} explode {string} and #foreach on the character array.\n"
+		"\n"
+		"     <K82>Ex<K81>: #parse {wl} {hello world}; #foreach {$wl} {w} {#showme $w}\n"
+		"     <K82>Ex<K81>: #list {cl} explode {hello world}; #foreach {$cl} {c} {#showme $c}\n"
 	},
 	{
 		"PATH",
@@ -1281,7 +1290,7 @@ struct help_type help_table[] =
 		"     <K82>Ex<K81>: #pathdir {ue} {dw} {18}\n"
 		"         #pathdir {dw} {ue} {40}\n"
 		"\n"
-		"   <K82>Note<K81>: You can remove a pathdir with the #unpathdir command.\n"		
+		"   <K82>Note<K81>: You can remove a pathdir with the #unpathdir command.\n"
 	},
 	{
 		"PORT",
@@ -1295,8 +1304,8 @@ struct help_type help_table[] =
 		"         #port {group}      {name} {group}     Assign a socket group\n"
 		"         #port {ignore}     {name}             Ignore a socket\n"
 		"         #port {info}                          Display your info\n"
-		"         #port {name}       {name}             Change socket name.\n"		
-		"         #port {prefix}     {text}             Set prefix before each message.\n"		
+		"         #port {name}       {name}             Change socket name.\n"
+		"         #port {prefix}     {text}             Set prefix before each message.\n"
 		"         #port {send}       {name|all} {text}  Send data to socket\n"
 		"         #port {uninitialize}                  Unitialize the port session.\n"
 		"         #port {who}                           Show all connections\n"
@@ -1332,7 +1341,7 @@ struct help_type help_table[] =
 		"         If you uses braces, { and } you can use several lines for 1 commands.\n"
 		"         This however means you must always match every { with a } for the read\n"
 		"         command to work.\n"
-		"         #READ remembers last read filename. If filename argument is omitted,\n" 
+		"         #READ remembers last read filename. If filename argument is omitted,\n"
 		"         default is last successfully read filename. If the filename is\n"
 		"         relative path or base name, .tintin directory is also searched.\n"
 		"\n"
@@ -1416,7 +1425,7 @@ struct help_type help_table[] =
 		"\n"
 		"         Reads in a file and sends it to the screen as if it was send by a mud.\n"
 		"         This is useful to convert ansi color file to html or viewing log file.\n"
-		
+
 	},
 	{
 		"SCRIPT",
@@ -1560,7 +1569,6 @@ struct help_type help_table[] =
 		"         #foreach {list} {variable} {commands}\n"
 		"         #if {expression} {true}\n"
 		"         #loop {min} {max} {variable} {commands}\n"
-		"         #parse {string} {variable} {commands}\n"
 		"         #return {value}\n"
 		"         #switch {expression} {commands}\n"
 		"         #while {expression} {commands}\n"
@@ -1660,10 +1668,10 @@ struct help_type help_table[] =
 		"<K82>Command<K81>: #ticker <K82>{<K81>name<K82>}<K81> <K82>{<K81>commands<K82>}<K81> <K82>{<K81>interval in seconds<K82>}<K81>\n"
 		"\n"
 		"         Executes given command every # of seconds.\n"
-		"\n"	
+		"\n"
 		"         Special command for second argument: \n"
 		"         * {SHOW}: shows the ticker definition.\n"
-		"         * {TIME}: displays time remains until next tick.\n"	
+		"         * {TIME}: displays time remains until next tick.\n"
 		"         * {SYNC}: ticker timer expires immediately and restarts to sync.\n"
 		"         * {DIFF}: sync and displays time difference/drift.\n"
 		"\n"
@@ -1711,7 +1719,7 @@ struct help_type help_table[] =
 		"         To see the internal index of a variable use &<variable name>. To see\n"
 		"         the size of a table you would use: &targets[] or &targets[%*]. A non\n"
 		"         existent nested variable will report itself as 0.\n"
-		"\n" 
+		"\n"
 		"     <K82>Ex<K81>: #showme {Number of targets starting with A: &targets[A%*]\n"
 		"\n"
 		"         In some scripts you need to know the name of a nested variable. This\n"
@@ -1742,7 +1750,7 @@ struct help_type help_table[] =
 		"\n"
 		"   <K82>Note<K81>: See '#help math', for more information.\n"
 	},
-                                                                                                   
+
 	{
 		"WRITE",
 		"<K82>Command<K81>: #write <K82>{<K81>filename<K82>}<K81>\n"

@@ -240,6 +240,18 @@ tintin 디렉토리 ($HOME/.tintin) 를 변경하려면 Unix나 윈도의
 
 $TINTIN 환경변수를 바꾸세요.
 
+-----------------------------------------------------------
+
+인용부호로 감싼 스트링은 하나의 인수로 취급됩니다.
+예를 들어 전엔 스트링 #case 라벨을 {} 로 감싸야 했지만 이제는 그럴 필요가 없습니다.
+#case {"my apple"} {} ==> #case "my apple" {}
+
+#PARSE 명령으로 단어 리스트를 만들 수 있습니다.
+그리고 #FOREACH 도 이제 list 변수를 반복 리스트로 직접 쓸 수 있습니다.
+
+#parse {wordlist} {apple orange banana};
+#foreach {$wordlist} $w {say I like $w};
+
 --------------------------------------------------------------------------------
 <EOT>
 ================================================================================
@@ -520,14 +532,11 @@ Wed Sep 19 12:00:00 2018 Akorn Farmer
   as item list.
 
 --------------------------------------------------------------------------------
-Sun Sep 30 12:00:00 2018 Akorn Farmer
+Tue Oct 2 12:00:00 2018 Akorn Farmer
 
 * main.c:
 - User can set tintin directory (default: $HOME/.tintin)
   by setting $TINTIN (Unix/Windows) environment variable.
-
-* tokenize.c:
-- #foreach list bug fix
 
 * parser.c:
 - get_arg_stop_spaces() will not stop at spaces in quoted string.
@@ -535,6 +544,25 @@ Sun Sep 30 12:00:00 2018 Akorn Farmer
 - Quoted string is tread as single token/argument.
 - So no more need to enclose multi-word string in #case label.
 - Old : #case {"my apple"} New: #case "my apple"
+
+* tokeniszer.c:
+* list.c:
+* tintin.h:
+- #foreach list bug fix
+- #parse is no longer character scan/loop statement. It is just a command.
+  It breaks string into words and store them in numbered word list (array).
+  Same as #list {var} create {arg}
+- #foreach accepts numbered array made by #list command as loop list without
+  list simplification. Bare {$list} form is OK as well as {$list[%*]}.
+  Ex: #list arr create {bob tim}; #foreach {$arr} {n} {tell $n OK}
+
+* table.c:
+- #list tokenize subcommand name is changed to #list explode.
+  To parse string into character array and lopp over it:
+  #list {cl} explode {Hello World}; #foreach {$cl} {c} {#showme $c}
+
+* help.c
+- #parse, #foreach, #list explode command change
 
 --------------------------------------------------------------------------------
 <EOT>

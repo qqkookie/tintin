@@ -72,13 +72,13 @@ struct command_type command_table[] =
 	{    "local",             do_local,             TOKEN_TYPE_COMMAND },
 	{    "log",               do_log,               TOKEN_TYPE_COMMAND },
 	{    "loop",              do_nop,               TOKEN_TYPE_LOOP    },
-	{    "lua",               do_lua,               TOKEN_TYPE_COMMAND },	
+	{    "lua",               do_lua,               TOKEN_TYPE_COMMAND },
 	{    "macro",             do_macro,             TOKEN_TYPE_COMMAND },
 	{    "map",               do_map,               TOKEN_TYPE_COMMAND },
 	{    "math",              do_math,              TOKEN_TYPE_COMMAND },
 	{    "message",           do_message,           TOKEN_TYPE_COMMAND },
 	{    "nop",               do_nop,               TOKEN_TYPE_COMMAND },
-	{    "parse",             do_nop,               TOKEN_TYPE_PARSE   },
+	{    "parse",             do_parse,             TOKEN_TYPE_COMMAND },
 	{    "path",              do_path,              TOKEN_TYPE_COMMAND },
 	{    "pathdir",           do_pathdir,           TOKEN_TYPE_COMMAND },
 	{    "port",              do_port,              TOKEN_TYPE_COMMAND },
@@ -184,7 +184,7 @@ struct config_type config_table[] =
 	{
 		"CHARSET",
 		"The character set encoding used by TinTin++",
-		"",		
+		"",
 		config_charset
 	},
 
@@ -193,12 +193,12 @@ struct config_type config_table[] =
 		"TinTin++ will properly color the start of each line",
 		"TinTin++ will leave color handling to the server",
 		config_colorpatch
-	},	
+	},
 
 	{
 		"COMMAND COLOR",
 		"The color of echoed commands",
-		"",		
+		"",
 		config_commandcolor
 	},
 
@@ -233,14 +233,14 @@ struct config_type config_table[] =
 	{
 		"HISTORY SIZE",
 		"The size of the command history",
-		"",		
+		"",
 		config_historysize
 	},
 
 	{
 		"LOG",
 		"The data format of the log files",
-		"",		
+		"",
 		config_log
 	},
 
@@ -253,10 +253,10 @@ struct config_type config_table[] =
 
 	{
 		"MATHSTR",
-		"String is evaluated non-zero for #math, #if",	
+		"String is evaluated non-zero for #math, #if",
 		"Compatible #math, #if behavior",
 		config_mathstr
-	},	
+	},
 
 	{
 		"MCCP",
@@ -268,7 +268,7 @@ struct config_type config_table[] =
 	{
 		"PACKET PATCH",
 		"Seconds TinTin++ will try to patch broken packets",
-		"",		
+		"",
 		config_packetpatch
 	},
 
@@ -282,7 +282,7 @@ struct config_type config_table[] =
 	{
 		"REPEAT CHAR",
 		"The character used for repeating commands",
-		"",		
+		"",
 		config_repeatchar
 	},
 
@@ -303,14 +303,14 @@ struct config_type config_table[] =
 	{
 		"TINTIN CHAR",
 		"The character used for TinTin++ commands",
-		"",		
+		"",
 		config_tintinchar
 	},
 
 	{
 		"UTF8DW",
 		"CJK double-width char and/or legacy MBCS host",
-		"Normal single-width UTF-8 host",		
+		"Normal single-width UTF-8 host",
 		config_utf8dw
 	},
 
@@ -324,7 +324,7 @@ struct config_type config_table[] =
 	{
 		"VERBATIM CHAR",
 		"The character used for unparsed text",
-		"",		
+		"",
 		config_verbatimchar
 	},
 
@@ -358,16 +358,16 @@ struct config_type config_table[] =
 };
 
 struct color_type color_table[] =
-{																			 
+{
 	{    "none",          "<088>" },
-	{    "reset",         "<088>" },			
+	{    "reset",         "<088>" },
 	{    "bold",          "<188>" },
 	{    "dim",           "<288>" },
-	{    "underscore",    "<488>" },	
+	{    "underscore",    "<488>" },
 	{    "blink",         "<588>" },
 	{    "reverse",       "<788>" },
 //	{    "light",         "<188>" },
-//	{    "dark",          "<288>" },		
+//	{    "dark",          "<288>" },
 //	{    "faint",         "<288>" },
 
 	{    "normal",        "<622>" },
@@ -382,7 +382,7 @@ struct color_type color_table[] =
 	{    "foreground",    "1"     },
 	{    "fg",            "1"     },
 	{    "background",    "2"     },
-	{    "bg",            "2"     },	
+	{    "bg",            "2"     },
 	{    "light",         "3"     },
 	{    "lt",            "3"     },
 
@@ -426,7 +426,7 @@ struct color_type color_table[] =
 	{    "-magenta",      "<885>" },
 	{    "-cyan",         "<886>" },
 	{    "-white",        "<887>" },
-	{    "-default",      "<649>" },	
+	{    "-default",      "<649>" },
 
 	{    "-azure",        "<ABD>" },
 	{    "-ebony",        "<G04>" },
@@ -436,7 +436,7 @@ struct color_type color_table[] =
 	{    "-pink",         "<DAB>" },
 	{    "-silver",       "<CCC>" },
 	{    "-tan",          "<CBA>" },
-	{    "-violet",       "<BAD>" },		
+	{    "-violet",       "<BAD>" },
 
 	{    "",              "<888>" }
 };
@@ -509,7 +509,7 @@ struct port_type port_table[] =
 
 struct array_type array_table[] =
 {
-	{     "ADD",              array_add           },	
+	{     "ADD",              array_add           },
 	{     "CLEAR",            array_clear         },
 	{     "CLR",              array_clear         },
 	{     "CREATE",           array_create        },
@@ -524,7 +524,8 @@ struct array_type array_table[] =
 	{     "SIZE",             array_size          },
 	{     "SORT",             array_sort          },
 	{     "SRT",              array_sort          },
-	{     "TOKENIZE",         array_tokenize      },
+	{     "EXPLODE",          array_explode       },
+	{     "PARSE",            array_create        },
 	{     "",                 NULL                }
 };
 
@@ -1248,7 +1249,7 @@ struct cpid_type codepage_table[] =
 {
 	{ "CP437",	 				437		},	// US ASCII
 	{ "ASCII", 					437		},
-	{ "ANSI_X3.4-1968",			437		},	
+	{ "ANSI_X3.4-1968",			437		},
 	{ "CP1252",	 				1252	},	// MS Windows US/Europe
 	{ "CP850",	 				850		},	// Latin-1, Western Europe
 	{ "ISO-8859-1",	 			850		},
@@ -1262,7 +1263,7 @@ struct cpid_type codepage_table[] =
 	{ "SJIS",	 				932		},
 	{ "EUC-JP",	 				932		},
 	{ "CP949",	 				949		},	// Korean KSC-5601
-	{ "EUC-KR",	 				949		},	
+	{ "EUC-KR",	 				949		},
 
 	{ "UTF-8",	 				65001	},
 	{ "UTF8",	 				65001	},

@@ -309,7 +309,7 @@ char *get_arg_all(struct session *ses, char *string, char *result, int verbatim)
 		}
 		*pto++ = *pti++;
 	}
-	*pto = '\0'; 
+	*pto = '\0';
 
 	return pti;
 }
@@ -343,7 +343,7 @@ char *get_arg_in_braces(struct session *ses, char *string, char *result, int fla
 
 	while (*pti)
 	{
-		
+
 		if (HAS_BIT(ses->flags, SES_FLAG_BIG5) && *pti & 128 && pti[1] != 0)
 		{
 			*pto++ = *pti++;
@@ -351,17 +351,27 @@ char *get_arg_in_braces(struct session *ses, char *string, char *result, int fla
 			continue;
 		}
 
-		if (*pti == DEFAULT_OPEN)
-		{
-			nest++;
-		}
-		else if (*pti == DEFAULT_CLOSE)
-		{
-			nest--;
+		int quoted = FALSE;
 
-			if (nest == 0)
+		if (*pti == '"')
+		{
+			quoted = !quoted;
+		}
+		else if (!quoted)
+		{
+
+			if (*pti == DEFAULT_OPEN)
 			{
-				break;
+				nest++;
+			}
+			else if (*pti == DEFAULT_CLOSE)
+			{
+				nest--;
+
+				if (nest == 0)
+				{
+					break;
+				}
 			}
 		}
 		*pto++ = *pti++;
@@ -432,7 +442,7 @@ char *get_arg_with_spaces(struct session *ses, char *string, char *result, int f
 		}
 		*pto++ = *pti++;
 	}
-	*pto = '\0'; 
+	*pto = '\0';
 
 	return pti;
 }
@@ -764,13 +774,13 @@ void write_mud(struct session *ses, char *command, int flags)
 			}
 		}
 	}
-	
+
 	if ( HAS_BIT(ses->flags, SES_FLAG_U8CONV) && HAS_BIT(ses->flags, SES_FLAG_UTF8))
 	{
 		int len = utf8convert(TRUE , output, size);
 		if ( len > 0 )
 			size = len;
-	}	
+	}
 
 	write_line_mud(ses, output, size);
 }

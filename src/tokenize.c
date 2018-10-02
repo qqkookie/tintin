@@ -115,7 +115,7 @@ void debugtoken(struct session *ses, struct scriptroot *root, struct scriptnode 
 			case TOKEN_TYPE_IF:
 			case TOKEN_TYPE_FOREACH:
 			case TOKEN_TYPE_LOOP:
-			case TOKEN_TYPE_PARSE:
+			// case TOKEN_TYPE_PARSE:
 			case TOKEN_TYPE_SWITCH:
 			case TOKEN_TYPE_WHILE:
 				show_debug(ses, root->list, "[%02d] %*s\033[1;32m%s {\033[0m%s\033[1;32m}\033[0m", token->type, token->lvl * 4, "", command_table[token->cmd].name, token->str);
@@ -253,7 +253,10 @@ void resetforeachtoken(struct session *ses, struct scriptnode *token)
 
 	str = sub_arg_in_braces(ses, str, arg, GET_ONE, SUB_VAR|SUB_FUN);
 
-	delim_list(arg);	
+	if ( !array2simple(ses, arg))
+	{
+		delim_list(arg);
+	}
 
 	RESTRING(token->data->str, arg);
 
@@ -298,6 +301,7 @@ char *get_arg_foreach(struct scriptroot *root, struct scriptnode *token)
 	return buf;
 }
 
+/*
 char *addparsetoken(struct scriptroot *root, int lvl, int opr, int cmd, char *str)
 {
 	struct scriptdata *data;
@@ -371,6 +375,7 @@ char *get_arg_parse(struct session *ses, struct scriptnode *token)
 
 	return buf;
 }
+*/
 
 char *addregextoken(struct scriptroot *root, int lvl, int type, int cmd, char *str)
 {
@@ -414,7 +419,7 @@ void deltoken(struct scriptroot *root, struct scriptnode *token)
 
 		case TOKEN_TYPE_LOOP:
 		case TOKEN_TYPE_FOREACH:
-		case TOKEN_TYPE_PARSE:
+		// case TOKEN_TYPE_PARSE:
 		case TOKEN_TYPE_SWITCH:
 			free(token->data->cpy);
 			free(token->data->str);
@@ -606,6 +611,7 @@ void tokenize_script(struct scriptroot *root, int lvl, char *str)
 						addtoken(root, lvl, TOKEN_TYPE_END, -1, "endloop");
 						break;
 
+					/*
 					case TOKEN_TYPE_PARSE:
 						str = addparsetoken(root, lvl++, TOKEN_TYPE_PARSE, cmd, arg);
 
@@ -614,6 +620,7 @@ void tokenize_script(struct scriptroot *root, int lvl, char *str)
 
 						addtoken(root, lvl, TOKEN_TYPE_END, -1, "endparse");
 						break;
+					*/
 
 					case TOKEN_TYPE_REGEX:
 						str = addregextoken(root, lvl, TOKEN_TYPE_REGEX, cmd, arg);
@@ -687,14 +694,14 @@ struct scriptnode *parse_script(struct scriptroot *root, int lvl, struct scriptn
 				{
 					case TOKEN_TYPE_FOREACH:
 					case TOKEN_TYPE_LOOP:
-					case TOKEN_TYPE_PARSE:
+					// case TOKEN_TYPE_PARSE:
 					case TOKEN_TYPE_WHILE:
 						debugtoken(root->ses, root, token);
 						return shift;
 
 					case TOKEN_TYPE_BROKEN_FOREACH:
 					case TOKEN_TYPE_BROKEN_LOOP:
-					case TOKEN_TYPE_BROKEN_PARSE:
+					// case TOKEN_TYPE_BROKEN_PARSE:
 					case TOKEN_TYPE_BROKEN_WHILE:
 						shift->type--;
 						return token;
@@ -718,10 +725,12 @@ struct scriptnode *parse_script(struct scriptroot *root, int lvl, struct scriptn
 						breaklooptoken(shift);
 						shift->type++;
 						break;
+					/*
 					case TOKEN_TYPE_PARSE:
 						breakparsetoken(shift);
 						shift->type++;
 						break;
+					*/
 					case TOKEN_TYPE_WHILE:
 						shift->type++;
 						break;
@@ -890,6 +899,7 @@ struct scriptnode *parse_script(struct scriptroot *root, int lvl, struct scriptn
 
 				continue;
 
+			/*
 			case TOKEN_TYPE_PARSE:
 				if (*token->data->arg == 0)
 				{
@@ -919,6 +929,7 @@ struct scriptnode *parse_script(struct scriptroot *root, int lvl, struct scriptn
 				token = parse_script(root, lvl + 1, token->next, token);
 
 				continue;
+			*/
 
 			case TOKEN_TYPE_REGEX:
 				split = NULL;
@@ -1035,7 +1046,7 @@ char *write_script(struct session *ses, struct scriptroot *root)
 
 			case TOKEN_TYPE_FOREACH:
 			case TOKEN_TYPE_LOOP:
-			case TOKEN_TYPE_PARSE:
+			// case TOKEN_TYPE_PARSE:
 				cat_sprintf(buf, "%s%c%s %s\n%s{\n", indent(token->lvl), gtd->tintin_char, command_table[token->cmd].name, token->data->cpy, indent(token->lvl));
 				break;
 
