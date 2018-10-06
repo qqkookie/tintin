@@ -396,7 +396,7 @@ void wrapstring(struct session *ses, char *str)
 	int col = 1, cnt = 1, len;
 
 	push_call("wrapstring(%p,%p)",ses,str);
-	
+
 	arg = get_arg_in_braces(ses, str, left, TRUE);
 
 	if (*arg == COMMAND_SEPARATOR)
@@ -548,7 +548,7 @@ int string_str_raw_len(struct session *ses, char *str, int start, int end)
 		{
 			ret_cnt += (str_cnt >= start) ? 1 : 0;
 			raw_cnt++;
-			
+
 			if (str[raw_cnt] == '\\')
 			{
 				ret_cnt += (str_cnt >= start) ? 1 : 0;
@@ -638,6 +638,41 @@ int string_raw_str_len(struct session *ses, char *str, int start, int end)
 		ret_cnt++;
 	}
 	return ret_cnt;
+}
+
+// string display width on screen, double-width for CJK char.
+
+int stringwidth(struct session *ses, char *str)
+{
+	char temp[BUFFER_SIZE], *pti;
+	int w = 0;
+
+	substitute(ses, str, temp, SUB_COL|SUB_ESC);
+
+	pti = temp;
+
+	while (*pti)
+	{
+		if (skip_vt102_codes(pti))
+		{
+			pti += skip_vt102_codes(pti);
+
+			continue;
+		}
+
+		if (HAS_BIT(ses->flags, SES_FLAG_UTF8) && (*pti & 192) == 192)
+		{
+			if ((pti[1] & 192) == 128 && HAS_BIT(ses->flags, SES_FLAG_U8DW))
+				w++;
+
+			do {
+				pti++;
+			} while ((*pti & 192) == 128);
+		}
+		pti++;
+		w++;
+	}
+	return w;
 }
 
 void timestring(struct session *ses, char *str)
@@ -896,6 +931,10 @@ void format_string(struct session *ses, char *format, char *arg, char *out)
 
 					case 'U':
 						sprintf(arglist[i], "%lld", utime());
+						break;
+
+					case 'W':
+						sprintf(arglist[i], "%d", stringwidth(ses, arglist[i]));
 						break;
 
 					case 'Y':

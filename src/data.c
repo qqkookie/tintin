@@ -308,7 +308,7 @@ int search_index_list(struct listroot *root, char *text, char *priority)
 
 	return nsearch_list(root, text);
 }
- 
+
 /*
 	Return insertion index.
 */
@@ -570,7 +570,7 @@ void delete_node_with_wild(struct session *ses, int type, char *text)
 		return;
 	}
 
-	if ( ! match(ses, arg1, "{^\\s*(GROUP|group)\\s+[{\\w}]+}", SUB_NONE)) 
+	if ( ! match(ses, arg1, "{^\\s*(GROUP|group)\\s+[{\\w}]+}", SUB_NONE))
 	{
 		for (i = root->used - 1 ; i >= 0 ; i--)
 		{
@@ -625,6 +625,8 @@ DO_COMMAND(do_kill)
 			kill_list(ses->list[index]);
 		}
 		show_message(ses, LIST_COMMAND, "#KILL - ALL LISTS CLEARED.");
+
+		do_read(ses, TINTIN_RC);
 
 		return ses;
 	}

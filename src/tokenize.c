@@ -253,9 +253,12 @@ void resetforeachtoken(struct session *ses, struct scriptnode *token)
 
 	str = sub_arg_in_braces(ses, str, arg, GET_ONE, SUB_VAR|SUB_FUN);
 
-	if ( !array2simple(ses, arg))
+	if (!strchr(arg, COMMAND_SEPARATOR))
 	{
-		delim_list(arg);
+		if (!array_to_list(ses, arg))
+		{
+			delim_list(ses, arg);
+		}
 	}
 
 	RESTRING(token->data->str, arg);

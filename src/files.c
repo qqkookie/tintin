@@ -47,15 +47,17 @@ DO_COMMAND(do_read)
 	if ( !*filename && gtd->fileread && *gtd->fileread)
 		strcpy(filename, gtd->fileread);
 
-	if (filename[0] && filename[0] != '/' && filename[1] != ':' 
-		&& check_filepath(filename, FALSE))
+	if ( !check_filepath(filename, FALSE) &&
+		filename[0] && filename[0] != '/' && filename[1] != ':' )
 	{
 		sprintf(temp, "%s/%s", gtd->home, filename);
 
 		if (check_filepath(temp, FALSE))
 		{
 			 strcpy(filename, temp);
-		}			 
+		}
+		else if (strcmp(arg, TINTIN_RC) == 0)
+			return ses;
 	}
 
 	if ((fp = fopen(filename, "r")) == NULL)
@@ -148,7 +150,7 @@ DO_COMMAND(do_read)
 						char *eol = strchr(pti + 3, '\n');
 						if (eol)
 							pti = eol;
-					}	
+					}
 					else
 					{
 						*pto++ = *pti++;
@@ -379,9 +381,12 @@ DO_COMMAND(do_read)
 		}
 	}
 
-	RESTRING(gtd->fileread, filename);
+	if ( strcmp(filename, TINTIN_RC) != 0)
+	{
+		RESTRING(gtd->fileread, filename);
 
-	set_nest_node(ses->list[LIST_VARIABLE], "_fileread", "%s", filename );
+		set_nest_node(ses->list[LIST_VARIABLE], "_fileread", "%s", filename );
+	}
 
 	fclose(fp);
 
@@ -500,10 +505,10 @@ int check_filepath(char *filepath, int dir)
 
 	if ( !filepath || !*filepath || stat(filepath, &st_buf) != 0 )
 		return FALSE;
-	
+
 	if (( !dir && S_ISREG( st_buf.st_mode ))
 		|| ( dir && S_ISDIR( st_buf.st_mode )))
 		return ( access( filepath, F_OK ) == 0 );
-	
+
 	return FALSE;
 }

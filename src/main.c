@@ -239,6 +239,8 @@ int main(int argc, char **argv)
 
 	init_tintin(greeting);
 
+	do_read(gts, TINTIN_RC);
+
 	if (argc > 1)
 	{
 		int c;
@@ -307,7 +309,7 @@ int main(int argc, char **argv)
 	if (!setjmp(exit_gate))
 	{
 		mainloop();
-	}	
+	}
 	sleep(1);
 
 	return 0;
@@ -349,56 +351,50 @@ void init_tintin(int greeting)
 
 	gtd->input_off      = 1;
 
-	char ttdir[256], filename[256];
-	char *home = getenv("TINTIN");
+	char tbuf[255], hbuf[255];
+	char *ttdir = getenv("TINTIN");
 
-	if ( home && check_filepath(home, TRUE))
+	if ( !ttdir || ! check_filepath(ttdir, TRUE))
 	{
-		strcpy(ttdir, home);
-	}
-	else
-	{
-		home = getenv("HOME");
+		char *home = getenv("HOME");
 
 #ifdef __CYGWIN__
-		if (!check_filepath(home, TRUE))
+		if ( !home || !check_filepath(home, TRUE))
 		{
-			char *prof = getenv("USERPROFILE");
-			if (prof)
+			home = getenv("USERPROFILE");
+			if (home)
 			{
-				strcpy (filename,  prof);
-				char *cp = filename;
+				strcpy (hbuf, home);
+				char *cp = hbuf;
 				while ((cp = strchr(cp, '\\')))
 					*cp = '/';
-
-				home = filename;
+				home = hbuf;
 			}
 		}
 #endif
-
 		if (!home)
 			home = ".";
 
-		sprintf(ttdir, "%s/%s", home, TINTIN_DIR);
+		sprintf(tbuf, "%s/%s", home, TINTIN_DIR);
+		ttdir = tbuf;
 	}
 
 	if (mkdir(ttdir, 0755) || errno == EEXIST)
 	{
-#ifdef __CYGWIN__		
-		if (home == filename && !getenv("SHELL"))
+		if (!getenv("SHELL"))
 		{
 			chdir(ttdir);
 		}
-#endif
-		sprintf(filename, "%s/%s", ttdir, HISTORY_FILE);
 
-		if (check_filepath(filename, FALSE))
+		sprintf(hbuf, "%s/%s", ttdir, HISTORY_FILE);
+
+		if (check_filepath(hbuf, FALSE))
 		{
-			history_read(gts, filename);		
+			history_read(gts, hbuf);
 		}
 	}
 
-	gtd->home           = strdup(ttdir);	
+	gtd->home           = strdup(ttdir);
 	gtd->term           = strdup(getenv("TERM") ? getenv("TERM") : "UNKNOWN");
 
 	for (index = 0 ; index < 100 ; index++)
@@ -436,7 +432,7 @@ void init_tintin(int greeting)
 	do_configure(gts, "{CHARSET}         {ASCII}");
 	do_configure(gts, "{HISTORY SIZE}     {1000}");
 	do_configure(gts, "{LOG}               {RAW}");
-	do_configure(gts, "{MATHSTR}           {OFF}");	
+	do_configure(gts, "{MATHSTR}           {OFF}");
 	do_configure(gts, "{PACKET PATCH}     {0.00}");
 	do_configure(gts, "{REPEAT CHAR}         {!}");
 	do_configure(gts, "{REPEAT ENTER}      {OFF}");
@@ -463,11 +459,10 @@ void init_tintin(int greeting)
 	insert_node_list(gts->list[LIST_PATHDIR], "se", "nw",  "6");
 	insert_node_list(gts->list[LIST_PATHDIR], "sw", "ne", "12");
 
-	// Help/chat string color code default
 	struct listroot *root = gts->list[LIST_VARIABLE];
-	
 	insert_node_list(root, "_TTDIR", gtd->home, "" );
 
+	// Help/chat string color code default
 	set_nest_node(root, "_TK[81]", "%s", "<078>");
 	add_nest_node(root, "_TK[82]", "%s", "<178>");
 	add_nest_node(root, "_TK[83]", "%s", "<068>");

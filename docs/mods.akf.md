@@ -309,4 +309,30 @@ Tue Oct 2 12:00:00 2018 Akorn Farmer
 - #parse, #foreach, #list explode command change
 
 --------------------------------------------------------------------------------
+
+Sat Oct 6 12:00:00 2018 Akorn Farmer
+* main.c:
+* file.c
+- code cleanup.
+- "tintinrc" file in current or TINTIN directory is read automatically
+  on start up and after #kill all.
+
+* funtion.c:
+* tinexp.c:
+* table.c:
+- Add built-in functions:
+- @islist{}, @isarray{}, @key{}, @value{}, @pair{}, @index{},
+  @first{}, @last{}, @klen{}, @llen{}, @varid{}
+
+* variable.c:
+  Add stringwidth()
+  In #format command, new %W format specifier is added.
+  %W stores on-screen dispaly width of string.
+  CJK characters are counted as double-width.
+
+* list.c:
+* tokenize.c:
+  Bug fix for array_to_list(), delim_list()
+
+--------------------------------------------------------------------------------
 <EOT>

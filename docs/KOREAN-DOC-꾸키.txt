@@ -253,6 +253,18 @@ $TINTIN 환경변수를 바꾸세요.
 #foreach {$wordlist} $w {say I like $w};
 
 --------------------------------------------------------------------------------
+
+현재 디렉터리나 TINTIN 디렉터리에 "tintinrc" 파일이 있으면 titin 시작할 때 와
+#KILL ALL 했을 때 command 파일로 자동으로 읽어드립니다.
+
+내장함수를 추가했습니다. 리스트 변수 등에 여러 정보를 반환합니다.
+각 함수의 기능은 #help function 을 참조하세요.
+- @islist{}, @isarray{}, @key{}, @value{}, @pair{}, @index{},
+  @first{}, @last{}, @klen{}, @llen{}, @varid{}
+
+#format 명령어에 %W 포맷 지정자를 추가 했습니다.
+스트링의 화면 상의 폭을 계산 반환합니다. 한글 1자는 영문 2자로 처리됩니다.
+
 <EOT>
 ================================================================================
 
@@ -563,6 +575,32 @@ Tue Oct 2 12:00:00 2018 Akorn Farmer
 
 * help.c
 - #parse, #foreach, #list explode command change
+
+--------------------------------------------------------------------------------
+
+Sat Oct 6 12:00:00 2018 Akorn Farmer
+* main.c:
+* file.c
+- code cleanup.
+- "tintinrc" file in current or TINTIN directory is read automatically
+  on start up and after #kill all.
+
+* funtion.c:
+* tinexp.c:
+* table.c:
+- Add built-in functions:
+- @islist{}, @isarray{}, @key{}, @value{}, @pair{}, @index{},
+  @first{}, @last{}, @klen{}, @llen{}, @varid{}
+
+* variable.c:
+  Add stringwidth()
+  In #format command, new %W format specifier is added.
+  %W stores on-screen dispaly width of string.
+  CJK characters are counted as double-width.
+
+* list.c:
+* tokenize.c:
+  Bug fix for array_to_list(), delim_list()
 
 --------------------------------------------------------------------------------
 <EOT>

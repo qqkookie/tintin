@@ -247,6 +247,8 @@ int substitute(struct session *ses, char *string, char *result, int flags)
 			case '@':
 				if (HAS_BIT(flags, SUB_FUN) && !HAS_BIT(ses->list[LIST_FUNCTION]->flags, LIST_FLAG_IGNORE))
 				{
+					char **lib = NULL;
+
 					i = 1;
 					escape = FALSE;
 					sesptr = NULL;
@@ -273,11 +275,20 @@ int substitute(struct session *ses, char *string, char *result, int flags)
 
 					if ((sesptr == NULL && node == NULL) || pti[i] != DEFAULT_OPEN)
 					{
-						while (*pti == '@')
+						for ( lib = lib_table; *lib; lib++ )
 						{
-							*pto++ = *pti++;
+							if (strcmp(*lib, temp) == 0)
+								break;
 						}
-						continue;
+
+						if (!*lib)
+						{
+							while (*pti == '@')
+							{
+								*pto++ = *pti++;
+							}
+							continue;
+						}
 					}
 
 					if (escape)
@@ -298,7 +309,7 @@ int substitute(struct session *ses, char *string, char *result, int flags)
 						substitute(sesptr, temp, pto, flags_neol);
 
 						pto += strlen(pto);
-						
+
 						continue;
 					}
 					else
@@ -306,7 +317,7 @@ int substitute(struct session *ses, char *string, char *result, int flags)
 						substitute(ses, temp, buf, flags_neol);
 					}
 
-					show_debug(ses, LIST_FUNCTION, "#DEBUG FUNCTION {%s}", node->left);
+					show_debug(ses, LIST_FUNCTION, "#DEBUG FUNCTION {%s}", node ? node->left : *lib );
 
 					RESTRING(gtd->vars[0], buf);
 
@@ -337,9 +348,16 @@ int substitute(struct session *ses, char *string, char *result, int flags)
 
 					}
 
-					substitute(ses, node->right, buf, SUB_ARG);
+					if (node)
+					{
+						substitute(ses, node->right, buf, SUB_ARG);
 
-					script_driver(ses, LIST_FUNCTION, buf);
+						script_driver(ses, LIST_FUNCTION, buf);
+					}
+					else
+					{
+						lib_function(ses, buf, lib-lib_table+1);
+					}
 
 					substitute(ses, "$result", pto, flags_neol|SUB_VAR);
 
@@ -771,7 +789,7 @@ int substitute(struct session *ses, char *string, char *result, int flags)
 								case '8':
 									break;
 								case '6':
-									if ( pti[2] == '2' 
+									if ( pti[2] == '2'
 										|| (pti[2] == '3' && pti[3] == '9')
 										|| (pti[2] == '4' && pti[3] == '9'))
 									{
@@ -780,7 +798,7 @@ int substitute(struct session *ses, char *string, char *result, int flags)
 										*pto++ = 'm';
 										pti[1] = '8'; pti[2] = '8';
 									}
-									break;		
+									break;
 								default:
 									*pto++ = pti[1];
 									*pto++ = ';';
@@ -878,8 +896,8 @@ int substitute(struct session *ses, char *string, char *result, int flags)
 					// 24 bit truecolor color code: "<xhhhhhhh>" for foregrund, "<Xhhhhhhh>" for background color.
 					//     hhhhhhh is 6 hexadecimal digits of 24 bit color, either in upper or lower case.
 					// ex:   "<Xfffff00>" for yellow background.
-					else if ((pti[1] == 'x' || pti[1] == 'X' ) && isxdigit((int) pti[2]) && isxdigit((int) pti[3]) 
-						&& isxdigit((int) pti[4]) && isxdigit((int) pti[5]) && isxdigit((int) pti[6]) 
+					else if ((pti[1] == 'x' || pti[1] == 'X' ) && isxdigit((int) pti[2]) && isxdigit((int) pti[3])
+						&& isxdigit((int) pti[4]) && isxdigit((int) pti[5]) && isxdigit((int) pti[6])
 						&& isxdigit((int) pti[7]) && pti[8] == '>')
 					{
 #define 		 hex2bin(c) 	(((c) > '9')? (((c) & 0xDF ) - 55) : ((c) - '0'))
@@ -895,7 +913,7 @@ int substitute(struct session *ses, char *string, char *result, int flags)
 						*pto++ = '0' + cnt / 100;
 						*pto++ = '0' + cnt % 100 / 10;
 						*pto++ = '0' + cnt % 10;
-						*pto++ = ';';	
+						*pto++ = ';';
 						cnt = ( hex2bin(pti[4]) *16 + hex2bin(pti[5]));
 						*pto++ = '0' + cnt / 100;
 						*pto++ = '0' + cnt % 100 / 10;
@@ -909,13 +927,13 @@ int substitute(struct session *ses, char *string, char *result, int flags)
 						pti += 9;	// "<xhhhhhh>"
 					}
 
-					// <K00>~<K99>: custom, numbered 'K'olors. To set these kolors, set ${_TK[00]} ~ ${_TK[99]} global vaiable. 
-					// Ex: #var {_TK[07]} {<XFFFF00><188>} to set <K07> to bold and yellow background. 
+					// <K00>~<K99>: custom, numbered 'K'olors. To set these kolors, set ${_TK[00]} ~ ${_TK[99]} global vaiable.
+					// Ex: #var {_TK[07]} {<XFFFF00><188>} to set <K07> to bold and yellow background.
 					else if (pti[1] == 'K' && isdigit((int) pti[2]) && isdigit((int) pti[3]) && pti[4] == '>')
 					{
 						char kolor[16];
 						sprintf(kolor, "${_TK[%c%c]}", pti[2], pti[3]);
-						
+
 						substitute(ses, kolor, pto, (SUB_COL|SUB_VAR));
 						pto += strlen(pto);
 						pti += 5; 	// "<K99>"
@@ -1080,7 +1098,7 @@ int check_one_regexp(struct session *ses, struct listnode *node, char *line, cha
 	else
 	{
 		str = line;
-	}	
+	}
 
 	return tintin_regexp(ses, node->regex, str, exp, option, SUB_ARG);
 }
@@ -1152,7 +1170,7 @@ int tintin_regexp_check(struct session *ses, char *exp)
 	}
 	return FALSE;
 }
-				
+
 int tintin_regexp(struct session *ses, pcre *nodepcre, char *str, char *exp, int option, int flag)
 {
 	char out[BUFFER_SIZE], *pti, *pto;

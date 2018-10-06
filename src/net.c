@@ -262,7 +262,7 @@ int read_buffer_mud(struct session *ses)
 	else
 #endif
 	size = read(ses->socket, buffer, BUFFER_SIZE - 1);
-	
+
 	if (size <= 0)
 	{
 		pop_call();
@@ -444,14 +444,14 @@ int utf8convert(int fromutf, char *linebuf, int inlen)
 		cpname = gtd->hostcp;
 		CPid = CPNameToCPID(cpname);
 	}
-	
+
 	if (!cpname || CPid == CP_UTF8)
 		return 0;
 
 	wchar_t wcbuf[STRING_SIZE];
 
 	int wlen = MultiByteToWideChar((fromutf ? CP_UTF8 : CPid ), 0, linebuf, inlen, wcbuf, STRING_SIZE);
-		
+
 	int  olen = -1;
 	if ( wlen > 0 )
 	{
@@ -465,7 +465,7 @@ int utf8convert(int fromutf, char *linebuf, int inlen)
 
 #include <iconv.h>
 
-int utf8convert(int fromutf, char *linebuf, int inlen) 
+int utf8convert(int fromutf, char *linebuf, int inlen)
 {
 	static char *cpname = NULL;
 	static iconv_t cd_to = (iconv_t)-1, cd_from = (iconv_t)-1;
@@ -483,7 +483,7 @@ int utf8convert(int fromutf, char *linebuf, int inlen)
 		if ( cpname && *cpname && strcmp(cpname, "UTF-8" ) != 0 )
 		{
 			cd_from  = iconv_open(cpname, "UTF-8");
-			cd_to = iconv_open("UTF-8", cpname);			
+			cd_to = iconv_open("UTF-8", cpname);
 		}
 		else
 		{
@@ -497,7 +497,7 @@ int utf8convert(int fromutf, char *linebuf, int inlen)
 		return 0;
 	}
 
-	char buf[STRING_SIZE];	
+	char buf[STRING_SIZE];
 	char *inbuf = linebuf, *outbuf = buf;
 	size_t conv, inleft, outleft = sizeof buf -1;;
 
@@ -509,7 +509,7 @@ int utf8convert(int fromutf, char *linebuf, int inlen)
 	if ( conv == (size_t)-1)
 	{
 		return 0;
-	}	
+	}
 	strcpy(linebuf, buf);
 
 	return (outbuf-buf);
@@ -520,13 +520,13 @@ int utf8convert(int fromutf, char *linebuf, int inlen)
 /*
 	Test string : "이것은 한글입니다. Happy life! 안녕"
 
-	static char str_euc_kr[] = { 	// Encoded in EUC-KR 
+	static char str_euc_kr[] = { 	// Encoded in EUC-KR
 		0xc0, 0xcc, 0xb0, 0xcd, 0xc0, 0xba, 0x20, 0xc7, 0xd1, 0xb1, 0xdb, 0xc0,
 		0xd4, 0xb4, 0xcf, 0xb4, 0xd9, 0x2e, 0x20, 0x48, 0x61, 0x70, 0x70, 0x79,
 		0x20, 0x6c, 0x69, 0x66, 0x65, 0x21, 0x20, 0xbe, 0xc8, 0xb3, 0xe7, 0x00,
 	};
 
-	static char str_utf8[] = {		// Encoded in UTF-8 
+	static char str_utf8[] = {		// Encoded in UTF-8
 		0xec, 0x9d, 0xb4, 0xea, 0xb2, 0x83, 0xec, 0x9d, 0x80, 0x20, 0xed, 0x95,
 		0x9c, 0xea, 0xb8, 0x80, 0xec, 0x9e, 0x85, 0xeb, 0x8b, 0x88, 0xeb, 0x8b,
 		0xa4, 0x2e, 0x20, 0x48, 0x61, 0x70, 0x70, 0x79, 0x20, 0x6c, 0x69, 0x66,
@@ -534,14 +534,12 @@ int utf8convert(int fromutf, char *linebuf, int inlen)
 	};
 */
 
-
-
 int CPNameToCPID(char *arg)
 {
 	struct cpid_type *cpp;
 	int cpid = -1;;
 
-	for ( cpp = codepage_table; cpp->name; cpp++ )
+	for ( cpp = codepage_table; *cpp->name; cpp++ )
 	{
 		if ( strcasecmp(cpp->name, arg) == 0 )
 		{
@@ -558,5 +556,5 @@ int CPNameToCPID(char *arg)
 		}
 	}
 
-	return cpid; 
+	return cpid;
 }

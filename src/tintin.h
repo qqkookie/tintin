@@ -133,6 +133,7 @@
 
 #define TINTIN_DIR               ".tintin"
 #define HISTORY_FILE         "history.txt"
+#define TINTIN_RC               "tintinrc"
 
 #define STRING_SIZE                  65536
 #define BUFFER_SIZE                  32768
@@ -1125,8 +1126,8 @@ extern DO_ARRAY(array_set);
 extern DO_ARRAY(array_sort);
 extern DO_ARRAY(array_explode);
 extern DO_COMMAND(do_parse);
-extern int array2simple(struct session *ses, char *arg);
-extern int delim_list(char *arg);
+extern int array_to_list(struct session *ses, char *arg);
+extern int delim_list(struct session *ses, char *arg);
 
 #endif
 
@@ -1529,6 +1530,7 @@ extern int check_filepath(char *filepath, int dir);
 
 extern DO_COMMAND(do_function);
 extern DO_COMMAND(do_unfunction);
+extern void lib_function(struct session *ses, char *arg, int func);
 
 #endif
 
@@ -1919,6 +1921,7 @@ extern struct history_type history_table[];
 extern struct buffer_type buffer_table[];
 extern struct telopt_type telopt_table[];
 extern struct term_type term_table[];
+extern char*  lib_table[];
 extern struct cpid_type codepage_table[];
 
 #endif

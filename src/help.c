@@ -570,6 +570,7 @@ struct help_type help_table[] =
 		"         #format {rows} {%R}         {}  store the screen height in {rows}\n"
 		"         #format {time} {%T}         {}  store the epoch time in {time}\n"
 		"         #format {time} {%U}         {}  store the micro epoch time in {time}\n"
+		"         #format {test} {%W}         {}  store on-screen display width of {test}\n"
 	},
 	{
 		"FUNCTION",
@@ -596,6 +597,20 @@ struct help_type help_table[] =
 		"         #showme The current time is @gettime{}\n"
 		"\n"
 		"   <K82>Note<K81>: You can remove a function with the #unfunction command.\n"
+		"\n"
+		"         Build-in functions to hand list and varible.\n"
+		"\n"
+		"         @islist{var}          Test {var} is a list or simple varaible\n"
+		"         @isarray{var}         Test {var} is a array (numbered list) or not\n"
+		"         @key{list/item}       Key (list) of list or a list item\n"
+		"         @value{list}          Value list of list or item\n"
+		"         @pair{list/item}      {key}{value} pairs of list or item\n"
+		"         @index{item}          Numeric index of the item in the list\n"
+		"         @first{list}          First key or value in the list\n"
+		"         @last{list}           Last key or value in the list\n"
+		"         @klen{list}           Count of key-value pairs in the list\n"
+		"         @llen{list}           Count of keys and values individually\n"
+		"         @varid{var}           Variable/list internal table index\n"
 	},
 	{
 		"GAG",
@@ -1344,6 +1359,8 @@ struct help_type help_table[] =
 		"         #READ remembers last read filename. If filename argument is omitted,\n"
 		"         default is last successfully read filename. If the filename is\n"
 		"         relative path or base name, .tintin directory is also searched.\n"
+		"         On start up and after #KILL ALL, if \"tintinrc\" file exists\n"
+		"         in current or TINTIN directory, it is read automatically.\n"
 		"\n"
 		"         You can comment out triggers using /* text */ or a /// \n"
 	},

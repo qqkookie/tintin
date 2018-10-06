@@ -1245,11 +1245,28 @@ struct term_type term_table[] =
 	{    "XTERM",                59 }
 };
 
+char * lib_table[] =
+{
+	"islist",
+	"isarray",
+	"key",
+	"value",
+	"pair",
+	"index",
+	"first",
+	"last",
+	"klen",
+	"llen",
+	"varid",
+
+	NULL
+};
+
 struct cpid_type codepage_table[] =
 {
 	{ "CP437",	 				437		},	// US ASCII
 	{ "ASCII", 					437		},
-	{ "ANSI_X3.4-1968",			437		},
+	{ "ANSI",					437		},
 	{ "CP1252",	 				1252	},	// MS Windows US/Europe
 	{ "CP850",	 				850		},	// Latin-1, Western Europe
 	{ "ISO-8859-1",	 			850		},
@@ -1270,5 +1287,5 @@ struct cpid_type codepage_table[] =
 
 	{ "C",	 					0		},
 	{ "ACP",	 				0		},
-	{ NULL,	 					0		},
+	{ "",	 					0		}
 };

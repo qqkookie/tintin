@@ -89,7 +89,10 @@ DO_ARRAY(array_add)
 	{
 		arg = sub_arg_in_braces(ses, arg, arg1, GET_ONE, SUB_VAR|SUB_FUN);
 
-		delim_list(arg1);
+		if (!array_to_list(ses, arg1))
+		{
+			delim_list(ses, arg1);
+		}
 
 		str = arg1;
 
@@ -147,7 +150,10 @@ DO_ARRAY(array_create)
 	{
 		arg = get_arg_in_braces(ses, arg, arg1, GET_ONE);
 
-		delim_list(arg1);
+		if (!array_to_list(ses, arg1))
+		{
+			delim_list(ses, arg1);
+		}
 
 		str = arg1;
 
@@ -535,21 +541,29 @@ DO_COMMAND(do_parse)
 	return ses;
 }
 
-int array2simple(struct session *ses, char *arg)
+int array_to_list(struct session *ses, char *arg)
 {
 	char item[BUFFER_SIZE], result[BUFFER_SIZE], *str;
 	str = arg ; *result = 0;
 
+	int n, old = 0;
 	do {
 		str = get_arg_in_braces(ses, str, item, GET_ONE);
-		if (!atoi(item))
+
+		n = atoi(item);
+		if (n <= old)
+		{
+			*item = '\0';
 			break;
+		}
+		old = n;
 
 		str = get_arg_in_braces(ses, str, item, GET_ONE);
 		if (!*item)
 			break;
 
 		cat_sprintf(result, "{%s}", item);
+		str = space_out(str);
 
 	} while (*str);
 
@@ -560,29 +574,30 @@ int array2simple(struct session *ses, char *arg)
 	return ok;
 }
 
-int delim_list(char *arg)
+int delim_list(struct session *ses, char *arg)
 {
-	char *p = arg, *q = arg;
-	if (!strpbrk(arg, ";{}") && strpbrk(arg, " \t,"))
+	char *inp = arg, *outp = arg;
+
+	if (!strpbrk(inp, ";{}") && strpbrk(inp, " \t,"))
 	{
 		int quoted = FALSE;
 
-		while (*p)
+		while (*inp)
 		{
-			if ( *p == '"')
+			if ( *inp == '"')
 			{
 				quoted = ! quoted;
 			}
-			else if (!quoted && (isspace(*p) || *p == ','))
+			else if (!quoted && (isspace(*inp) || *inp == ','))
 			{
-				p++;
-				if (!isspace(*p) && *p != ',' && q > arg && *p)
-					*q++ = ';';
+				inp++;
+				if (!isspace(*inp) && *inp != ',' && outp > arg && *inp)
+					*outp++ = ';';
 				continue;
 			}
-			*q++ = *p++;
+			*outp++ = *inp++;
 		}
-		*q = '\0';
+		*outp = '\0';
 	}
-	return (q-arg);
+	return (outp-arg);
 }
