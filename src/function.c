@@ -146,7 +146,7 @@ void lib_function(struct session *ses, char *arg, int func)
 
 		if ( len > 0)
 		{
-			*strtail(ses, str, len) = '\0';
+			*strright(ses, str, len) = '\0';
 		}
 		set_nest_node(ses->list[LIST_VARIABLE], "result", "%s", str);
 
