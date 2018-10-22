@@ -145,9 +145,9 @@ DO_COMMAND(do_read)
 						pti += 2;
 						com += 1;
 					}
-					else if (lvl == 0 && pti[1] == '/' && pti[2] == '/' && isspace(pti[3]))
+					else if (lvl == 0 && pti[1] == '/' && ! isdigit(pti[2]))
 					{
-						char *eol = strchr(pti + 3, '\n');
+						char *eol = strchr(pti + 2, '\n');
 						if (eol)
 							pti = eol;
 					}

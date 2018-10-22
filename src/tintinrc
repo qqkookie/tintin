@@ -1,0 +1,87 @@
+#nop
+#ALIAS {RELOAD} {#READ}
+
+#nop supplimentary built-in function library
+
+#var result {}
+
+#function {which}		{ #if {%1} {#return {%2}} {#return {%3}}}
+
+#function {math}		{ #format {result} {%m} {%0}}
+#function {eval}		{ #format {result} {%m} {%0}}
+#function {toarray}		{ #list {result} create %0}
+#function {tosimple}	{ #list {result} simplify %0}
+#function {format}		{ #format {result} {%0}}
+
+#function {numgrp}		{ #format {result} {%g} {%1}}
+#function {numungrp}	{ #var result {%1} ; #replace result {,} {} }
+
+#function {lower}		{ #format {result} {%l} {%0}}
+#function {upper}		{ #format {result} {%u} {%0}}
+#function {capital}		{ #format {result} {%n} {%0}}
+
+#function {trim}		{ #format {result} {%p} {%0}}
+#function {strlen}		{ #format {result} {%L} {%0}}
+#function {strwidth}	{ #format {result} {%W} {%0}}
+#function {checksum}	{ #format {result} {%m} {"%0"}}
+
+#function {int}		    { #format result {%d} {%1}}
+
+#function {div}		    { #if { ! %2 }
+							#math result {(%1)/(%2)}; #format result {%d} {$result};
+						 #else { #var result {error}}}
+
+#function {mod}			{ #if { ( + %1 || ! %1) && + %2 }
+							{ #math result {(%1)%(%2)}; #format result {%d} {$result}};
+						  #else { #var result {error}}}
+
+#function {round}		{ #format result {%.%2f} {%1}}
+
+#function {pow}			{ #if { ( + %1 || ! %1 ) && ( + %2 || ! %2) }
+							{ #math result {(%1)**(%2) + 0.000000}};
+						  #else { #var result {error}}}
+
+#function {sqrt}		{ #if { + %1 || ! %1 } { #math result {(%1)//2.000000}};
+						  #else { #var result {error}}}
+
+#function {rand}		{ #if { ( + %1 || ! %1 ) && ( + %2 || ! %2) && %2 >= %1 }
+							{ #math result { 1d((%2) - (%1) + 1) + %1 - 1 }};
+						  #else { #var result {error}}}
+
+#function {dice}		{ #if { %1 > 0 && %2 > 0 }
+							{ #math result { + %3 + (%1)d(%2)}};
+						  #else { #var result {error}}}
+
+#function {max}
+{
+	#local _tl {}; #local _tx {};
+	#list _tl create %0; #var result {$_tl[+1]};
+	#foreach {$_tl} _tx
+		{ #if { $_tx > $result } { #var result {$_tx}}};
+}
+
+#function {min}
+{
+	#local _tl {}; #local _tx {};
+	#list _tl create %0; #var result {$_tl[+1]};
+	#foreach {$_tl} _tx
+		{ #if { $_tx < $result } { #var result {$_tx}}};
+}
+
+#function {abs}
+{
+	#if { + %1 && %1 < 0 } { #math result { -1 * %1 }};
+	#else { #var result {%1}};
+}
+
+#function {replace}
+{
+	#var result {%1};
+	#replace result {%2} {%3};
+}
+
+#function {fill}
+{
+	#format result {%+%2s};
+	#if {%1} { #replace result { } {%1}};
+}

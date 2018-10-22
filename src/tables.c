@@ -519,6 +519,7 @@ struct array_type array_table[] =
 	{     "GET",              array_get           },
 	{     "INSERT",           array_insert        },
 	{     "LENGTH",           array_size          },
+	{     "MERGE",            array_merge         },
 	{     "SET",              array_set           },
 	{     "SIMPLIFY",         array_simplify      },
 	{     "SIZE",             array_size          },
@@ -1249,6 +1250,7 @@ char * lib_table[] =
 {
 	"islist",
 	"isarray",
+	"isdef",
 	"key",
 	"value",
 	"pair",
@@ -1258,6 +1260,9 @@ char * lib_table[] =
 	"klen",
 	"llen",
 	"varid",
+
+	"find",
+	"substr",
 
 	NULL
 };

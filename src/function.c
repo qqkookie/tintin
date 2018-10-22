@@ -65,10 +65,23 @@ DO_COMMAND(do_unfunction)
 	return ses;
 }
 
+// get tail part of string
+char *strright(struct session *ses, char *str, int off)
+{
+	while (*str && off > 0)
+	{
+		off--;
+		str++;
+		if (HAS_BIT(ses->flags, SES_FLAG_UTF8) && (str[-1] & 192) == 192)
+			while ((*str & 192) == 128)
+				str++;
+	}
+	return str;
+}
 
-enum { LF_NONE = 0, LF_ISLIST, LF_ISARRAY, LF_KEY, LF_VALUE,
+enum { LF_NONE = 0, LF_ISLIST, LF_ISARRAY, LF_ISDEF, LF_KEY, LF_VALUE,
 	LF_PAIR, LF_INDEX, LF_FIRST, LF_LAST, LF_KLEN,
-	LF_LLEN, LF_VARID, };
+	LF_LLEN, LF_VARID, LF_FIND, LF_SUBSTR };
 
 void lib_function(struct session *ses, char *arg, int func)
 {
@@ -82,16 +95,18 @@ void lib_function(struct session *ses, char *arg, int func)
 
 	switch (func)
 	{
-		case LF_ISLIST: case LF_ISARRAY: case LF_INDEX: case LF_FIRST:
-		case LF_LAST: case LF_KLEN: case LF_LLEN: case LF_VARID:
+		case LF_ISLIST: case LF_ISARRAY: case LF_ISDEF: case LF_INDEX:
+		case LF_FIRST: case LF_LAST: case LF_KLEN: case LF_LLEN: case LF_VARID:
 			strcpy(result, "0");
 			break;
 	}
 
+	set_nest_node(ses->list[LIST_VARIABLE], "result", result);
+
 	str = get_arg_to_brackets(ses, arg1, name);
 	get_arg_at_brackets(ses, str, brak);
 
-	if (func == LF_VARID)
+	if (func == LF_VARID || func == LF_ISDEF )
 	{
 		sprintf(exp, "&{%s}", name);
 
@@ -99,6 +114,50 @@ void lib_function(struct session *ses, char *arg, int func)
 
 		set_nest_node(ses->list[LIST_VARIABLE], "result", result);
 
+		return;
+	}
+	else if (func == LF_FIND)
+	{
+		int off = atoi(gtd->vars[3]);
+
+		str = off > 0 ? strright(ses, arg1, off) : arg1;
+
+		char *found = strstr(str, gtd->vars[2]);
+
+		if (found)
+		{
+			*found = '\0';
+			off += strip_vt102_strlen(ses, str);
+		}
+		else
+		{
+			off = -1;
+		}
+		set_nest_node(ses->list[LIST_VARIABLE], "result", "%d", off + 1);
+
+		return;
+	}
+	else if (func == LF_SUBSTR)
+	{
+		int off = atoi(gtd->vars[2]);
+		int len = atoi(gtd->vars[3]);
+
+		str = off > 0 ? strright(ses, arg1, off) : arg1;
+
+		if ( len > 0)
+		{
+			*strtail(ses, str, len) = '\0';
+		}
+		set_nest_node(ses->list[LIST_VARIABLE], "result", "%s", str);
+
+		return;
+	}
+
+	sprintf(te, "&{%s}[+1]", name);
+	substitute(ses, te, tr, SUB_VAR);
+
+	if (strcmp(tr, "1") != 0 )
+	{
 		return;
 	}
 
@@ -117,14 +176,6 @@ void lib_function(struct session *ses, char *arg, int func)
 	else
 	{
 		ixt = IX_VAL;
-	}
-
-	sprintf(te, "&{%s}[+1]", name);
-	substitute(ses, te, tr, SUB_VAR);
-
-	if (strcmp(tr, "1") != 0)
-	{
-		return;
 	}
 
 	if (func == LF_KEY && ixt == IX_NO)

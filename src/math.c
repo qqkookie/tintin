@@ -97,7 +97,7 @@ double get_number(struct session *ses, char *str)
 	return val;
 }
 
-// Similar to get_number(), but with string evaluation. 
+// Similar to get_number(), but with string evaluation.
 double get_number_eval(struct session *ses, char *str)
 {
 	double val;
@@ -114,7 +114,7 @@ double get_number_eval(struct session *ses, char *str)
 
 	if (val == 0.0 && !is_number(result))
 	{
-		char *p = result, op = '\0', quote = '\0'; 
+		char *p = result, op = '\0', quote = '\0';
 		long long hash = 0;
 		int len = 0;
 
@@ -123,7 +123,7 @@ double get_number_eval(struct session *ses, char *str)
 		if ( *p == '+')
 			return 0.0;
 
-		if ( *p == '!' || *p == '?' ) 
+		if ( *p == '!' || *p == '?' )
 		 	op = *p++;
 
 		while (isspace(*p)) p++;
@@ -138,22 +138,22 @@ double get_number_eval(struct session *ses, char *str)
 				hash = (hash <<1) + (*p -' ' + 1);
 				len ++; p++;
 			}
-			
+
 			hash += len;
 			if (hash == 0 && len != 0)
 				hash  += len;
-		}	
+		}
 		else		// undefined variable
 			hash = 0;
 
 		if ( op == '!' )
 			hash = !hash;
 		else if ( op == '?' )
-			hash = (hash != 0);	
+			hash = (hash != 0);
 
-		val = (double) hash; 
+		val = (double) hash;
 	}
-	
+
 	return val;
 }
 
@@ -168,10 +168,15 @@ double get_double(struct session *ses, char *str)
 
 	return val;
 }
-	
+
 void get_number_string(struct session *ses, char *str, char *result)
 {
 	sprintf(result, "%.*f", precision, get_number(ses, str));
+}
+
+void get_eval_string(struct session *ses, char *str, char *result)
+{
+	sprintf(result, "%.*f", precision, get_number_eval(ses, str));
 }
 
 double mathswitch(struct session *ses, char *left, char *right)
@@ -185,7 +190,7 @@ double mathswitch(struct session *ses, char *left, char *right)
 
 /*
 	Flexible tokenized mathematical expression interpreter
-	
+
 	If seed is set it forces floating point math
 */
 
@@ -313,7 +318,7 @@ int mathexp_tokenize(struct session *ses, char *str, int seed, int debug)
 						break;
 
 					case '!':
-					case '?':					
+					case '?':
 					case '~':
 					case '+':
 					case '-':
@@ -361,7 +366,7 @@ int mathexp_tokenize(struct session *ses, char *str, int seed, int debug)
 					case ':':
 						*pta++ = *pti++;
 						break;
-						
+
 					case '.':
 						*pta++ = *pti++;
 						if (point >= 0)
@@ -438,8 +443,8 @@ int mathexp_tokenize(struct session *ses, char *str, int seed, int debug)
 				break;
 
 			case EXP_WORD:		// unquoted non-numeric word
-				*pta++ = *pti++;			
-				*pta = '\0';			
+				*pta++ = *pti++;
+				*pta = '\0';
 				if ( !*pti || *pti == ' ' || *pti == '\t' )	// look ahead
 				{
 					*pta++ = '"' ; *pta = '\0';
@@ -474,13 +479,13 @@ int mathexp_tokenize(struct session *ses, char *str, int seed, int debug)
 								*pta++ = *pti++;
 								MATH_NODE(FALSE, EXP_PR_INTMUL, EXP_VARIABLE);
 								break;
-							
+
 							default:
 								MATH_NODE(FALSE, EXP_PR_INTMUL, EXP_VARIABLE);
 								break;
 						}
 						break;
-	
+
 					case '/':
 						*pta++ = *pti++;
 
@@ -895,7 +900,7 @@ double tintoi(char *str)
 	switch (*ptr)
 	{
 		case '!':
-		case '?':			
+		case '?':
 		case '~':
 		case '+':
 		case '-':
@@ -954,7 +959,7 @@ double tintoi(char *str)
 				break;
 
 			case '!':
-			case '?':				
+			case '?':
 			case '~':
 			case '+':
 			case '-':
@@ -991,7 +996,7 @@ double tintoi(char *str)
 		case '!':
 			return !(values[0] + values[1] + values[2] + values[3] + values[4]);
 		case '?':
-			return ((values[0] + values[1] + values[2] + values[3] + values[4]) != 0);			
+			return ((values[0] + values[1] + values[2] + values[3] + values[4]) != 0);
 		case '~':
 			return ~ (long long) (values[0] + values[1] + values[2] + values[3] + values[4]);
 		case '+':
@@ -1062,7 +1067,7 @@ double tintoi(char *str)
 		default:
 			return atof(str);
 	}
-*/	
+*/
 }
 
 double tincmp(char *left, char *right)

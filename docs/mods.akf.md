@@ -311,8 +311,9 @@ Tue Oct 2 12:00:00 2018 Akorn Farmer
 --------------------------------------------------------------------------------
 
 Sat Oct 6 12:00:00 2018 Akorn Farmer
+
 * main.c:
-* file.c
+* file.c:
 - code cleanup.
 - "tintinrc" file in current or TINTIN directory is read automatically
   on start up and after #kill all.
@@ -333,6 +334,41 @@ Sat Oct 6 12:00:00 2018 Akorn Farmer
 * list.c:
 * tokenize.c:
   Bug fix for array_to_list(), delim_list()
+
+--------------------------------------------------------------------------------
+
+Sat Oct 23 12:00:00 2018 Akorn Farmer
+
+* list.c:
+- Expand array_simplify() into array_merge() with optional delimeter
+- Add #list {list} MERGE {var} {del} subcommand
+- Delimeter {del} is optional, default is concatnate (no delimetr).
+- #list {list} SIMPLIFY {var} is same as #list {list} MERGE {var} {;}.
+- #list MERGE can be used as reverse function of #list EXPLODE.
+
+* function.c:
+- Add @isdef{}, @find{}, @substr{} builtin function
+- Bug fix: $result is initialized properly.
+
+* tintinrc:
+- Add tintinrc file as part of source code
+- Add library functions in tintinrc startup script
+  @which{}, @eval{}, @toarray{}, @tosimple{}, @format{},
+  @numgrp{}, @numungrp{}, @lower{}, @upper{}, @capital{},
+  @trim{}, @strlen{}, @strwidth{}, @checksum{},
+  @int{}, @div{}, @mod{}, @round{}, @pow{}, @sqrt{},
+  @rand{}, @dice{}, @max{}, @min{}, @abs{},
+  @replace{}, @fill{},
+
+ * file.c
+- Single line comment of C++ style (i.e. // comment ...)
+
+ * math.c:
+ * variable.c:
+  - Replace mathstring() to get_eval_string()
+
+ * help.c:
+  - Expand #FUNCTION section on libray functions
 
 --------------------------------------------------------------------------------
 <EOT>

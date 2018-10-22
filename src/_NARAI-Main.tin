@@ -1,0 +1,1911 @@
+#nop
+/// ------------------------------------------------------------------
+/// NARAI SCRIPT BY COOKIE 2018. 09
+/// ------------------------------------------------------------------
+
+#CONFIG		{VERBOSE}	    {OFF}
+#CONFIG		{SPEEDWALK}	    {ON}
+#CONFIG		{LOG}	        {PLAIN}
+#CONFIG		{MATHSTR}	    {ON}
+#CONFIG		{CHARSET}	    {UTF8}
+#CONFIG		{UTF8DW}	    {EUC-KR}
+#CONFIG		{COMMAND COLOR}	{<x000050><XDDFFDD>}
+#CONFIG		{WORDWARP}	    {INDENT}
+#CONFIG		{256 COLORS}	{ON}
+
+
+/// #var Host	{narai.mynetgear.com 5001}
+#var Host	{192.168.1.10 5001}
+
+#alias	{OpenSession}
+{
+    #var {Player}   {%1};
+    #var {Class}    {$PlayerClass[%1]};
+    #SESSION        {Ses$Player} $Host;
+}
+
+#alias {SetupPlayer }
+{
+    #alias	{O%1}		        {OpenSession {%1}};
+    #var    {PlayerClass[%1]}   {%2};
+    #if { ? %3 } { #var {NickList[%3]} {%1};#var {NickList[%1]} {%3}};
+}
+
+SetupPlayer     TestOne     Mage    ZT
+SetupPlayer     Cookie      Warrior ZC
+SetupPlayer     Kookie      Cleric  ZK
+SetupPlayer     Wookie      Warrior ZW
+SetupPlayer     Xookie      Warrior ZX
+/// SetupPlayer     Zookie      Warrior
+
+#subst {^Cookie } {*Cookie* }
+#subst {^Xookie } {*Xookie* }
+
+#alias {ottt}   {OTestOne}
+
+SetupPlayer     Zaa         Warehouse
+SetupPlayer     Zbb         Warehouse
+SetupPlayer     Zcc         Warehouse
+
+#action	{^By what name do you wish to be known?} {$Player}
+
+#action	{^Password :}	{1111}
+#action	{^*** PRESS RETURN : }	{#cr}
+
+#action {^Welcome to the land of Kkang-PaeMUD.}
+    { SetScore; #delay 2 { group $Player }}
+
+#action	{^Reconnecting.$}	{ SetScore ; look}
+
+#EVENT  {SESSION CONNECTED}
+{
+    #format f {LOG/tt_$Player\_%t\.log} {%y%m%d};
+    #log {append} {$f}; #unvar f;
+    #line log {} {================================================================================};
+    #echo {PLAYER: $Player    TIME: %t\n\n} {%F %T}
+    #TICK {HourlyLog}
+    {
+        #echo    {--------------------------------------------------------------------------------};
+        #format {f} {HOURLY LOG: PLAYER: $Player    TIME: %t\n\n} {%F %T};
+	    #showme  {$f} ; #unvar f;
+	    score; inv; eqip;
+    } {3600}
+}
+
+///	#action	{^1) Into the NaraiMUD.} {}
+
+/// Welcome to the land of Kkang-PaeMUD. May your visit here be... Interesting.
+/// If you are new player, type 'info' or 'help' or 'NEWS'
+
+/// ------------------------------------------------------------------
+
+#SPLIT 0 3
+
+#PROMPT		{^[%1,%2,%3]}
+    {[%1, %2, %3] $Player ($Class $Level) @OnPrompt{{%1} {%2} {%3}}
+    Sanc: @AffOn{$Sanc}, Haste: @AffOn{$Haste}, Inv: @AffOn{$SeeInv}
+   } {1}
+
+///  #action     {^[%1,%2,%3]}   {#var HP {%1}; #var Mana {%2}; #var Move {%3}}
+
+#function {OnPrompt}    {
+    #var HP {%1}; #var Mana {%2}; #var Move {%3}; #return {} }
+
+/// ===================================================================
+/// General utility function, alias
+
+/// #function   {Number} { #format {result} {%g} {%1}}) }
+/// #function   {Eval} { #math {result} {%0} }
+
+#function   {InList} { #list {%1} find {%2} {result} }
+
+#alias      {gagline}   {#line gag}
+
+#alias      {print}         {#echo {%0}}
+#alias      {printbold}     {#echo {%0}}
+#alias      {info}          {#echo {%0}}
+#alias      {infoline}  { #showme {%0} {2}}
+
+
+/// ------------------------------------------------------------------
+#var EmptyLines 0
+
+#action     {^$}
+{
+    gagline; #math EmptyLines {$EmptyLines + 1};
+    #if { $EmptyLines < 20 } {
+        #delay {BlankLines} { #echo {}; #var EmptyLines {0}} {10}};
+    #else {#echo {}; #var EmptyLines {0}}
+}
+
+/// ===================================================================
+
+#ALIAS      {retin}  {#READ; SetScore; look }
+#alias      {rere}  {retin}
+
+#alias  {tth}		{#help}
+
+#alias	{/}		    {chat}
+
+#alias  {x}         {exit}
+#alias  {r}         {e}
+#alias  {m}         {n}
+
+/// ------------------------------------------------------------------
+
+#alias  {rent}		{save; \rent}
+#alias  {ren}		{remove}
+
+#action {^In your dreams, or what?}                 {wake; stand}
+#action	{^Nah... You feel too relaxed to do that..}	{stand}
+#action {^You can't do this sitting!}               {stand}
+#action {^Maybe you should get on your feet first?} {stand}
+
+#action {^You stop following %1.}                   {group $Player}
+
+#alias bread	{ get bag urn; get all bag }
+#alias unbread	{ put all.bread bag; put bag urn}
+
+/// ------------------------------------------------------------------
+/// Tick
+
+#if { ! $Tick }
+{
+    #var    {Tick}      {48.2}
+    #tick   {Tick}      { OnTick; #delay {PreTick} {PreTick} {46}} {$Tick};
+}
+
+#var    {Tick}      {48.2}
+#tick   {Tick}      { OnTick; #delay {PreTick} {PreTick} {46}} {$Tick};
+
+#alias  {SyncTick}  {#tick {Tick} {SYNC}}
+
+#alias  {OnTick}
+{
+    #if { $Sanc > 0 }       { #math  {Sanc}    { $Sanc - 1}};
+    #if { $Haste > 0 }      { #math  {Haste}   { $Haste - 1}};
+    #if { $SeeInv > 0 }     { #math  {SeeInv}    { $SeeInv - 1}};
+    #cr;
+}
+
+#alias {PreTick}    {#if { $Alarm } {#echo {Tick!}}}
+
+#alias {alarm}      { #math {Alram} {!$Alarm}}
+
+#alias {tick}       { #tick {Tick} {TIME}}
+
+/// ------------------------------------------------------------------
+
+#alias  {yyt}       {rescue test}
+#alias  {yyk}       {rescue kookie}
+#alias  {hhc}       {cast 'full heal' cookie}
+#alias  {hht}       {cast 'full heal' test}
+#alias  {hhx}       {cast 'full heal' xookie}
+#alias  {hhk}       {cast 'full heal' kookie}
+
+/// ------------------------------------------------------------------
+#alias  {buddy}     { #var {Buddy} {%1}}
+
+#alias	{kk}        {kill}
+#alias  {yyy}       {#if { ? %1 } { rescue %1 } {rescue $Buddy }}
+#alias  {aaa}       {#if { ? %1 } { assist %1 } {assist $Buddy }}
+
+#alias  {member}        { gtell ORDER: '%0'}
+#alias  {allmember}     { gtell ALLORDER: '%0'}
+
+
+#action {** %1 ** ' ORDER ASSIST'}  { #if { %1 != $Player }   {assist $Buddy }}
+#action {** %1 ** ' ORDER SHOT %2'}    {
+    #if { %1 == $Player } {#return};
+    #elseif { $Class == Warrior }    {#3 spin};
+    #elseif { $Class == Thief }      { lig; backstab %2; lig };
+    #elseif { $Class == Cleric }     {#3 cast 'sunburst'};
+    #elseif { $Class == Mage }       {#3 cast 'cone of ice'};
+}
+
+#action {** %1 ** ' ORDER SUMMON %2'}    {
+    #if { %1 == $Player } {#return};
+    #elseif { $Class == Cleric || $Class == Mage } { summon %2 }
+}
+
+#alias  {aa}    {gtell ORDER ASSIST}
+#alias  {oo}    {gtell ORDER SHOT %0}
+
+/*
+#action {** %1 ** ' ORDER %2 %3 %4'}
+{
+    #local ot {%4};
+    #if { $ot == ME } {#local {ot} {%1}};
+    #elseif { $ot == YOU } {#local {ot} {$Player}};
+
+    #if { %2 ==  ||  } {#local {ot} {$Player}};
+
+    #if { %2 == ALL } {DoOrder %3 $ot};
+    #elseif { %2 == MATE && %1 != $Player } {DoOrder %3 $ot};
+    #elseif { %2 == $Player ||  %2 == $Nick } {DoOrder %3 $ot};
+    #elseif { %2 == $Class || %2 == $ClassNick } {DoOrder %3 $ot};
+    #elseif { %2 == CM && ( $Class == Cleric || $Class == Mage )  } {DoOrder %3 $ot};
+    #elseif { %2 == WT && ( $Class == Warrior || $Class == Thief ) } {DoOrder %3 $ot};
+}
+*/
+
+/*
+#alias {DoOrder}
+{
+    #if { $Class == Cleric || $Class == Mage }
+        { #local {cls} {CM}} { #local {cls} {WT}}
+
+    #switch {%1} {
+        #case ASSIST        { assist %2 };
+        #case RESCUE        { rescue %2 ; rescue %2 };
+        #case HEAL         {
+            #if { $Class == Cleric }    { FullHeal %2};
+            #elseif { $Class == Mage }  { cast 'heal' %2};
+            #else { %2 == $Player }     {SelfHeal};
+        }
+        #case HASTE {
+            #if { $cls == CM &&
+
+            #if { $cls == CM } {Haste}
+
+        }
+    };
+    }
+
+    #elseif { %1 ==
+
+    #elseif
+
+
+    }
+    #elseif { %1 == STORM )
+    {
+        #if { $Class == Warrior || $Class == Warrior } {tornado} { cast 'firestorm' };
+    }
+
+
+
+
+}
+
+
+    { #if { "%1" != "$Player" } {%2}}
+
+*/
+#action {** %1 ** ' ORDER HEAL %2'}
+{
+    #if { $Class == Cleric }        {FullHeal %1};
+    #elseif { $Class == Mage }      {Heal %1};
+    #elseif { %1 == $Player }       {SelfHeal};
+}
+
+#alias ohh {
+    #if { %1 }  { gtell ORDER HEAL %1};
+    #else       { gtell ORDER HEAL $Player};
+}
+
+#alias oass {
+    #if { %1 }  { gtell ORDER ASSIT %1};
+    #else       { gtell ORDER ASSIST $Player};
+}
+
+#action {** %1 ** ' HEALME'} { #if { "%1" != "$Player" } {%2}}
+
+
+#action {** %1 ** ' ALLORDER: '%2''} {%2}
+
+
+#alias  {ohh}   {}
+
+
+#alias {aaa}        {member assist $Player}
+#alias {ass}        {#if { ? %1 } { assist %1 } {assist $Buddy }}
+
+#alias {kkk}        {
+    #if { $Class == Warrior || $Class == Thief } {tornado};
+    #elseif { $Class == Cleric || $Class == Mage } {cast 'firestorm' }
+}
+
+#alias {ooh}
+{
+
+}
+
+
+#alias {kkaa} {kkk; aaa}
+#alias {mmm}  {member}
+
+
+#alias  {mul10}     {#10 multi}
+
+#alias {bb} {lig; back %0; lig}
+#gag {^this skill can used only in fighting.}
+
+#alias {CastPlayer} {#if { %2 } { cast '%1' %2 } { cast '%1' $Player }}
+
+#alias  {gogo}
+{
+	#if { $Room == Mid }
+		{ DrSundew bubble ; say help; say help;
+		#return };
+
+	#if { $Class == Cleric || $Class == Mage}
+		{ armor ; protevil };
+}
+
+#alias {ggg}
+{
+	#if { %1 }
+		{ haste %1 ; bless %1 };
+	#elseif { $Class == Cleric }
+		{ haste ; reflect ; brave; bless };
+	#elseif { $Class == Mage }
+		{ improved; haste; mirror; reflect ; brave; bless };
+    #delay {3} {SetScore};
+}
+
+
+
+#alias  {helper}
+{
+    #if { "$Room" == "Mid" }
+        {say help; say help; #delay 2 {SetScore}};
+    #else { #echo {Here is not Midgaard.}}
+}
+
+#alias  {protect}   { armor; protevil}
+
+/// ------------------------------------------------------------------
+
+///  heal, full heal recall
+/// {^A warm feeling fills your body.}
+
+#alias	{hh}		{SelfHeal}
+#alias	{SelfHeal}	{cast 'self heal' }
+
+#alias  {hhh}
+{
+	#if { "$Class" == "Cleric" }
+		{ FullHeal };
+	#elseif { "$Class" == "Mage" }
+		{CastPlayer {heal}};
+	#else	{SelfHeal};
+}
+
+#alias	{fh}		{FullHeal}
+
+#alias	{FullHeal}	{CastPlayer {full heal}}
+
+#high   {^A warm feeling fills your body.} {BOLD}
+
+/// ------------------------------------------------------------------
+
+#alias	{haste}	{ CastPlayer haste }
+
+#action {^You feel world is going slowly!}      {#var Haste 5 }
+#high	{^You feel world is going slowly!}      {BOLD}
+#action {^You feel things return to normal.}
+        {#var Haste -1 ; printbold {*HASTE OFF*};SyncTick}
+#high	{^You feel things return to normal.}    {underscore}
+
+#alias {improved}	{cast 'improved haste'}
+#alias {imp}		{improved}
+
+#alias	{sanc}		{ CastPlayer sanc}
+
+#action {^You start glowing.}                   {#var Sanc 7; SetScore}
+#high   {^You start glowing.}                   {BOLD}
+#action {^The white aura around your body fades.}
+        {#var Sanc -1; printbold {*SANC OFF*};SyncTick}
+#high   {^The white aura around your body fades.}   {BOLD}
+
+#alias  {reflect}       {cast 'reflect' }
+#alias  {refl}		    {cast 'reflect' }
+#high   {^You get ready to reflect damages!}    {BOLD}
+#high   {^Your reflecting shield fades!}        {BOLD}
+
+#alias  {mirror}	{cast 'mirror'}
+#alias  {mirr}	    {mirror}
+#high   {^You made your illusion.}              {BOLD}
+#high   {^Your illusion color fades.}           {BOLD}
+
+#alias  {armor}	        {CastPlayer armor }
+#high   {^You feel someone protecting you.}     {BOLD}
+#high   {^You feel less protected.}             {BOLD}
+
+#alias  {bless}	        {CastPlayer bless }
+/// {^You feel righteous.}
+/// {^You feel less righteous.}
+
+#alias  {brave}	        {cast 'damage up'}
+
+#alias  {protevil}  { cast 'protection from evil'}
+
+#alias	{love}		{cast 'love' }
+#action {^You feel glorious.}                   {#var Love 999}
+#high   {^You feel glorious.}                   {BOLD}
+#action {^You are normalized again!}
+        {#var Love -1 ; #echo {*LOVE OFF*}}
+#high	{^You are normalized again!}            {underscore}
+
+/// ------------------------------------------------------------------
+
+#alias	{rrr}	        {recite recall}
+#alias  {recall}        {recite recall}
+#alias  {word}	        {cast 'word of recall'}
+#alias	{rec}	        { #if { ? %1 }  { recite %1 };
+                            #else { recite recall; get recall boddari}}
+
+#alias	{id}		    {cast 'identify' }
+
+#alias	{summon}	    {cast 'summon' }
+#alias	{sum}		    {summon}
+#alias	{summ}		    {summon}
+
+#alias  {seeinv}	    {cast 'detect inv'}
+#action {^Your eyes tingle.}                    {#var SeeInv 999}
+#action {^The detect invisible wears off.}      {#var SeeInv -1}
+#high	{^The detect invisible wears off.}      {underscore}
+
+#alias  {phase}	        {cast 'phase' }
+#alias  {relo}	        {cast 'relocate' }
+#alias  {locate}	    {cast 'locate object' }
+#alias  {farlook}       {cast 'far look' }
+
+#alias  {vital}	        {cast 'vitalize' }
+#alias  {moveboost}	    {cast 'restore move' }
+#alias  {manaboost}	    {cast 'mana boost' }
+
+#alias  {charm}	        {cast 'charm person' }
+
+/// #alias  {create food}	        {cast 'create food' }
+/// #alias  {create water}	        {cast 'create waten' }
+
+/// infravision
+#alias  {infra}	        {cast 'infra vison' }
+/// {^You feel your eyes become more sensitive.}
+
+#alias  {kkurc}		{summon urchin ; kill urchin}
+#alias  {kksuz}		{summon suzy ; kill suzy}
+#alias  {kkmer}		{summon mercenary ; kill mercenary}
+
+/// ------------------------------------------------------------------
+
+#alias {cone}	{cast 'cone of ice' }
+#alias {ii}	    {cone}
+
+#alias  {zzz}	        {cast 'sleep'}
+#high   {%1 go to sleep.}                       {BOLD}
+
+#alias  {curse}	        {cast 'curse' }
+#high   {^%1 reveal a red aura!}                {BOLD}
+
+#alias  {crush}	        {cast 'crush armor' }
+#high   {^Your victim's armor has crumbled!}    {BOLD}
+
+#alias  {blind}	        {cast 'blind' }
+#high   {^%1 seems to be blinded!}              {BOLD}
+
+
+#alias  {dumb}	        {cast 'dumb' }
+#high   {^%1 gets DUMB!!}                       {BOLD}
+
+#alias  {poison}	    {cast 'poison' }
+
+#alias {ccc}	{crush %1; curse %1; blind %1; poison %1};
+
+#alias {zzcc}	{zzz %1; zzz %1; crush %1; curse %1; blind %1, poison %1}
+
+
+#alias {holy}   {cast 'holy'}
+
+#high   {^Your holy shield fades!}              {BOLD}
+
+#alias  {harm}		    {cast 'harm'}
+
+#alias  {earth}         {cast 'earthquake' }
+#alias  {storm}         {cast 'firestorm' }
+#alias  {ff}            {storm}
+#alias  {hand}          {cast 'hand of god' }
+
+#high	{^%1 makes the earth tremble and shiver}              {BOLD}
+
+#gag    {^The earth trembles and shivers.}
+#gag    {^The fire storm is flowing in the atmosphere.}
+#gag    {^Dirty hands with long nail is going and coming all over sky.}
+
+#gag    {^The Grand Archmage shouts 'SUNFIRE'}
+
+/// ------------------------------------------------------------------
+
+#alias	{zza}		{target %1; tell %1 OK}
+#alias	{zzb}		{ say summon: $target }
+#alias	{zzc}		{}
+#alias	{zzc}		{kill $target}
+#alias	{zzlove}	{kill $target}
+#alias	{zzf}		{say f}
+#alias	{zzh}		{say help}
+#alias	{zzl}		{look $target}
+
+/// ===================================================================
+/// Quest
+
+#var Quest {Unknown}
+
+#action {^QUEST : QM proposes you should kill %1.}
+{
+    #var {Quest} {%1};
+    #if { + $sc_quest } {QuestScore};
+    #elseif { $Room == PetShop } { qqt }
+}
+
+#high   {^QUEST : QM proposes you should kill %1.}              {underscore}
+#high	{^QUEST : Congratulations, You made! Go to QM.}         {underscore}
+#high   {^QUEST : QM gives %1 for your success.}                {underscore}
+
+#alias {qqu}            {quest}
+#alias {qqr}            {request}
+
+#alias {qqtell}         { tell %1 OK }
+#alias {qql}            { #if { ? "%1" } { farlook %1 } { farlook $Quest}}
+
+///  qqt ; qqt suzy bogan ; qqt queen 10 ;  qqt mage 10 20
+#alias {qqt}
+{
+    #if { + %2 } {
+        #local {i} {};
+        #if { +%3 } { #local s %2; #local e %3 };
+        #else { #local s 1; #local e %2 };
+        #loop {$s} {$e} {i} {tell $i\.%1 OK $i\.%1 };
+        #return;
+    };
+    #elseif { ? %0 } { #local q {%0} };
+    #else { #local q {$Quest}};
+    #local {x} {};
+    #foreach {$q} {x} {tell $x OK};
+}
+
+#alias {qqs}
+{
+    #if { ? "%1" }  { #local q {%1}} { #local q {$Quest}};
+    #if { $Class == Cleric || $Class == Mage } { summon $q};
+    #else { gtell ORDER SUMMON $q };
+}
+
+#alias {qqs2} {#list fn create {$Quest} ; qqs $fn[2]; #unvar fn }
+
+#alias {qqk}    { #if { ? "%1" } { qqq %1 } { qqq $Quest}}
+
+#alias {qqq}
+{
+    #switch {$Class}
+    {
+        #case Warrior   {punch %0};
+        #case Thief     {back %0; lig; lig};
+        #case Cleric    {harm %0};
+        #case Mage      {cone %0};
+        #default        {kill %0};
+    }
+}
+
+#alias  {Pet2QR}        {n;w;n;n; u; quest }
+
+#alias  {QR2Pet}
+{
+    d; drink sundew; s;w;n; #delay {2.0} {DoBank};
+	#delay {4.0} {s;e;s;e;s; quest};
+}
+
+#alias  {qqx}
+{
+    #if { $Room == PetShop } {Pet2QR};
+    #elseif { $Room == QuestRoom } {QR2Pet};
+}
+
+#alias  {qqo}
+{
+    #if { $Room == PetShop } {Pet2QR};
+    #delay {3.0} {#if { $Room == QuestRoom } {QR2Pet}};
+}
+
+/// ------------------------------------------------------------------
+
+#alias	{target}	{ #var $target {%1} }
+#alias	{pp}		{ point	%1 ; target %1 }
+#alias	{killtarget}	{ #if {"%1" != ""} {target %1}; kill $target }
+
+
+#high   {^Your bare hand dice is added!!!}               {BOLD}
+#high   {^Your bare hand dice is enlarged!!!}            {BOLD}
+#high   {^Your %1 POWER is more skilled!}                 {BOLD}
+
+#high	{^%1 is dead! R.I.P.}					        {BOLD}
+#action {^You receive %1 experience and %2 gold coins.}
+        { #echo {You receive %g experience and %g gold coins.} {%1} {%2};
+          gagline ; exam corpse }
+
+#action	{^Your blood freezes as you hear %1 death cry.}
+{
+    #if { "%1" != "someones" } { #var Corpse {%1}; gagline };
+    #if { "$Room" == "Mid" } { gagline }
+}
+
+#high	{^You wish that your wounds would stop BLEEDING that much!} {<FBB>}
+#action {^You wish that your wounds would stop BLEEDING that much!}
+            {#delay {selfheal} {SelfHeal; SelfHeal} {1} }
+#high	{^PANIC! You couldn't escape!}			                    {<FBB>}
+#high	{^That Really did HURT!}                                    {BOLD}
+
+
+/// #action {^Mom is here, shaking her finger at you.}                  {look mom}
+/// #high   {^Mom is here, shaking her finger at you.}                  {BOLD}
+
+#high	{^TYou flee head over heels.}                               {BOLD}
+#high	{^%1 panics, and attempts to flee.}                         {BOLD}
+
+#high   {^You lost your concentration!}                             {BOLD}
+#high   {^Impossible! You can't concentrate enough!}                {BOLD}
+#high	{^You can see star above your head ?!? , you are confused!} {BOLD}
+
+#high   {^Yaho! To the rescue...}                                   {BOLD}
+#high   {^You fail the rescue.}                                     {BOLD}
+/// #high   {^But nobody is fighting %1?}                           {BOLD}
+#high   {You are rescued by %1, you are confused!}                  {BOLD}
+#high   {^%1 heroically rescues %2.}                                {BOLD}
+
+
+#high   {^%1 assist you !!$}                                        {BOLD}
+#high   {^%1 says '스핀~~~버드~~~킥!!!'}                            {BOLD}
+
+#high   {^파바바바박~~!!$}
+#gag    {^요~~~오~~~옷!!$}
+#gag    {^얍얍얍얍얍!!!!$}
+#gag    {^차차차차찻~~~~$}
+
+#high	{^DeathCure is here, looking your hit point ???}	    {under}
+#high	{^Musashi is here, dancing with his samurai sword.}     {under}
+#high	{^I CHALLENGE YOU.}                                     {under}
+#action	{^I CHALLENGE YOU.}         {flee; SelfHeal}
+
+#high	{^%1 suppresses a laugh.}                               {BOLD}
+#high	{^You discover that %1 has %2 hands in your wallet.}    {BOLD}
+
+/// #high	{^%1 sends a POWERFUL PUNCH!!! ORURURURURURURURU!!!!!}  {BOLD}
+
+#high	{^No way! You are fighting for your life!} {BOLD}
+
+
+#gag	{%1 -miss- you.$}
+#gag	{%1 -tickle- you.$}
+#gag	{%1 -barely- you.$}
+/// #gag	{%1 -hit- you.$}
+
+#gag	{You -hit- %1.$}
+#gag	{You -hard- %1.$}
+#gag	{You -very hard- %1.$}
+
+/*
+#action {%1 -hit- %2.$}     {}
+#action {%1 -hit %2.$}      {}
+#action {%1 -hit %2.$}      {}
+#action {%1 -hit %2.$}      {}
+*/
+
+#gag    {^You parry successfully.}
+#gag    {^%1 parries successfully.}
+
+#gag	{^%1 says 'Ya haa haa hap'.}
+/// #gag	{^%1 says 'Quu ha cha cha'.}
+
+#gag	{^%1 failed to punch down %2!!!}
+
+#high	{^You have been blinded!}
+
+#action {^You have been blinded!} {healself}
+
+/// Kick / multi kick
+#gag	{^You're hit in solar plexus, wow, this is breathtaking !!}
+#gag    {^%1 kicks %2 in solar plexus, %3 is rendered breathless}
+#gag	{^%1 misses a kick at your groin, you breathe lighter now}
+#gag    {^%1 misses a kick at %2's groin}
+
+
+/// Bash
+#gag    {^%1 sends you sprawling}
+#gag    {^%1 sends %2 sprawling with a powerful bash}
+#gag    {^You dodge a bash from %1 who loses %2 balance and falls}
+#gag    {^%1 avoids being bashed by %2 who loses his balance and falls}
+
+#gag    {^%1 lost the concentration!!!}
+#gag    {^%1 could not summon enough energy to cast.}
+
+#gag    {^%1 try flash attack %2, but failed.}
+
+/*
+/// Magic missile
+#gag    {^You stagger as a magic missile from %1 hits you}
+#gag    {^%1 throws a magic missile at %2 who staggers under the blow}
+/// #gag    {^ utters the words, 'waouq wuggurz'}
+/// #gag    {^ utters the words, 'magic missile'}
+
+/// Chill touch
+#high   {^You feel your life flowing away as %1 chills you} {BOLD}
+#gag    {^%1 chills %2 who suddenly seem less lively}
+/// #gag    {^%1 utters the words, 'qpurr hajqp'}
+/// #gag    {^%1 utters the words, 'chill touch'}
+
+/// Burning hands
+#gag    {^You cry out in pain as The %1 burns you}
+#gag    {^%1 cries out as %2 burns %3}
+/// #gag    {^%1 utters the words, 'mosailla paieg'}
+/// #gag    {^%1 utters the words, 'burning hands'}
+
+/// color spray
+#gag    {^A sudden burst of colours sends you reeling}
+#gag    {^%1 throws colours at %2 who in vain tries to escape}
+/// #gag    {^%1 utters the words, 'qahif gsfal'}
+/// #gag    {^%1 utters the words, 'color spray'}
+
+/// Shocking grasp
+#gag    {^You get a shock as %1 gets too close to you}
+#gag    {^%1 looks shocked as %2 graspes at %3}
+/// #gag    {^%1 utters the words, 'gpaqtuio ofags'}
+/// #gag    {^%1 utters the words, 'shocking grasp'}
+
+/// Lightnining bolt
+#gag    {^YOU'RE HIT. A lightning bolt from %1 has reached its goal}
+#gag    {^%1 wavers under the impact of the lightning bolt sent by %2}
+/// #gag    {^%1 utters the words, 'diesilla barh'}
+/// #gag    {^%1 utters the words, 'lightening bolt'}
+
+/// Fireball
+#gag    {^You are enveloped in flames from a fireball sent by %1 - OUCH}
+#gag    {^%1 smirks as his fireball explodes into the face of %2}
+/// #gag    {^%1 utters the words,  utters the words, 'yufzbarr'}
+/// #gag    {^%1 utters the words,  utters the words, 'fireball'}
+
+/// Harm
+#gag    {^%1 utters the words, 'pabraw'}
+#gag    {^%1 utters the words, 'harm'}
+
+/// Earthquajke
+/// #gag    {^%1 utters the words, 'zabrahpdjatz'}
+/// #gag    {^%1 utters the words, 'earthquake'}
+*/
+
+#high   {^%1 has a few scratches.}                      {BOLD}
+#high   {^%1 has some small wounds and bruises.}        {BOLD}
+#high   {^%1 has quite a few wounds.}                   {BOLD}
+#high   {^%1 has some big nasty wounds and scratches.}  {BOLD}
+#high   {^%1 looks pretty hurt.}                        {BOLD}
+#high   {^%1 is in an awful condition.}                 {BOLD}
+
+#gag    {^%1 screams 'PROTECT THE INNOCENT!!! CHARGE!!!'}
+
+#high   {%1 is here, fighting  YOU!}                {BOLD}
+
+#high   {Thwapp! You are shot by %1 with %2.}  {BOLD}
+#gag    {^You are shot at by %1 with %1, but missed.}
+#gag    {^으라차아  !$}
+
+/// ===================================================================
+///	Door, gate, key
+
+#function {Dir}
+{
+    #switch {%1}
+    {
+        #case e     { #return {east}};
+        #case w     { #return {west}};
+        #case s     { #return {south}};
+        #case n     { #return {north}};
+        #case u     { #return {up}};
+        #case d     { #return {down}};
+    }
+}
+
+#alias {SetDoor}
+{
+    #if { "%1" == "" } {};
+    #switch {%1%2}
+    {
+	#case do    { #var {Door} {door}}; #break;
+	#case ga    { #var {Door} {gate}}; #break;
+
+        #case de
+        #case dw
+        #case ds
+        #case dn
+        #case du
+        #case dd
+	    { #var {Door} {door @Dir {%2}}}; #break;
+
+        #case ge
+        #case gw
+        #case gs
+        #case gn
+	    { #var {Door} {gate @Dir {%2}}}; #break;
+
+        #case ie    { #var {Door} {it east}};
+        #case iw    { #var {Door} {it west}};
+        #case is    { #var {Door} {it south}};
+        #case in    { #var {Door} {it north}};
+        #case iu    { #var {Door} {it up}};
+        #case id    { #var {Door} {it down}};
+	#default    #return {%1 %2};
+    };
+    #return {$Door};
+}
+
+#alias gkc    {get key corpse}
+
+#alias opk    {get key; unlock @Dir {%0}; open @Dir {%0}; drop key }
+
+#alias gkop  {get all corps; unlock @Dir{%1}; open %1 @Dir{%1}}
+
+#alias keyop {unlock %1; open %1 @Dir{%2}}
+
+#action	{^The %1 seems to be closed.}	{#var Door {%1}; open %1 }
+#action	{^It seems to be closed.}	    {#var Door {.}; open %1 }
+
+#alias  {op}        {#var Door %0; open %0}
+#alias  {opk}       {#var Door %0; unlock %0; open %0}
+#alias  {opp}       {#var Door %0; pick %0}
+
+#alias  {gkop}       {#var Door %0; get %1 ; unlock %0; open %0;  drop %1}
+#alias  {gcop}       {#var Door %0; get %1 corp ; unlock %0; open %0;  drop %1}
+
+/// #action	{^It seems to be locked.}	    { unlock $Door }
+/// #action	{^You do not have the proper key for that.} { }
+
+#action	{^The lock quickly yields to your skills.}  {open $Door }
+#action	{^Oh.. it wasn't locked at all.}            {open $Door }
+
+#nop #action	{ ; open $Door}
+
+#alias {UnlockDoor} {
+	SetDoor %0;
+	unlock $Door;
+	open $Door
+}
+
+
+#alias {UnlockDoor} {
+	#if { %1 } {#var {Door} {%1 %2}} {#var {Door} {door}};
+	unlock $Door ;
+	open $Door
+}
+
+#alias	{pick5}	{ #5 pick $Door}
+
+#action {^You failed to pick the lock.}             {}
+
+#action {The lock quickly yields to your skills.} {open $Door}
+
+///
+/// You failed to pick the lock.
+///
+/// You do not have the proper key for that.
+/// You seem to be unable to pick this lock.
+
+/// ------------------------------------------------------------------
+
+#alias {AutoKeyUnlock}
+    { #action {^%1 is dead! R.I.P.}         {get key corpse; unlock %2; open %2}}
+
+AutoKeyUnlock {The computer robocop}        {gate north}
+AutoKeyUnlock {The Apple computer}          {MSX up}
+AutoKeyUnlock {The MSX computer}            {XT up}
+AutoKeyUnlock {The XT computer}             {AT up}
+AutoKeyUnlock {The AT computer}             {386 up}
+AutoKeyUnlock {The 386 computer}            {486 up}
+AutoKeyUnlock {The 486 computer}            {pentium up}
+
+AutoKeyUnlock {Mine robocop}                {gate north}
+AutoKeyUnlock {Coal robot}                  {iron down}
+AutoKeyUnlock {Iron robot}                  {copper down}
+AutoKeyUnlock {Copper robot}                {silver down}
+AutoKeyUnlock {Silver robot}                {gold down}
+AutoKeyUnlock {Gold robot}                  {ruby down}
+AutoKeyUnlock {Ruby robot}                  {sapphire down}
+AutoKeyUnlock {Sapphire robot}              {diamond down}
+
+AutoKeyUnlock {The 5th robocop}             {fourth up}
+AutoKeyUnlock {The 4th robocop}             {third up}
+AutoKeyUnlock {The 3rd robocop}             {second up}
+AutoKeyUnlock {The 2nd robocop}             {first up}
+AutoKeyUnlock {The 1st robocop}             {head up}
+
+AutoKeyUnlock {The Red rainbow Sura}        {red up}
+AutoKeyUnlock {The Orange rainbow Sura}     {orange up}
+AutoKeyUnlock {The Yellow rainbow Sura}     {yellow up}
+AutoKeyUnlock {The Green rainbow Sura}      {green u}
+AutoKeyUnlock {The Blue rainbow Sura}       {blue up}
+AutoKeyUnlock {The Maid Sur}                {indigo up}
+AutoKeyUnlock {The Violet rainbow Sura}     {violet up}
+
+AutoKeyUnlock {The January month Sura}      {feb up}
+AutoKeyUnlock {The February month Sura}     {march up}
+AutoKeyUnlock {The March month Sura}        {april up}
+AutoKeyUnlock {The April month Sura}        {may up}
+AutoKeyUnlock {The May month Sura}          {june up}
+AutoKeyUnlock {The June month Sura}         {july up}
+AutoKeyUnlock {The July month Sura}         {aug up}
+AutoKeyUnlock {The September month Sura}    {oct up}
+AutoKeyUnlock {The October month Sura}      {nov up}
+AutoKeyUnlock {The The Lady Sura}           {dec up}
+
+AutoKeyUnlock {Auto keeper}                 {auto west}
+AutoKeyUnlock {Auto keeper}                 {auto west}
+
+/// ===================================================================
+
+#alias {DoArg1}
+{
+    #local {r} {};
+    #if { "%1" == "" } #return;
+    #list args create {%0}; #list args delete 1;
+    #foreach {$args} {r}
+        {#if { "$r" != "" } {%1  $r}};
+    #unvar {args};
+}
+
+#alias {DoArg2}
+{
+    #local {r} {};
+    #if { "%2" == "" } #return;
+    #list args create {%0}; #list args delete 1 2;
+    #foreach {$args} {r}
+        {#if { "$r" != "" } {%1 $r %2}};
+    #unvar {args};
+}
+
+#alias {DoArg3}
+{
+    #local dest; #local r;
+    #if { "%3" == "" } #return;
+    #list args create {%0}; #list args delete 1;
+    #list args get -1 {dest}; #list args delete -1;
+    #foreach {$args} {r}
+        {#if { "$r" != "" } {%1 $r $dest}};
+    #unvar {args};
+}
+/// ------------------------------------------------------------------
+/// Color defintions. Help, chat color
+
+/// RESET
+#var {RESET}    {<088>}
+#var {NONE}     {<088>}
+#var {BOLD}     {<188>}
+#Var {UNDER}    {<488>}
+
+/// BG Misty Rose
+#var {_TK[31]}    {<XFFE4E1>}
+/// BG Apple Geeen
+#var {_TK[32]}    {<XE2F2DE>}
+/// BG Light cyan
+#var {_TK[33]}    {<XE0FFFF>}
+/// BG Lemon Chiffon
+#var {_TK[34]}    {<XFFFACD>}
+/// BG Cornsilk
+#var {_TK[35]}    {<XFFF8DC>}
+/// BG Yellow + Bold
+#var {_TK[36]}    {<XFFFF00><188>}
+/// BG Light Steele Blue
+#var {_TK[37]}    {<XFFFF00>}
+/// BG Grey + Bold
+#var {_TK[38]}    {<XBEBEBE><188>}
+/// BG Cyan
+#var BGCYAN       {<X00FFFF>}
+
+#var {_TK[81]}  {<088><188><x0020ff>}
+#var {_TK[82]}  {<408>}
+#var {_TK[83]}  {<048>}
+#var {_TK[84]}  {<028>}
+
+/// ===================================================================
+///	Score
+
+#var Terse {0}
+
+#alias {sc}          /// sc, sc 0 ~ sc 4
+{
+    #if { + %1 || "%1" == "0" } { #var Terse {%1}} { #var Terse {2} };
+    score; #delay 2 { #var Terse {0}};
+}
+
+#alias {stat}     { sc 3 }
+
+#alias  {SetScore}
+        { #var Terse {4}; score;  #delay 2 { #var Terse {0} }}
+
+#var PlayerClass[the Swordpupil]  {Warrior};
+#var PlayerClass[the Believer]    {Cleric}
+#var PlayerClass[the Apprentice of Magic] {Mage}
+#var PlayerClass[the Pilferer]    {Thief}
+#var PlayerClass[the Pilferess]   {Thief}
+
+#var {PlayerClass[Warrior]}   {AW}
+#var {PlayerClass[Cleric]}    {AC}
+#var {PlayerClass[Mage]}      {AM}
+#var {PlayerClass[Thief]}     {AT}
+
+#var {PlayerClass[AW]}   {Warrior}
+#var {PlayerClass[AC]}    {Cleric}
+#var {PlayerClass[AM]}      {Mage}
+#var {PlayerClass[AT]}     {Thief}
+
+
+#action  {^You are a saint.$}               {#var Align {are a saint}; gagline }
+#action  {^You are almost evil.$}           {#var Align {are almost evil}; gagline }
+#action  {^You feel like being a saint.$}   {#var Align {feel like being a saint}; gagline }
+#action  {^You are good.$}                  {#var Align {are good}; gagline }
+#action  {^You are slightly good.$}         {#var Align {are slightly good}; gagline }
+#action  {^You are almost good.$}           {#var Align {are almost good}; gagline }
+#action  {^You are going to be good.$}      {#var Align {are going to be good}; gagline }
+#action  {^You are neutral.$}               {#var Align {are neutral}; gagline }
+#action  {^You are going to be evil.$}      {#var Align {are going to be evil}; gagline }
+#action  {^You are almost evil.$}           {#var Align {are almost evil}; gagline }
+#action  {^You are slightly evil.$}         {#var Align {are slightly evil}; gagline }
+#action  {^You are evil.$}                  {#var Align {are evil}; gagline }
+#action  {^You feel like being a devil.$}   {#var Align {feel like being a devil}; gagline }
+#action  {^You are a devil.$}               {#var Align {are a devil}; gagline}
+
+#alias   {MyPosture}        { #var Posture {%1}; #if { $Terse >= 4 } { gagline} }
+#action  {^You are DEAD!$}                                      { MyPosture {DEAD!} }
+#action  {^You are mortally wounded!, you should seek help!$}   { MyPosture {mortally wounded!} }
+#action  {^You are incapacitated, slowly fading away$}          { MyPosture {incapacitated, slowly fading away} }
+#action  {^You are stunned! You can't move$}                    { MyPosture {stunned! You can't move} }
+#action  {^You are sleeping.$}          { MyPosture {sleeping} }
+#action  {^You are resting.$}           { MyPosture {restingg} }
+#action  {^You are sitting.$}           { MyPosture {sitting} }
+#action  {^You are fighting %1.}        { MyPosture {fighting}; #var Fighting {%1}}
+#action  {^You are standing.$}          { MyPosture {standing} }
+#action  {^You are floating.$}          { MyPosture {floating} }
+
+/// ------------------------------------------------------------------
+
+#action	{^You are %1 years old.}
+	{#var Age {%1}; gagline }
+
+#action	{^Your ac is %1.}
+	{#var AC {%1}; gagline}
+
+#action	{^You have %1(%2) hit, %3(%4) mana and %5(%6) movement points.}
+{
+    #var Hit {%1}; #var MaxHit {%2}; #var Mana {%3};
+    #var MaxMana {%4}; #var Move {%5}; #var MaxMove {%6};
+    #if { $Terse >= 3 } {gagline};
+}
+
+#action	{^Your stat: str %1 wis %2 int %3 dex %4 con %5.}
+    {   #if { $Terse >= 1 } { gagline };
+        #var Str {%1}; #var Wis {%2}; #var Int {%3}; #var Dex {%4}; #var Con {%5}}
+
+#action	{^Your hitroll is %1 , and damroll is %2.}
+	{#var HR {%1}; #var DR {%1}; gagline}
+
+#action	{^Your Bare Hand Dice is %1.}	{ gagline;
+	#if { $Terse <= 1 } {#echo {Your AC: $AC , HR : $HR , DR : $DR , Bare Hand Dice : %1}}}
+
+#action	{^You save para : %1, hit skill : %2, breath : %3, spell : %4.}
+	{#var sc_tmp {%0}; #replace {sc_tmp} {^You } {}; gagline}
+
+#action	{^Your regeneration is %1.}
+{
+    gagline;
+	#if { $Terse <= 1 } { #echo {Your Regen : %1, $sc_tmp} }
+}
+
+#action	{^You have been playing for %1.}
+{
+    #var PlayTime {%1}; gagline;
+    #if { $Terse <= 1 } {#echo {You $Align and AC is $AC\.}}
+}
+
+#action	{^You have scored %1 exp, and have %2 gold coins.}
+	{ #var Exp {%1}; #var Gold {%2}; gagline}
+
+#action	{^This ranks you as %1 %2 (level %3).}
+{
+    #var sc_tmp {%0}; #var {Player} {%1}; #var {Nick} {$NickList[%1]};
+    #var {Title} {%2}; #var {Level} {%3}; gagline;
+
+    #if { "$Class" == "Warehouse" } {#return};
+    #local cls {$PlayerClass[$Title]};
+    #if { "$cls" == "" }
+        {#local cls {$PlayerClass[$Player]}};
+    #if { "$cls" != "" } {#var {Class} {$cls}; #var {ClassNick} {$PlayerClass[$cls]} };
+}
+
+#action	{^You %1 %2 experience to advance%3$}
+{
+    #if { $Terse <= 2 }
+    {
+        #echo {You have scored %g exp, and have %g gold coins.} {$Exp} {$Gold};
+	    #if { "%1" == "need" }
+            { gagline ; #echo {You need %g experience to advance} {%2}};
+        #replace sc_tmp {level} {$Class level}; #echo {$sc_tmp};
+    };
+    #else {gagline};
+    #unvar sc_tmp;
+
+    #if { $Terse <= 1 }
+        { #echo {You have been playing for ${PlayTime} and $Age years old.}};
+    #var Sanc {-1}; #var Haste {-1}; #var SeeInv {-1};
+}
+
+/// ------------------------------------------------------------------
+
+#action	{^Affecting Spells:$}
+{
+     #var Sanc {-1}; #var Haste {-1}; #var SeeInv {-1};
+     #if { $Terse >= 4 } { gagline; #gag {^%%1: %%2 hrs$}}
+}
+
+#action {^detect invisibility: %1 hrs$} {#var {SeeInv}  {%1}}
+#action {^sanctuary: %1 hrs$}           {#var {Sanc}    {%1}}
+#action {^haste: %1 hrs$}               {#var {Haste}   {%1}}
+#action {^improved haste: %1 hrs$}      {#var {Haste}   {%1}}
+#action {^love: %1 hrs$}                {#var {Love}    {%1}}
+
+#function AffOn
+{
+    #math result {+%1};
+    #if { $result >= 0 && $result <= 300 } #return {$result};
+    #elseif { $r > 500 } #return {\@};
+    #else #return {X}
+}
+
+#action	{^You have killed %1 player(s)}
+{
+    #ungag {^Affecting Spells:$}; #ungag {^%%1: %%2 hrs$};
+    #var PK %1 ; gagline;
+    #if { $Terse <= 2 } {
+        #if { $SeeInv < 0 && $Sanc < 0 }{ #echo {${BOLD}You needs see inv and sanc.}};
+        #elseif { $SeeInv < 0 }         { #echo {${BOLD}You needs see inv.}};
+        #elseif { $Sanc  < 0 }          { #echo {${BOLD}You needs sanc.}};
+    };
+    #if { $Terse == 0 } { #var sc_quest 1; quest };
+}
+
+#var Guild {None};
+
+#action	{^You have been killed %1 time(s)}
+	{#var Killed %1; gagline}
+
+#action	{^You have made %1 QUEST(s)}
+	{#var QuestCount {%1}; gagline}
+
+#action	{^You are a member of %1 guild.}
+	{#var Guild {%1}; gagline}
+
+#alias  {QuestScore}
+{
+    gagline; #unvar sc_quest;
+    #echo {Your QUEST (No.$QuestCount): $Quest};
+    #echo {Killed : $Killed times,  PK : $PK,  Guild : $Guild};
+}
+
+/*
+You are 17 years old.
+You are neutral.
+Your ac is -108.
+You have 2390(2388) hit, 3260(3258) mana and 3300(3298) movement points.
+Your stat: str 18/70 wis 18 int 18 dex 18 con 18.
+Your hitroll is 22 , and damroll is 37.
+Your Bare Hand Dice is 0d0.
+You save para : 60, hit skill : 80, breath : 50, spell : 40.
+Your regeneration is 0.
+You have scored 1367120 exp, and have 1398 gold coins.
+You have been playing for 4 days and 10 hours.
+This ranks you as TestOne the Believer (level 20).
+You have enough experience to advance.
+You are standing.
+
+You have killed #0 player(s)
+You have been killed #0 time(s)
+You have made  #15 QUEST(s)
+You are a member of OUTLAW guild
+
+You are 17 years old.
+You are neutral.
+Your ac is -24.
+You have 105(103) hit, 103(101) mana and 87(85) movement points.
+You have scored 1 exp, and have 1000 gold coins.
+You have been playing for 0 days and 0 hours.
+This ranks you as Zaa the Swordpupil (level 1).
+You need 1999 experience to advance
+You are standing.
+
+You have killed #0 player(s)
+You have been killed #0 time(s)
+You have made  #0 QUEST(s)
+*/
+
+/// ===================================================================
+/// Food, water, sundew, cup
+
+#action	{^You are hungry.}			        {DrSundew any; SyncTick}
+#action	{^You are thirsty.}			        {DrSundew any; SyncTick}
+#action	{^Your stomach will be empty soon.}	{DrSundew bubble; SyncTick}
+#action	{^You need some water now.}			{DrSundew bubble; SyncTick}
+
+#high {^Your stomach will be empty soon.}   {BOLD}
+#high {^You need some water now.}           {BOLD}
+
+#var Drink {};
+
+#alias  {dry}     {DrSundew}
+
+#alias	{DrSundew}	{
+    #if { ( "%1" == "any" || "%1" == "bubble" )
+            && ( "$Drink" == "any" || "$Drink" == "bubble") } #return;
+    #var Drink {%1};
+    #if { "$Drink" == "" } {#var Drink {bubble}};
+
+    #if { "$Room" != "Mid"
+        && ( "$Drink" == "cup" || "$Drink" == "any" ) } {look cup};
+    look bubble;
+
+    #delay {Sundew}
+    {
+        #if { "$Drink" != "sundew" && "$Drink" != "cup" }
+            { #var Drink {}; #return };
+        drink $Drink;
+        #delay 0.5 { #if { "$Drink" != "" } { drink $Drink}};
+        #delay 1.5 { #if { "$Drink" != "" } { drink $Drink}};
+        #delay 2 { #if { "$Drink" != "" } { drink $Drink}};
+    } {1};
+}
+
+#action {^You do not see that here.}
+        { #if { "$Drink" != ""  } { gagline }}
+
+#action	{^Use "drink sundew" to get a refreshing drink.}
+        { #if { "$Drink" != "" }
+            { #var Drink {sundew}; gagline}}
+
+#action	{^It looks like a drink container.}
+        { #if { "$Drink" != "" }
+        	{ #var Drink {cup}; gagline}}
+
+#action	{^It's empty already.}
+        {#if { "$Drink" != "" }
+            { junk $Drink; #var Drink {}; gagline}}
+
+#action	{^You are full.} { #var Drink {}}
+#action	{^Your stomach can't contain anymore!} { #var Drink {}}
+#action	{^You can't find it!} { #var Drink {}}
+
+/// ------------------------------------------------------------------
+///     Bank
+
+#alias {bank}
+{
+	#if { $Room == Bank } {DoBank; #return};
+
+	#if { $Room == Mid } {s;w;n};
+	#elseif { $Room == QuestRoom } {d;s;w;n};
+	#elseif { $Room == PetShop } {n;w;n;w;n};
+    #else { #echo {Not Bank} }
+    #delay 2.0 {DoBank};
+}
+
+#alias {allbank}
+{
+	#if { $Room == Bank } { allorder {DoBank}};
+	#elseif { $Room == Mid } { s;w;n; alloder {DoBank}};
+}
+
+#alias	{DoBank}
+{
+    SetScore;
+    #if { + %1  } { #math amt {%1}} { #var amt {0}};
+    #delay 1.0 {
+        #if { "$Room" != "Bank" }
+            { #echo {Here is not bank.}; #unvar amt; #return};
+        #if { $amt > 0 }
+            { deposit %1 };
+        #elseif { $amt < 0  && $Gold + $amt > 0  } {
+            #math {amt} { $amt * (-1) };
+            withdraw  $amt;
+        };
+        #else {
+	        #if { "%1" == "kaist" }
+		        { #math {amt} {$Gold-2000}};
+	        #else
+                { #math {amt} { $Gold - $Gold % 10000 }};
+
+            #if { $amt > 0 }
+	        {
+                deposit $amt;
+                #echo {You deposit %g coins} {$amt};
+		        #math {Gold} {$Gold-$amt}
+            };
+        };
+        balance; #unvar amt;
+    }
+}
+
+#action	{^The Bank Examiner is a weak little guy.} {#var Room {Bank}; gagline}
+
+/// The banker says 'Have a nice day.'
+
+#action	{^You have %1 coins in the bank.$}
+	{ #echo  {You have %g coins in the bank.} {%1} ;
+	#var Bank {%1}; gagline}
+
+/// ===================================================================
+/// inventory related
+
+#alias  {rm}        {remove}
+#alias  {wr}        {wear}
+#alias  {xx}        {examine}
+
+#alias  {ghh}       {DoArg2     get holding}
+#alias  {phh}       {DoArg2     put holding}
+#alias  {whh}       {wear       holding}
+#alias  {rhh}       {remove     holding}
+#alias  {xhh}       {exam       holding}
+
+#alias  {gbb}       {DoArg2     get boddari}
+#alias  {pbb}       {DoArg2     put boddari}
+#alias  {xbb}       {exam       boddari}
+
+#alias  {guu}       {DoArg2     get urn}
+#alias  {puu}       {DoArg2     put urn}
+#alias  {xuu}       {exam urn}
+
+#alias  {getl}      {DoArg1    get}
+#alias  {dropl}     {DoArg1    drop}
+
+#alias  {xcor}      { #if { + %1 } { exam %1.corpse } { exam corpse}}
+#alias  {cor}       { #if { + %1 } { get all %1.corpse };
+                      #elseif { ? %1 } { get %1 corpse };
+                      #else   { get all corpse }}
+
+#alias {getinv}
+        { get holding; wear holding; get urn; get boddari;
+         get canoe; #3 get recall; #3 get cup}
+
+#alias {allcor}    {
+    #var ncorp 0; #var kcorp 0;
+    #gag {^You see nothing special..$};
+    #gag {^Nothing$};
+    #action {^Corpse of %%1 is lying here.} {
+        #math ncorp {$ncorp + 1};
+        exam $ncorp\.corpse;
+    };
+    #action {^corpse (here) : $} {
+        #math kcorp {$kcorp + 1};
+        #line gag; #echo {corpse (here) [$kcorp] : };
+    };
+    look;
+    #delay 3 {
+        #unaction {^Corpse of %%1 is lying here.};
+        #unaction {^corpse (here) : $};
+        #ungag {^You see nothing special..$};
+        #ungag {^Nothing$};
+        #unvar ncorp; #unvar kcorp;
+    }
+}
+
+#alias {allrecall}
+{
+    #var Recall 0;
+    #action {^a scroll of recall$} { #math Recall {$Recall+1}};
+    #gag {%*};
+    inv; exam boddari; exam urn;
+    #delay 1.5 {
+        #ungag {%*};
+        #unaction {^a scroll of recall$};
+        #echo {You have $Recall recalls.};
+    };
+}
+
+#alias {i}
+{
+    #var Recall 0;
+    #action {^a scroll of recall$} { #math Recall {$Recall+1}};
+    inventory;
+    #delay 1 { #if { $Recall == 0 } #echo {No Recall!!}}
+}
+
+#action     {^A altar made of white marble sits in the middle of the room.}
+            { exam altar }
+
+#gag    {^When you look inside, you see:}
+
+#high   {^A large, cracked urn has been left here.} {BOLD}
+#high   {^A little boddari.}                        {BOLD}
+#high   {^A Very big Bag of Holding with many pockets and jewels.}   {BOLD}
+
+
+#subst {..It has a soft glowing aura!}          {..glow.}
+#subst {..It emits a faint humming sound!}      {..humm.}
+
+#subst {^A align Keywords by Great SuperSundew's NOGADA !!} {A align Keywords}
+#subst {^You see nothing special..}     {-------------------------}
+#subst {^You are carrying:}             {-------------------------}
+
+
+///  ------------------------------------------------------------------
+
+#list {EqPos} {create} {
+    {<used as light>}
+    {<worn on finger>}
+    {<worn on finger>}
+    {<worn around neck>}
+    {<worn around neck>}
+    {<worn on body>}
+    {<worn on head>}
+    {<worn on legs>}
+    {<worn on feet>}
+    {<worn on hands>}
+    {<worn on arms>}
+    {<worn as shield>}
+    {<worn about body>}
+    {<worn about waist>}
+    {<worn around wrist>}
+    {<worn around wrist>}
+    {<wielded>}
+    {<held>}
+    {<worn around knee>}
+    {<worn around knee>}
+    {<worn about legs>}
+    {<worn on back>}
+}
+
+#action {^You are using:}
+{
+    #var myeq {1};
+    #list {EqList} clear;
+    #var {Light} {}; #var {Kal} {}; #var {HoldItem} {}; #var {Backpack} {};
+    #delay 0.5  {
+        #local uneq {};
+        #loop {1} {&EqPos[]} {idx} {
+            #if { ! "$EqList[$idx]" }
+                { #var {uneq} {$EqPos[$idx] $uneq}}
+        }
+        #if { ? "$uneq" } { #echo {\nUnequipped: $uneq}};
+        #unvar {idx}; #unvar {idx1}; #unvar {myeq};
+    }
+}
+
+#alias {SetEqList}
+{
+    #if { ! $myeq } { #return };
+    #local {itm} {%2}; #replace {itm} {^%s} {}; #replace {itm} {..It{.*}$} {};
+
+    #list {EqPos} {find} {%1} {idx};
+    #if { ! $idx } { #return };
+    #math {idx1} {$idx+1};
+    #if { ? "$EqList[$idx]" } { #var {EqList[$idx1]} {$itm}} { #var {EqList[$idx]} {$itm}};
+    #switch {"%1"}
+    {
+        #case {"<used as light>"}   { #var {Light}      {$itm}};
+        #case "<wielded>"           { #var {Kal}        {$itm}};
+        #case "<held>"              { #var {HoldItem}   {$itm}};
+        #case {"<worn on back>"}    { #var {Backpack}   {$itm}};
+    }
+}
+
+#action {^<used as light> %s %2$}       { SetEqList  {<used as light>}   {%2} }
+#action {^<worn %1> %s %2$}             { SetEqList  {<worn %1>}         {%2} }
+#action {^<wielded> %s %2$}             { SetEqList  {<wielded>}         {%2} }
+#action {^<held> %s %2$}                { SetEqList  {<held>}            {%2} }
+
+/*
+<used as light>      the bloody cross banner..glow...humm.
+<worn on finger>     A ring of secret mechanic robot
+<worn on finger>     A ring of secret mechanic robot
+<worn around neck>   A diamond pendant..glow.
+<worn around neck>   A diamond pendant..glow.
+<worn on body>       the Tiamat mail..glow.
+<worn on head>       The Gaiot's Helmet..humm.
+<worn on legs>       Sharon's Beautiful Leggings..glow.
+<worn on feet>       a Gaiot's leather boots..glow.
+<worn on hands>      a titanic gloves of grandiser..glow.
+<worn on arms>       KAIST Armplate..glow...humm.
+<worn as shield>     large fragment of a spaceship's hull
+<worn about body>    a major globe of invulnerability..glow.
+<worn about waist>   a Lss belt sword..glow.
+<worn around wrist>  KAIST Band..glow...humm.
+<worn around wrist>  KAIST Band..glow...humm.
+<wielded>            a beautiful ZIZON sword..glow...humm.
+<held>               a beautiful ZIZON sword..glow...humm.
+<worn around knee>   a zzanga's PCB knee
+<worn around knee>   a zzanga's PCB knee
+<worn about legs>    The ANTI DeathCure..glow.
+<worn on back>       A Bag of Holding
+*/
+
+#action {^Damage Dice is '%1D%2'}       { #math {kaldr} {(%1 * %2)/2}};
+#action {^    Affects : DAMROLL By %1}  { #math {kaldr} {$kaldr + %1}};
+
+#action {^Object '%1', Item type: WEAPON}
+    { #delay 0.1 {#echo {Avg. Damage is $kaldr}; #unvar kaldr}}
+
+/// ===================================================================
+///     Mid gag
+
+#subst  {^A mysterious liquid bubbles from the ground.}
+        {- Sundew bubbles from the ground.}
+#gag    {^A large bulletin board is mounted on a wall here.}
+#gag    {^A large mail box is mounted on a wall here.}
+#gag    {^sundew : You can't carry that much weight.}
+#gag    {^board : You can't carry that much weight.}
+#gag    {^altar : You can't carry that much weight.}
+
+#gag	{^A quivering hoard of maggots consume Corpse of}
+
+#gag	{^%1 glows with a bright light!}
+#gag	{^%1 is EXCITED with glorious feeling!!!!}
+#subst  { (invisible) is }      { (\*) }
+
+#gag	{^%1 disappears into the void.}
+#gag	{^%1 drinks sundew from liquid bubbles}
+#gag	{^%1 attempts to misbehave here.}
+#gag	{^%1 says 'help'$}
+#gag    {^%1 stops using A Bag of Holding.}
+#gag    {^%1 wears A Bag of Holding about %2 back.}
+#gag    {^%1 gets a scroll of recall from %2 A Bag of Holding.}
+#gag    {^%1 gets a canoe from %2 A Bag of Holding.}
+#gag    {^%1 awakens.$}
+#gag    {^%1 clambers on %2 feet.}
+#gag    {^%1님이 눕더니 잠이 듭니다.}
+
+#list   {Smiler} create {{Maker} {Creator} {Deity} {Saint}}
+
+#action	{^%1 smiles happily.}
+	    {#list {Smiler} find {%1} {found};
+         #if { $found > 0 } { gagline }; #unvar found}
+
+/// ------------------------------------------------------------------
+
+#gag	{^Helper 미드에서 say help 하세요. (sanc & haste) is standing here.}
+#gag    {^Helper utters the words, 'sanctuary'}
+#gag    {^Helper utters the words, 'haste'}
+#gag    {^Helper utters the words, 'gaiqhjabral'}
+#gag    {^Helper utters the words, 'paghz'}
+
+#gag	{^\*Perhaps is proudly standing here.}
+#subst  {^Narai 오픈카톡방 https://open.kakao.com/o/gAx75aN} {${BOLD}God Narai${NONE}}
+
+#action	{^Someone says '나래 머드에 오신걸 환영합니다.'}
+        {w; cast 'detect invis' ; e}
+
+#gag	{^Perhaps says '나래 머드에 오신걸 환영합니다.'}
+#gag	{^Perhaps says '나래 머드에 관한 의견이 있으면 board에 써주세요.'}
+#gag	{^Perhaps says '초보자 이시면, 'help'를 쳐보세요.'}
+#gag	{^Perhaps says 'NEWS를 자주 보세요...type 'NEWS' '}
+#gag	{^Perhaps says '길드에 가입하면 level-down이 안된답니다.'}
+#gag	{^Perhaps says '경찰길드와 깡패길드는 midgaard근처에 있습니다.'}
+#gag	{^Perhaps says '암살자 길드는 DeathKingdom에 있습니다.'}
+#gag	{^Perhaps says 'reimburse는 안해준데요...'}
+#gag	{^Perhaps says '버그가 발견되면 보드에 적어주세요. 사례를 드립니다.'}
+
+#action	{^You have been idle, and are pulled into a void.}	{look}
+#action	{^Puff says 'I've got a peaceful, easy feeling.'}	{look}
+#action	{^Puff says 'How'd all those fish get up here?'}	{look}
+#action	{^Puff says 'My god! It's full of stars!'}		    {look}
+
+#high	{^Puff the Fractal Dragon is here, contemplating a higher reality.} {BOLD}
+
+#gag	{^The Mayor says 'Hello Honey!'}
+#gag	{^The Mayor says 'What a view! I must get something done about dump!'}
+#gag	{^The Mayor says 'Vandals! Youngsters nowadays have no respect for anything!'}
+#gag	{^The Mayor says 'Good day, citizens!'}
+#gag	{^The Mayor says 'I hereby declare the bazaar open!'}
+#gag	{^The Mayor says 'I hereby declare Midgaard closed!'}
+
+#gag    {^Mom says '일찍 자고 일찍 일어나라.'}
+#gag    {^Mom says '밥먹기 전에는 손을 씻어야지.'}
+#gag    {^Mom says '얘 ! 방좀 가서 치워라.'}
+#gag    {^Mom says '누가 여기 쓰레기 치우지 않았지 ?'}
+#gag    {^Mom says '숙제 다 했어 ?'}
+#gag    {^Mom says '보고서 다 썼니 ?'}
+#gag    {^Mom says '밤늦게 까지 오락 하지 말랬지 !'}
+#gag    {^Mom says '얘들아 잘시간이다.'}
+#gag    {^Mom says '넌 집에서 가정교육을 좀 더 받아야해'}
+#gag    {^Mom says '집에서 너무 멀리 가지 말아라.'}
+#gag    {^Mom says '오늘 할 일을 내일로 미루지 마라.'}
+
+#gag    {^An Unarmed Cityguard is here, yawning.}
+#gag    {^A cityguard stands here.}
+#gag    {^A cityguard is here, guarding the gate.}
+#gag    {^A Security Guard is here, hoping to go on lunch break soon.}
+#gag    {^A Mercenary waiting for a job.}
+#gag    {^A janitor named 영구 is walking around, cleaning up.}
+
+#gag    {^A squeaky little mouse is running in circles.}
+#gag    {^아주 못 생긴 땡칠이가 있습니다.}
+#gag    {^Odif Yltsaeb is here, walking backwards.}
+
+/// ------------------------------------------------------------------
+/// Weather message
+
+#action	{^The sun rises in the east.}	{#var DayNight {Morning};SyncTick}
+#action	{^The day has begun.}	        {#var DayNight {Morning};SyncTick}
+#action	{^The sun slowly disappears in the west.}	{#var DayNight {Morning};SyncTick}
+#action	{^The night has begun.}	        {#var DayNight {Morning};SyncTick}
+
+#action	{^The clouds disappear.}        {#var Weather {Sunny}; SyncTick}
+#action	{^The sky is getting cloudy.}	{#var Weather {Cloudy};SyncTick}
+#action	{^It starts to rain.}           {#var Weather {Rainy};SyncTick}
+#action	{^The rain stopped.}            {#var Weather {Cloudy};SyncTick}
+#action	{^Lightning starts to show in the sky.}  {#var Weather {Lightning};SyncTick}
+#action	{^The lightning has stopped.}   {#var Weather {Rainy};SyncTick}
+
+#var WeatherMap[cloudless]      {Sunny}
+#var WeatherMap[cloudy]         {Cloudy}
+#var WeatherMap[rainy]          {Rainy}
+#var WeatherMap[lit by flashes of lightning] {Lightning}
+
+#action	{^The sky is %s and you feel a warm wind from south.}
+        {#var Wather WeatherMap[%1]}
+
+#action	{^The sky is % and your foot tells you bad weather is due.}
+        {#var Wather WeatherMap[%1]}
+
+///  You have no feeling about the weather at all.
+
+/// ===================================================================
+
+#alias	{Room}	{ #echo {Room is <$Room>}; #cr}
+
+#action	{^The Temple Of Midgaard$}	    {#var Room {Mid}}
+#action	{^By the Temple Altar$}		    {#var Room {Altar}}
+#action	{^The Board Room$}		        {#var Room {AboutMid}}
+#action	{^The Post Office$}		        {#var Room {AboutMid}}
+#action	{^The Quest Room$}		        {#var Room {QuestRoom}}
+#action	{^Remortal Place}$		        {#var Room {AboutMid}}
+
+#action	{^The Bank$}			        {#var Room {Bank}}
+#action	{^The Temple Square$}		    {#var Room {AboutMid}}
+#action	{^The Locker room in General$}	{#var Room {AboutMid}}
+#action	{^The Entrance to the Bank$}	{#var Room {AboutMid}}
+
+#action	{^Market Square$}		        {#var Room {Street}}
+#action	{^The Main Street}              {#var Room {Street}}
+#action	{^The Pet Shop$}                {#var Room {PetShop}}
+
+#action	{^Entrance to POLICE guild$}	{#var Room {Guild}}
+#action	{^Entrance to OUTLAW guild$}	{#var Room {Guild}}
+#action	{^Entrance to ASSASIN guild$}	{#var Room {Guild}}
+
+#action	{^robot city entrance$}		    {#var Room {RoboCity}}
+
+/// ------------------------------------------------------------------
+
+#var  {KEYROOM}         {<K36>}
+#var  {UTLROOM}         {<K33><188>}
+
+#high {^The Temple Of Midgaard$}		    {$KEYROOM}
+#high {^The Bank$}				            {$KEYROOM}
+
+#high {^Market Square$}				        {$KEYROOM}
+#high {^The Common Square$}			        {$POINT}
+#high {^Levee$}					            {$KEYROOM}
+#high {^Magic Shop$}			            {$POINT}
+#high {^Inside the West Gate of Midgaard$}	{$POINT}
+#high {^Inside the East Gate of Midgaard$}	{$POINT}
+#high {^The Practice Room$}			        {$POINT}
+#high {^The Main Hall$}			            {$KEYROOM}
+
+#high {^The edge of the forest$}            {$KEYROOM}
+#high {^The Turning Point$}			        {$KEYROOM}
+
+#action {^   You are at the end of the main street of Midgaard.  South of here is the}
+    {#echo {Main 1 EE: <188>MAGIC Shop<088>, Practice Room}}
+
+#action {^   You are on the main street passing through the City of Midgaard.  South of}
+    {#echo {Main 2 E: Bakery/Armory}}
+
+#action {^   You are on the main street crossing through town.  To the north is the}
+    {#echo {Main 3 W: General/Pet Shop}}
+
+#action {^   You are on Main Street, in beautiful downtown Midgaard.}
+    {#echo {Main 4 WW: WEAPON Shop/TB}}
+
+
+#high {^A large sign mounted on a pole is standing by the roadside.} {UNDER}
+#high {^A colossal tree blocks the way westwards.}                   {UNDER}
+
+/// ------------------------------------------------------------------
+
+#gag {^   You are in the southern end of the temple hall in the Temple of Midgaard.}
+#gag {^The temple has been constructed from giant marble blocks, eternal in}
+#gag {^appearance, and most of the walls are covered by ancient wall paintings}
+#gag {^picturing Gods, Giants and peasants.}
+#gag {^   Large steps lead down through the grand temple gate, descending the huge}
+#gag {^mound upon which the temple is built and ends on the temple square below.}
+
+#gag {^   You are by the temple altar in the northern end of the Temple of Midgaard.}
+#gag {^A huge altar made from white polished marble is standing in front of you and}
+#gag {^behind it is a ten foot tall sitting statue of Odin, the King of the Gods.}
+
+#gag {^Even though the altar is more than ten feet long it appears to be made from a}
+#gag {^single block of white virgin marble.}
+
+#gag {^  This is where the mail box should be.  Relax, the floor is soft.}
+#gag {^There are many interesting people here, sometimes.  The immortals will}
+#gag {^be along any minute to take care of you. There is a poster on the wall.}
+
+#gag {^  This is where the bulletin board should be.  Relax, the floor is soft.}
+#gag {^There are many interesting people here, sometimes.  The immortals will}
+#gag {^be along any minute to take care of you.}
+
+#gag {^   You are standing on the temple square.  Huge marble steps lead up to the}
+#gag {^temple gate.  The entrance to the Clerics Guild is to the west, and the old}
+#gag {^Grunting Boar Inn, is to the east.  Just south of here you see the market}
+#gag {^square, the center of Midgaard.}
+
+#gag {^   You are in the entryway to the prestigious Midgaard Bank.  The walls}
+#gag {^and floors here are made of marble.  There are gold plated plaques of}
+#gag {^famous bankers on the walls.  Know any famous bankers?}
+
+#gag {^  You are in a modern bank, bustling with activity.  There are a}
+#gag {^lot of serious looking tellers here.  There is also a sign.  You}
+#gag {^should read the sign.  And take your hat off, please.}
+
+#gag {^   You are standing in the entrance hall of the Grunting Boar Inn.  The hall}
+#gag {^has been wisely decorated with simple but functional furniture.  A small}
+#gag {^staircase leads up to the reception and the bar is to the east.}
+
+#gag {^   You are by two small towers that have been built into the city wall and}
+#gag {^connected with a footbridge across the heavy wooden gate.  Main Street leads}
+#gag {^east and Wall Road leads south from here.}
+
+#gag {^   You are at the end of the main street of Midgaard.  South of here is the}
+#gag {^entrance to the Guild of Magic Users.  The street continues east towards the}
+#gag {^market square.  The magic shop is to the north and to the west is the city}
+
+#gag {^   You are on the main street passing through the City of Midgaard.  South of}
+#gag {^here is the entrance to the Armoury, and the bakery is to the north.  East of}
+#gag {^here is the market square.}
+
+#gag {^   You are standing on the market square, the famous Square of Midgaard.}
+#gag {^A large, pecualiar looking statue is standing in the middle of the square.}
+#gag {^Roads lead in every direction, north to the temple square, south to the}
+#gag {^common square, east and westbound is the main street.}
+
+#gag {^   You are on the main street crossing through town.  To the north is the}
+#gag {^general store, and the main street continues east.  To the west you see and}
+#gag {^hear the market place, to the south a small door leads into the Pet Shop.}
+
+#gag {^   You are on Main Street, in beautiful downtown Midgaard.}
+
+#gag {^   The common square, people pass you, talking to each other.  To the west is}
+#gag {^the poor alley and to the east is the dark alley.  To the north, this square}
+#gag {^is connected to the market square.  From the south you notice a nasty smell.}
+
+#gag {^   The dark alley, to the west is the common square and to the south is}
+#gag {^the new McDonalds.  The alley continues east.}
+
+#gag {^  You are standing in the alley which continues east and west.  South of}
+#gag {^  You are at the levee.  South of here you see the river gently flowing east.}
+#gag {^The river bank is very low making it possible to enter the river.}
+
+#gag {^connected with a footbridge across the heavy wooden gate.  To the}
+#gag {^You are standing at the eastern edge of a big forest.  To the east is the West}
+#gag {^Gate of Midgaard and to the west is a narrow trail, leading in through the}
+
+#gag {^  The trees stand close here, and the tall, bushy undergrowth prevents you}
+#gag {^from seeing far in any direction save north, where a broad lane leads off into}
+#gag {^the distance; and west, where the same lane continues towards what looks like}
+#gag {^a fairly large city. The muted sounds of city commotion reach your ears from a}
+#gag {^distance; stray dogs barking, children crying, and street salesmen shouting.}
+#nop {You can "call" taxi to Process' house here.}
+
+/// ===================================================================
+/// Map, path
+
+/// ------------------------------------------------------------------
+/// From Mid
+
+#alias dop { unlock %0; open %0 }
+#alias dpi { unlock %0; open %0 }
+
+#alias {OpenGate}
+{ unlock $0; open $0; pick $0}
+
+
+/// Turning Point
+#alias  {toTP}          {s;s;e;e;e; OpenGate gate east;e;e;e}
+
+/// Dragon Tower
+#alias  {toDT}          {toTP; #10 n;e;e;n;n;w; pick gate n; open gate n;}
+
+/// West forest
+#alias  {towest}        {s;s;w;w;w; OpenGate gate wast; w;w;}
+
+#alias  {levee}         {s;s;s;e;e;s}
+
+#alias  {tocoloss}      { towest; #8 w}
+
+#alias  {tomainhall}    { levee; mainhall }
+
+#alias  {KAIST2}        { s;s;call; #5 n;s;s;n;w; n;e;w;s; w;n }
+
+/// ------------------------------------------------------------------
+/// From Leevee
+
+#alias  {desert}        {s;s;#7 e}
+#alias  {wasteland}     {s;#9 e;#5 n}
+#alias  {mainhall}      {wasteland; n;n;w;n;n;n;n;open door north;n}
+
+#alias  {tofork}        {wasteland; n;n;e;n;w; open cover down; d;close cover}
+#alias  {hypnos}        {wastekand; n;n;w;w;n;n; open door west; w;d;w;w}
+
+#alias  {aerie}         {s;#14 e; open door n}
+#alias  {toDK}		    {s;#7 w;#5 w;}
+#alias  {shelter}       {s;#7 w;s;s;s;s;w;w}
+
+/// ------------------------------------------------------------------
+///     From Main Hall
+///
+#alias {fury} {#8 u; open door n}
+#alias {lesser} {d;e;e;e;e;s;open door s;INFO s == lessor gods}
+#alias {hecate} {d;s;e;e;INFO s == hecate}
+#alias {monoceros} {d;e;open door north;l monoceros}
+#alias {medusa} {d;s;s;open door south;INFO s == medusa}
+#alias {hades} {d;s;s;w;open door south;s;s;w;INFO n == hades}
+#alias {hydra} {d;s;s;w;open door south;s;s;s;w;l down;INFO d == hydra}
+
+///  proserpina
+#alias {kong} {d;w;w;w;n;w;open curtain;}
+
+/// ===================================================================
+///     For Test
+/*
+#var scr {
+    function test(a, b , c)
+        xx7 = a
+        yy8 = "xxb"
+        zz9 = "xyz"
+        bb9 = arg[2]
+        return xx7, yy8, zz9, bb9
+    end
+    xx, yy, zz, bb = test("xxx1", "yyy2", "zzz3")
+
+    xx = "aaa"
+    yy = "bbb"
+    zz = "cc"
+    bb = "kkk"
+
+    return { 11, 22, 33, 44}
+}
+
+#var scr {
+    print("#echo {HELLO, TINTIN. PI=", 3.14159, "}" )
+    return { 11, 22, 33, 44}
+}
+
+#var z      {}
+#var a      {aaa}
+#var ab     { aaa bbb }
+#var n      {789}
+*/
+
+#list {la} create {aa; bb; cc}
+#list {lb} create {{dd}{ee} {{FFF} {GGG}}}
+#var  {lc} {{4}{kkk}{5}{lll}{6}{mmm}}
+
+#var  {ld[a]} {aaa}
+#var  {ld[b]} {bbb}
+#var  {ld[c]} {ccc}
+
+#var  {lk} {{d}{ddd}{e}{eee}{f}{fff}}
+
+#gag     {^Zef님이 the Puppy 강아지 을 데리고 갑니다.}
+#gag     {^The Puppy 강아지 now follows Zef.}
+#gag     {^Zef gives the Puppy 강아지 an order.}
+#gag     {^The Puppy 강아지 realizes that Zef is a jerk!}
+#gag     {^Zef place Zef's QUEST DAGGER in the back of the Puppy 강아지, resulting in some strange noises, a lot of blood and a corpse}
+#gag     {^The Puppy 강아지 is dead! R.I.P.}
+#gag     {^Corpse of the Puppy 강아지 is lying here.}
+
+#var test 222
+

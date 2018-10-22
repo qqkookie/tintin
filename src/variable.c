@@ -327,11 +327,6 @@ void reversestring(char *str)
 	}
 }
 
-void mathstring(struct session *ses, char *str)
-{
-	get_number_string(ses, str, str);
-}
-
 void thousandgroupingstring(struct session *ses, char *str)
 {
 	char result[BUFFER_SIZE], strold[BUFFER_SIZE];
@@ -858,7 +853,7 @@ void format_string(struct session *ses, char *format, char *arg, char *out)
 						break;
 
 					case 'm':
-						mathstring(ses, arglist[i]);
+						get_eval_string(ses, arglist[i], arglist[i]);
 						break;
 
 					case 'n':

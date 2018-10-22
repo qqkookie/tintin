@@ -45,7 +45,7 @@ DO_COMMAND(do_list)
 
 	if (*arg1 == 0 || *arg2 == 0)
 	{
-		show_error(ses, LIST_VARIABLE, "#SYNTAX: #LIST {variable} {ADD|CLE|CRE|DEL|FIN|GET|INS|SET|SIM|SIZ|SOR|EXP} {argument}");
+		show_error(ses, LIST_VARIABLE, "#SYNTAX: #LIST {variable} {ADD|CLE|CRE|DEL|FIN|GET|INS|MER|SET|SIM|SIZ|SOR|EXP} {argument}");
 	}
 	else
 	{
@@ -331,16 +331,17 @@ DO_ARRAY(array_insert)
 	return ses;
 }
 
-DO_ARRAY(array_simplify)
+DO_ARRAY(array_merge)
 {
-	char arg1[BUFFER_SIZE], tmp[BUFFER_SIZE];
+	char arg1[BUFFER_SIZE], arg2[BUFFER_SIZE], tmp[BUFFER_SIZE];
 	int index;
 
-	arg = sub_arg_in_braces(ses, arg, arg1, GET_ALL, SUB_VAR|SUB_FUN);
+	arg = sub_arg_in_braces(ses, arg, arg1, GET_ONE, SUB_VAR|SUB_FUN);
+	arg = sub_arg_in_braces(ses, arg, arg2, GET_ONE, SUB_VAR|SUB_FUN);
 
 	if (*arg1 == 0)
 	{
-		return show_error(ses, LIST_VARIABLE, "#SYNTAX: #LIST {variable} SIMPLIFY {variable}");
+		return show_error(ses, LIST_VARIABLE, "#SYNTAX: #LIST {variable} MERGE {variable} [{delim}]");
 	}
 
 	if (list->root)
@@ -353,7 +354,7 @@ DO_ARRAY(array_simplify)
 			}
 			else
 			{
-				cat_sprintf(tmp, ";%s", list->root->list[index]->right);
+				cat_sprintf(tmp, "%s%s", arg2, list->root->list[index]->right);
 			}
 		}
 		set_nest_node(ses->list[LIST_VARIABLE], arg1, "%s", tmp);
@@ -362,10 +363,17 @@ DO_ARRAY(array_simplify)
 	}
 	else
 	{
-		show_error(ses, LIST_VARIABLE, "#LIST SIMPLIFY: {%s} is not a list.", arg1);
+		show_error(ses, LIST_VARIABLE, "#LIST MERGE: {%s} is not a list.", var);
 	}
 
 	return ses;
+}
+
+DO_ARRAY(array_simplify)
+{
+	strcat(arg, " {;}");
+
+	return array_merge(ses, list, arg, var);
 }
 
 DO_ARRAY(array_size)

@@ -13,8 +13,7 @@ config.log
 *~
 *.lnk
 *.sym
-
-autom4te.cache/
+*.txt
 
 ##### Generated binaries #####
 
